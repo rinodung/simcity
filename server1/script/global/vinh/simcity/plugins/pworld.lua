@@ -244,8 +244,11 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 	local normalPoints = {}
 	
 	-- Separate exact points and normal points
-	for _, path in walkAreas do
-		for _, point in path do
+	local i, j
+	for i = 1, getn(walkAreas) do
+		local path = walkAreas[i]
+		for j = 1, getn(path) do
+			local point = path[j]
 			if point[3] and point[3] == 1 then
 				tinsert(exactPoints, {point[1], point[2]})
 			else
@@ -257,20 +260,28 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 	-- Process normal points and snap to exact points if within radius
 	local SNAP_RADIUS = 5 -- Adjust this value as needed
 	local processedPoints = {}
-	local graph = {}
+	local graph = {
+		nodes = {},  -- Store node coordinates
+		edges = {}   -- Store connections
+	}
 	
 	-- First add all exact points to processed
-	for _, ep in exactPoints do
+	for i = 1, getn(exactPoints) do
+		local ep = exactPoints[i]
 		tinsert(processedPoints, ep)
-		graph[ep[1] .. "_" .. ep[2]] = {}
+		local nodeKey = ep[1] .. "_" .. ep[2]
+		graph.nodes[nodeKey] = ep
+		graph.edges[nodeKey] = {}
 	end
 	
 	-- Process normal points
-	for _, np in normalPoints do
+	for i = 1, getn(normalPoints) do
+		local np = normalPoints[i]
 		local snapped = nil
 		
 		-- Check if point should snap to any exact point
-		for _, ep in exactPoints do
+		for j = 1, getn(exactPoints) do
+			local ep = exactPoints[j]
 			if GetDistanceRadius(np[1], np[2], ep[1], ep[2]) <= SNAP_RADIUS then
 				snapped = ep
 				break
@@ -279,7 +290,8 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 		
 		-- If no exact point to snap to, check other normal points
 		if not snapped then
-			for _, pp in processedPoints do
+			for j = 1, getn(processedPoints) do
+				local pp = processedPoints[j]
 				if GetDistanceRadius(np[1], np[2], pp[1], pp[2]) <= SNAP_RADIUS then
 					snapped = pp
 					break
@@ -295,21 +307,24 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 		
 		-- Initialize graph node if not exists
 		local nodeKey = snapped[1] .. "_" .. snapped[2]
-		if not graph[nodeKey] then
-			graph[nodeKey] = {}
+		if not graph.nodes[nodeKey] then
+			graph.nodes[nodeKey] = snapped
+			graph.edges[nodeKey] = {}
 		end
 	end
 	
 	-- Build connections between points based on original paths
-	for _, path in walkAreas do
-		for i = 1, getn(path)-1 do
-			local p1 = path[i]
-			local p2 = path[i+1]
+	for i = 1, getn(walkAreas) do
+		local path = walkAreas[i]
+		for j = 1, getn(path)-1 do
+			local p1 = path[j]
+			local p2 = path[j+1]
 			
 			-- Find corresponding processed points
 			local pp1, pp2 = nil, nil
 			
-			for _, pp in processedPoints do
+			for k = 1, getn(processedPoints) do
+				local pp = processedPoints[k]
 				if GetDistanceRadius(p1[1], p1[2], pp[1], pp[2]) <= SNAP_RADIUS then
 					pp1 = pp
 				end
@@ -325,7 +340,8 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 				local key2 = pp2[1] .. "_" .. pp2[2]
 				
 				local found = nil
-				for _, conn in graph[key1] do
+				for k = 1, getn(graph.edges[key1]) do
+					local conn = graph.edges[key1][k]
 					if conn[1] == pp2[1] and conn[2] == pp2[2] then
 						found = 1
 						break
@@ -333,8 +349,8 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 				end
 				
 				if not found then
-					tinsert(graph[key1], pp2)
-					tinsert(graph[key2], pp1)
+					tinsert(graph.edges[key1], pp2)
+					tinsert(graph.edges[key2], pp1)
 				end
 			end
 		end
