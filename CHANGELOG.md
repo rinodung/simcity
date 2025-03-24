@@ -1,712 +1,238 @@
 ## 25-03-2025
 
-### Thay đổi
-* Cap nhat Ten
+5.4
 
-### Chi tiết
+-   Cập nhật lại tên nhân vật
+-   Nâng cấp AI đi lại cho các sim
 
+## 24-03-2025
 
-## 25-03-2025
-
-### Thay đổi
-* Cap nhat AI cho cac sim
-
-### Chi tiết
-
-
-## 25-03-2025
-
-### Thay đổi
-* World graph added
-
-### Chi tiết
-
-
-## 25-03-2025
-
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 25-03-2025
-
-### Thay đổi
-* Remove .cursor and .vscode from git tracking
-
-### Chi tiết
-
-
-## 25-03-2025
-
-### Thay đổi
-* 5.3.4 Giam lag toan bo simcity. Khong con bi lag khi ve thanh.
-
-### Chi tiết
-
-
-## 25-03-2025
-
-### Thay đổi
-* Giam lag simcity
-
-### Chi tiết
-
-
-## 23-03-2025
-
-### Thay đổi
-* Add AI agent
-
-### Chi tiết
-
+-   5.3.4 Giảm lag toàn bộ simcity khi về thành.
 
 ## 28-09-2024
 
-### Thay đổi
-* 5.3.3 danh nhan si vo lam se bi danh lai. Can than khi luyen cong.
-
-### Chi tiết
-
+-   5.3.3 danh nhan si vo lam se bi danh lai. Can than khi luyen cong.
 
 ## 16-08-2024
 
-### Thay đổi
-* 5.3.2 Them pt train cac map 9x
-
-### Chi tiết
-
+-   5.3.2 Them pt train cac map 9x
 
 ## 04-08-2024
 
-### Thay đổi
-* Tiep tuc chuc nang Van Tieu
-
-### Chi tiết
-
+-   Tiep tuc chuc nang Van Tieu
 
 ## 03-08-2024
 
-### Thay đổi
-* Phuc hoi 5.2 cho chien loan
-
-### Chi tiết
-
+-   Phuc hoi 5.2 cho chien loan
 
 ## 03-08-2024
 
-### Thay đổi
-* Sua loi keo xe
-
-### Chi tiết
-
+-   Sua loi keo xe
 
 ## 03-08-2024
 
-### Thay đổi
-* Tam thoi bo theo sau
-
-### Chi tiết
-
+-   Tam thoi bo theo sau
 
 ## 02-08-2024
 
-### Thay đổi
-* Bo qua nhung quai lam rot do trong TK
-
-### Chi tiết
-
+-   Bo qua nhung quai lam rot do trong TK
 
 ## 02-08-2024
 
-### Thay đổi
-* Merge branch 'dev' of github.com:vinh-ttn/simcity into dev
-
-### Chi tiết
-
+-   Merge branch 'dev' of github.com:vinh-ttn/simcity into dev
 
 ## 02-08-2024
 
-### Thay đổi
-* Them cau chat
-
-### Chi tiết
-
+-   Them cau chat
 
 ## 02-08-2024
 
-### Thay đổi
-* them chuc nang check lag
-
-### Chi tiết
-
+-   them chuc nang check lag
 
 ## 01-08-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 01-08-2024
-
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 01-08-2024
-
-### Thay đổi
-* Tu dong them TongKim khong can cai dat
-
-### Chi tiết
-
+-   Tu dong them TongKim khong can cai dat
 
 ## 31-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
+-   Phuc hoi file chat
 
 ## 31-07-2024
 
-### Thay đổi
-* Phuc hoi file chat
-
-### Chi tiết
-
+-   Major code refactor
 
 ## 31-07-2024
 
-### Thay đổi
-* Major code refactor
-
-### Chi tiết
-
+-   x2 so quai
 
 ## 31-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 31-07-2024
-
-### Thay đổi
-* x2 so quai
-
-### Chi tiết
-
-
-## 31-07-2024
-
-### Thay đổi
-* Bo sung cau chat
-
-### Chi tiết
-
+-   Bo sung cau chat
 
 ## 30-07-2024
 
-### Thay đổi
-* 9x xuat hien o thanh thi
-
-### Chi tiết
-
+-   9x xuat hien o thanh thi
 
 ## 30-07-2024
 
-### Thay đổi
-* Lam gon menu simcity
-
-### Chi tiết
-
+-   Lam gon menu simcity
 
 ## 30-07-2024
 
-### Thay đổi
-* Remove gitignore
-
-### Chi tiết
-
+-   Remove gitignore
 
 ## 30-07-2024
 
-### Thay đổi
-* 5.2.5 Release
-
-### Chi tiết
-
+-   5.2.5 Release
 
 ## 29-07-2024
 
-### Thay đổi
-* Fix lag
-
-### Chi tiết
-
+-   Fix lag
 
 ## 29-07-2024
 
-### Thay đổi
-* Code refactor
-
-### Chi tiết
-
+-   Code refactor
 
 ## 29-07-2024
 
-### Thay đổi
-* Sua loi keo xe sau khi update 5.2.2
-
-### Chi tiết
-
+-   Sua loi keo xe sau khi update 5.2.2
 
 ## 29-07-2024
 
-### Thay đổi
-* 5.2.2 Release
-
-### Chi tiết
-
+-   5.2.2 Release
 
 ## 29-07-2024
 
-### Thay đổi
-* Bugfix TuongDuong chienloan lag
-
-### Chi tiết
-
+-   Bugfix TuongDuong chienloan lag
 
 ## 28-07-2024
 
-### Thay đổi
-* Merge vantieu into groupfighter
-
-### Chi tiết
-
+-   Merge vantieu into groupfighter
 
 ## 28-07-2024
 
-### Thay đổi
-* Remove unneccessary codes
-
-### Chi tiết
-
+-   Remove unneccessary codes
 
 ## 28-07-2024
 
-### Thay đổi
-* Auto add NPCs ON
-
-### Chi tiết
-
+-   Auto add NPCs ON
 
 ## 28-07-2024
 
-### Thay đổi
-* 5.2.1
-
-### Chi tiết
-
+-   5.2.1
 
 ## 28-07-2024
 
-### Thay đổi
-* Merge branch 'dev'
-
-### Chi tiết
-
+-   Sua loi keo xe khong the xoa
 
 ## 28-07-2024
 
-### Thay đổi
-* Sua loi keo xe khong the xoa
-
-### Chi tiết
-
+-   Cap nhat core group_fighter
 
 ## 28-07-2024
 
-### Thay đổi
-* Cap nhat core group_fighter
-
-### Chi tiết
-
+-   Sua loi tat thong bao sim thanh thi
 
 ## 28-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
+-   Merge branch 'dev'
 
 ## 28-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
+-   Sua loi encoding va nv di lai
 
 ## 28-07-2024
 
-### Thay đổi
-* Merge branch 'main' into dev
-
-### Chi tiết
-
-
-## 28-07-2024
-
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 28-07-2024
-
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 28-07-2024
-
-### Thay đổi
-* Merge pull request #2 from vinh-ttn/main
-
-### Chi tiết
-Sua loi tat thong bao sim thanh thi
-
-## 28-07-2024
-
-### Thay đổi
-* Sua loi tat thong bao sim thanh thi
-
-### Chi tiết
-
-
-## 28-07-2024
-
-### Thay đổi
-* Merge branch 'dev'
-
-### Chi tiết
-
-
-## 28-07-2024
-
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 28-07-2024
-
-### Thay đổi
-* Sua loi encoding va nv di lai
-
-### Chi tiết
-
-
-## 28-07-2024
-
-### Thay đổi
-* Sua loi encoding va them chuc nang tu dong tao NPCs
-
-### Chi tiết
-
+-   Sua loi encoding va them chuc nang tu dong tao NPCs
 
 ## 27-07-2024
 
-### Thay đổi
-* Sua loi load 1 vai file map
-
-### Chi tiết
-
+-   Sua loi load 1 vai file map
 
 ## 27-07-2024
 
-### Thay đổi
-* Them 116 map by Do Gia Bao
-
-### Chi tiết
-
+-   Them 116 map by Do Gia Bao
 
 ## 27-07-2024
 
-### Thay đổi
-* Update cach hoat dong cua Simcity core
-
-### Chi tiết
-
+-   Update cach hoat dong cua Simcity core
 
 ## 24-07-2024
 
-### Thay đổi
-* Them ten cho anh hung o sim Thanh Thi
-
-### Chi tiết
-
+-   Them ten cho anh hung o sim Thanh Thi
 
 ## 23-07-2024
 
-### Thay đổi
-* Dem TongKim vao Lenh Bai Simcity main menu
-
-### Chi tiết
-
+-   Dem TongKim vao Lenh Bai Simcity main menu
 
 ## 23-07-2024
 
-### Thay đổi
-* Su dung lb simcity trong TongKim thay vi NPC
-
-### Chi tiết
-
+-   Su dung lb simcity trong TongKim thay vi NPC
 
 ## 21-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
+-   New way to show npc Voky TrieuMan
 
 ## 21-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
+-   Merge branch 'main' of github.com:vinh-ttn/simcity
 
 ## 21-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 21-07-2024
-
-### Thay đổi
-* New way to show npc Voky TrieuMan
-
-### Chi tiết
-
-
-## 21-07-2024
-
-### Thay đổi
-* Merge branch 'main' of github.com:vinh-ttn/simcity
-
-### Chi tiết
-
-
-## 21-07-2024
-
-### Thay đổi
-* Sua loi pkeoxe bi hu
-
-### Chi tiết
-
+-   Sua loi pkeoxe bi hu
 
 ## 20-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
+-   Merge branch 'dev'
 
 ## 20-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
+-   Sua loi thanh mau trong TK va sua loi tao bai training
 
 ## 20-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 20-07-2024
-
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 20-07-2024
-
-### Thay đổi
-* Merge branch 'dev'
-
-### Chi tiết
-
-
-## 20-07-2024
-
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 20-07-2024
-
-### Thay đổi
-* Sua loi thanh mau trong TK va sua loi tao bai training
-
-### Chi tiết
-
-
-## 20-07-2024
-
-### Thay đổi
-* Sua loi mau????
-
-### Chi tiết
-
+-   Sua loi mau????
 
 ## 15-07-2024
 
-### Thay đổi
-* Them ID cua nguoi theo sau
-
-### Chi tiết
-
+-   Them ID cua nguoi theo sau
 
 ## 15-07-2024
 
-### Thay đổi
-* Khi tao bai khong duoc tao quai cao hon cap do cua ban do
-
-### Chi tiết
-
+-   Khi tao bai khong duoc tao quai cao hon cap do cua ban do
 
 ## 15-07-2024
 
-### Thay đổi
-* Them chuc nang tao bai va xoa bai luyen cong vao LB Keo Xe
-
-### Chi tiết
-
+-   Them chuc nang tao bai va xoa bai luyen cong vao LB Keo Xe
 
 ## 09-07-2024
 
-### Thay đổi
-* Sua loi keo xe bi quai danh vi nham Phe khac
-
-### Chi tiết
-
+-   Sua loi keo xe bi quai danh vi nham Phe khac
 
 ## 02-07-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
-
-## 02-07-2024
-
-### Thay đổi
-* Update source
-
-### Chi tiết
-
-
-## 02-07-2024
-
-### Thay đổi
-* Revert "Clean out main branch"
-
-### Chi tiết
-This reverts commit 532e282efc13c0b75e0065a2d7221b5e48b7d6d7.
-
+-   Update source
 
 ## 30-06-2024
 
-### Thay đổi
-* Clean out main branch
-
-### Chi tiết
-
+-   Clean out main branch
 
 ## 30-06-2024
 
-### Thay đổi
-* Update README.md
-
-### Chi tiết
-
+-   TK: giam thoi gian bao danh va cong diem khi danh 1 minh
 
 ## 30-06-2024
 
-### Thay đổi
-* Create README.md
-
-### Chi tiết
-
+-   TK: them NPC vao TK bao ve nguyen soai
 
 ## 30-06-2024
 
-### Thay đổi
-* TK: giam thoi gian bao danh va cong diem khi danh 1 minh
-
-### Chi tiết
-
+-   Them TK
 
 ## 30-06-2024
 
-### Thay đổi
-* TK: them NPC vao TK bao ve nguyen soai
-
-### Chi tiết
-
+-   5.0.1 wip
 
 ## 30-06-2024
 
-### Thay đổi
-* Them TK
-
-### Chi tiết
-
-
-## 30-06-2024
-
-### Thay đổi
-* 5.0.1 wip
-
-### Chi tiết
-
-
-## 30-06-2024
-
-### Thay đổi
-* Version 5.0
-
-### Chi tiết
-
+-   Version 5.0
