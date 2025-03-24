@@ -449,14 +449,34 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 		local N = getn(tmpFound)
 
 		if map9x == 0 then
-			for i = 1, total do
-				local id = tmpFound[random(1, N)]
-				-- Thanh thi / Duoi 9x
-				self:_createSingle(id, nW, { ngoaitrang = 1, level = level or 95, cap = capHP })
+			-- Split into 4 tables of 50 NPCs each
+			local table1 = {}
+			local table2 = {}
+			local table3 = {}
+			local table4 = {}
+			local table5 = {}
+
+			-- Fill each table with 40 random NPCs
+			local perTable = floor(total/5)
+			for i = 1, perTable do
+				tinsert(table1, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
+				tinsert(table2, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
+				tinsert(table3, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
+				tinsert(table4, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
+				tinsert(table5, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
 			end
-			-- Tren 9x = bai luyen cong
+
+			-- Add all tables to everything array
+			self:_createBatch({
+				table1,
+				table2,
+				table3,
+				table4,
+				table5
+			})			
 		else
 			total = 20 -- 20 PT tat ca
+			local everything = {}
 			for i = 1, total do
 				local id = tmpFound[random(1, N)]
 				local children5 = {}
@@ -467,7 +487,7 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 						nNpcId = tmpFound[random(1, N)], -- required, main char ID
 					})
 				end
-				self:_createSingle(id, nW,
+				tinsert(everything, {{id, nW,
 					{
 						szName = SimCityPlayerName:getName(),
 						ngoaitrang = 1,
@@ -492,8 +512,27 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 						TIME_FIGHTING_maxTs = 3000,
 						TIME_RESTING_minTs = 1,
 						TIME_RESTING_maxTs = 3,
-					})
+					}}});
 			end
+			self:_createBatch(everything)
 		end
 	end
+end
+
+
+function processNextBatch(currentIndex, Map, config)
+	local batches = SimCityMainThanhThi.currentBatch
+	if currentIndex <= getn(batches) then
+		local batch = batches[currentIndex]
+		for i = 1, getn(batch) do
+			SimCityMainThanhThi:_createSingle(batch[i][1], batch[i][2], batch[i][3])
+		end
+		-- Schedule next batch after 3 seconds
+		AddTimer(3 * 18, "processNextBatch", currentIndex + 1)
+	end
+end
+
+function SimCityMainThanhThi:_createBatch(batches)
+	SimCityMainThanhThi.currentBatch = batches
+    processNextBatch(1)	
 end
