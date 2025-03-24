@@ -2,7 +2,7 @@
 
 —vinhsmoke—
 
-Phiên bản hiện tại: **5.3.4**
+Phiên bản hiện tại: **5.3.4** (cập nhật ngày 25/03/2025: giảm lag các thành thị và bãi luyện công khi mở Simcity tự động)
 
 Download: [main.tar.gz](https://github.com/vinh-ttn/simcity/archive/refs/heads/main.tar.gz)
 
