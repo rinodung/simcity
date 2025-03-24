@@ -20,6 +20,7 @@ function SimCityWorld:New(data)
 		data.walkAreas = data.walkAreas or {}
 		data.decoration = data.decoration or {}
 		data.chientranh = data.chientranh or {}
+		data.walkGraph = self:ComputeWalkGraph(data.walkAreas)
 
 		data.tick = 0
 		data.announceBXHTick = 3
@@ -235,4 +236,109 @@ function SimCityWorld:OnTime()
 		end
 	end
 	self.m_TimerId = TimerList:AddTimer(self, 60 * 18)
+end
+
+function SimCityWorld:ComputeWalkGraph(walkAreas)
+	-- Store all exact points (priority points) first
+	local exactPoints = {}
+	local normalPoints = {}
+	
+	-- Separate exact points and normal points
+	for _, path in walkAreas do
+		for _, point in path do
+			if point[3] and point[3] == 1 then
+				tinsert(exactPoints, {point[1], point[2]})
+			else
+				tinsert(normalPoints, {point[1], point[2]})
+			end
+		end
+	end
+
+	-- Process normal points and snap to exact points if within radius
+	local SNAP_RADIUS = 5 -- Adjust this value as needed
+	local processedPoints = {}
+	local graph = {}
+	
+	-- First add all exact points to processed
+	for _, ep in exactPoints do
+		tinsert(processedPoints, ep)
+		graph[ep[1] .. "_" .. ep[2]] = {}
+	end
+	
+	-- Process normal points
+	for _, np in normalPoints do
+		local snapped = nil
+		
+		-- Check if point should snap to any exact point
+		for _, ep in exactPoints do
+			if GetDistanceRadius(np[1], np[2], ep[1], ep[2]) <= SNAP_RADIUS then
+				snapped = ep
+				break
+			end
+		end
+		
+		-- If no exact point to snap to, check other normal points
+		if not snapped then
+			for _, pp in processedPoints do
+				if GetDistanceRadius(np[1], np[2], pp[1], pp[2]) <= SNAP_RADIUS then
+					snapped = pp
+					break
+				end
+			end
+		end
+		
+		-- If no snap point found, use original point
+		if not snapped then
+			snapped = {np[1], np[2]}
+			tinsert(processedPoints, snapped)
+		end
+		
+		-- Initialize graph node if not exists
+		local nodeKey = snapped[1] .. "_" .. snapped[2]
+		if not graph[nodeKey] then
+			graph[nodeKey] = {}
+		end
+	end
+	
+	-- Build connections between points based on original paths
+	for _, path in walkAreas do
+		for i = 1, getn(path)-1 do
+			local p1 = path[i]
+			local p2 = path[i+1]
+			
+			-- Find corresponding processed points
+			local pp1, pp2 = nil, nil
+			
+			for _, pp in processedPoints do
+				if GetDistanceRadius(p1[1], p1[2], pp[1], pp[2]) <= SNAP_RADIUS then
+					pp1 = pp
+				end
+				if GetDistanceRadius(p2[1], p2[2], pp[1], pp[2]) <= SNAP_RADIUS then
+					pp2 = pp
+				end
+				if pp1 and pp2 then break end
+			end
+			
+			-- Add bidirectional connection
+			if pp1 and pp2 then
+				local key1 = pp1[1] .. "_" .. pp1[2]
+				local key2 = pp2[1] .. "_" .. pp2[2]
+				
+				local found = nil
+				for _, conn in graph[key1] do
+					if conn[1] == pp2[1] and conn[2] == pp2[2] then
+						found = 1
+						break
+					end
+				end
+				
+				if not found then
+					tinsert(graph[key1], pp2)
+					tinsert(graph[key2], pp1)
+				end
+			end
+		end
+	end
+	
+	return graph
 end
