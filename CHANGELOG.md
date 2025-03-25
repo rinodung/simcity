@@ -1,6 +1,6 @@
-## 25-03-2025
+## 26-03-2025
 
-5.4
+5.4.1
 
 -   Cập nhật lại tên nhân vật
 -   Nâng cấp AI đi lại cho các sim

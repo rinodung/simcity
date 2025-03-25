@@ -2,7 +2,7 @@
 
 —vinhsmoke—
 
-Phiên bản hiện tại: **5.4** (cập nhật ngày [25/03/2025](CHANGELOG.md))
+Phiên bản hiện tại: **5.4.1** (cập nhật ngày [26/03/2025](CHANGELOG.md))
 
 Download: [main.tar.gz](https://github.com/vinh-ttn/simcity/archive/refs/heads/main.tar.gz)
 
@@ -89,11 +89,11 @@ Chạy trên JX Server 8
 
 ### Kéo xe NPC
 
-1) Nếu muốn tạo lệnh bài gọi xe nhanh đem theo bên mình (thay vì NPC Vô Kỵ) thì vào <https://jxoffline.github.io/jxtools/shopbuilder.d/>  để tạo thêm 1 vật phẩm với đường link tới file script
+1. Nếu muốn tạo lệnh bài gọi xe nhanh đem theo bên mình (thay vì NPC Vô Kỵ) thì vào <https://jxoffline.github.io/jxtools/shopbuilder.d/>  để tạo thêm 1 vật phẩm với đường link tới file script
 
 `\script\global\vinh\simcity\controllers\main.lua`
 
-2) Nếu muốn thay đổi danh sách theo sau (hoặc tạo riêng cho mình) thì sửa file
+2. Nếu muốn thay đổi danh sách theo sau (hoặc tạo riêng cho mình) thì sửa file
 
 `\script\global\vinh\simcity\plugins\pkeoxe.lua`
 
