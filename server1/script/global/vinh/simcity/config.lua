@@ -40,4 +40,4 @@ DISTANCE_VISION = 15               -- qua 15 = phai respawn vi no se quay ve cho
 
 
 AI_TRAIN_PATH_LENGTH = 3
-AI_CITY_PATH_LENGTH = 25
+AI_CITY_PATH_LENGTH = 100
