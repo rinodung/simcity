@@ -246,6 +246,25 @@ function NpcFighter:IsNpcEnemyAround()
     return 0
 end
 
+function NpcFighter:IsDialogNpcAround()
+    if self.mode ~= "thanhthi" then        
+        return 0
+    end
+    local allNpcs = {}
+    local nCount = 0
+    local radius = 8    
+    allNpcs, nCount = Simcity_GetNpcAroundNpcList(self.finalIndex, radius)
+    for i = 1, nCount do
+        local fighter2Kind = GetNpcKind(allNpcs[i])
+        local fighter2Name = GetNpcName(allNpcs[i])
+        local nNpcId = GetNpcSettingIdx(allNpcs[i])
+        if fighter2Kind == 3 and (nNpcId == 108 or nNpcId == 198 or nNpcId == 203 or nNpcId == 384) then
+            return 1
+        end
+    end
+    return 0
+end
+
 function NpcFighter:IsPlayerEnemyAround()
     -- FIGHT other player
     if GetNpcAroundPlayerList then
@@ -647,12 +666,15 @@ function NpcFighter:Breath()
         return 0
     end
 
+    
+
     -- Binh thuong
     if ((self.role == "keoxe" and cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER) or
             (self.role == "child" and cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER) or
             self.role == "citizen") and worldInfo.allowFighting == 1 and
         (self.isFighting == 0 and self.tick_canswitch < self.tick_breath) then
-        if self.role == "citizen" or self.role == "keoxe" then
+        local isDialogNpcAround = self:IsDialogNpcAround()
+        if (isDialogNpcAround == 0 and self.role == "citizen") or self.role == "keoxe" then
             -- Case 1: someone around is fighting, we join
             if (self.CHANCE_ATTACK_NPC and random(0, self.CHANCE_ATTACK_NPC) <= 2) then
                 if self:TriggerFightWithNPC() == 1 then
@@ -673,7 +695,7 @@ function NpcFighter:Breath()
         end
 
         -- Case 3: I auto switch to fight  mode
-        if (self.role == "citizen" and self.attackNpcChance and random(1, self.attackNpcChance) <= 2) then
+        if (isDialogNpcAround == 0 and self.role == "citizen" and self.attackNpcChance and random(1, self.attackNpcChance) <= 2) then
             -- CHo nhung dua chung quanh
 
             local countFighting = 0
@@ -733,7 +755,7 @@ function NpcFighter:Breath()
 
     -- Khong phai dang keo xe
     if self.role == "citizen" then
-        if self.tick_checklag and self.tick_breath > self.tick_checklag then
+        if self.tick_checklag and self.tick_breath > self.tick_checklag and self:IsDialogNpcAround() == 0 then
             self:Respawn(4, "dang bi lag roi")
             return 1
         end
@@ -741,7 +763,12 @@ function NpcFighter:Breath()
         -- Mode 1: randomwork
         if self:HasArrived() == 1 then
             -- Keep walking no stop
-            if (self.noStop == 1 or random(1, 100) < 90) then
+            local keepWalkingRate = 90
+            if self:IsDialogNpcAround() == 1 then
+                keepWalkingRate = 5
+            end
+
+            if (self.noStop == 1 or random(1, 100) < keepWalkingRate) then
                 nNextPosId = nNextPosId + 1
 
                 -- End of the array
