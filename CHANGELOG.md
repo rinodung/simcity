@@ -4,10 +4,7 @@
 
 -   Cập nhật lại tên nhân vật
 -   Nâng cấp AI đi lại cho các sim
-
-## 24-03-2025
-
--   5.3.4 Giảm lag toàn bộ simcity khi về thành.
+-   Giảm lag toàn bộ simcity khi về thành.
 
 ## 28-09-2024
 
