@@ -525,7 +525,7 @@ function NpcFighter:HardResetPos()
                     -- For initial path, start from current position if specified
                     local startX = self.goX
                     local startY = self.goY
-                    local graphPath = generateRandomPath(worldInfo.walkGraph, pathLength, startX, startY)
+                    local graphPath = SimCityWorld:GenerateRandomPath(worldInfo.walkGraph, pathLength)
                     if graphPath then
                         self.originalWalkPath = graphPath
                         self.usingGraphPath = 1  -- Mark that we're using a graph-generated path
@@ -786,7 +786,7 @@ function NpcFighter:Breath()
                             -- Get current position for new path start
                             local currX = floor(nX32 / 32)
                             local currY = floor(nY32 / 32)
-                            local graphPath = generateRandomPath(worldInfo.walkGraph, pathLength, currX, currY)
+                            local graphPath = SimCityWorld:GenerateRandomPath(worldInfo.walkGraph, pathLength, currX, currY)
                             if graphPath then
                                 self.originalWalkPath = graphPath
                                 self:GenWalkPath(0)
@@ -1335,79 +1335,4 @@ function NpcFighter:OnPlayerEnterMap(nX2, nY2, nMapIndex2)
         self:Respawn(2, "chu xe tieu qua map")
         self.playerLeftMap = 0
     end
-end
-
-function generateRandomPath(graph, length, startX, startY)
-    if not graph or not graph.nodes or not graph.edges then
-        return nil
-    end
-
-    -- Get all node keys
-    local nodeKeys = {}
-    local startKey = nil
-    
-    -- If we have a starting position, find the closest node
-    if startX and startY then
-        local minDist = 99999
-        for k, node in graph.nodes do
-            local dist = GetDistanceRadius(startX, startY, node[1], node[2])
-            if dist < minDist then
-                minDist = dist
-                startKey = k
-            end
-        end
-    end
-    
-    -- If no starting position or no close node found, collect all nodes
-    if not startKey then
-        for k, _ in graph.nodes do
-            tinsert(nodeKeys, k)
-        end
-        startKey = nodeKeys[random(1, getn(nodeKeys))]
-    end
-
-    -- Start from chosen node
-    local path = {}
-    local currentNode = graph.nodes[startKey]
-    tinsert(path, {currentNode[1], currentNode[2]})
-    local currentKey = startKey
-
-    -- Generate path by randomly walking the graph
-    local tries = 0
-    while getn(path) < length and tries < length * 2 do
-        tries = tries + 1
-        
-        -- Get available edges
-        local edges = graph.edges[currentKey]
-        if edges and getn(edges) > 0 then
-            -- Pick random neighbor
-            local nextNode = edges[random(1, getn(edges))]
-            local nextKey = nextNode[1].."_"..nextNode[2]
-            
-            -- Add to path if not creating a short loop
-            local canAdd = 1
-            if getn(path) >= 3 then
-                local lastThree = {path[getn(path)-2], path[getn(path)-1], path[getn(path)]}
-                for _, point in lastThree do
-                    if point[1] == nextNode[1] and point[2] == nextNode[2] then
-                        canAdd = nil
-                        break
-                    end
-                end
-            end
-            
-            if canAdd then
-                tinsert(path, {nextNode[1], nextNode[2]})
-                currentKey = nextKey
-                tries = 0
-            end
-        else
-            -- Dead end, start from a new random node
-            currentKey = nodeKeys[random(1, getn(nodeKeys))]
-            currentNode = graph.nodes[currentKey]
-            tinsert(path, {currentNode[1], currentNode[2]})
-        end
-    end
-
-    return path
 end

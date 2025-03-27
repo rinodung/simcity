@@ -20,7 +20,6 @@ function SimCityWorld:New(data)
 		data.walkAreas = data.walkAreas or {}
 		data.decoration = data.decoration or {}
 		data.chientranh = data.chientranh or {}
-		data.walkGraph = self:ComputeWalkGraph(data.walkAreas)
 
 		data.tick = 0
 		data.announceBXHTick = 3
@@ -85,8 +84,10 @@ function SimCityWorld:ShowTrangTri(nW, show)
 end
 
 function SimCityWorld:initThanhThi()
-	for i=1, getn(allSimcityMap) do		
-		self:New(allSimcityMap[i])
+	for i=1, getn(allSimcityMap) do
+		local targetMap = allSimcityMap[i]
+		targetMap.walkGraph = self:ComputeWalkGraph(targetMap.walkAreas)
+		self:New(targetMap)
 	end
 	if self.m_TimerId then
 		TimerList:DelTimer(self.m_TimerId)
@@ -241,4 +242,80 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 	end
 	
 	return graph
+end
+
+
+function SimCityWorld:GenerateRandomPath(graph, length, startX, startY)
+    if not graph or not graph.nodes or not graph.edges then
+        return nil
+    end
+
+    -- Get all node keys
+    local nodeKeys = {}
+    local startKey = nil
+    
+    -- If we have a starting position, find the closest node
+    if startX and startY then
+        local minDist = 99999
+        for k, node in graph.nodes do
+            local dist = GetDistanceRadius(startX, startY, node[1], node[2])
+            if dist < minDist then
+                minDist = dist
+                startKey = k
+            end
+        end
+    end
+    
+    -- If no starting position or no close node found, collect all nodes
+    if not startKey then
+        for k, _ in graph.nodes do
+            tinsert(nodeKeys, k)
+        end
+        startKey = nodeKeys[random(1, getn(nodeKeys))]
+    end
+
+    -- Start from chosen node
+    local path = {}
+    local currentNode = graph.nodes[startKey]
+    tinsert(path, {currentNode[1], currentNode[2]})
+    local currentKey = startKey
+
+    -- Generate path by randomly walking the graph
+    local tries = 0
+    while getn(path) < length and tries < length * 2 do
+        tries = tries + 1
+        
+        -- Get available edges
+        local edges = graph.edges[currentKey]
+        if edges and getn(edges) > 0 then
+            -- Pick random neighbor
+            local nextNode = edges[random(1, getn(edges))]
+            local nextKey = nextNode[1].."_"..nextNode[2]
+            
+            -- Add to path if not creating a short loop
+            local canAdd = 1
+            if getn(path) >= 3 then
+                local lastThree = {path[getn(path)-2], path[getn(path)-1], path[getn(path)]}
+                for _, point in lastThree do
+                    if point[1] == nextNode[1] and point[2] == nextNode[2] then
+                        canAdd = nil
+                        break
+                    end
+                end
+            end
+            
+            if canAdd then
+                tinsert(path, {nextNode[1], nextNode[2]})
+                currentKey = nextKey
+                tries = 0
+            end
+        else
+            -- Dead end, start from a new random node
+            currentKey = nodeKeys[random(1, getn(nodeKeys))]
+            currentNode = graph.nodes[currentKey]
+            tinsert(path, {currentNode[1], currentNode[2]})
+        end
+    end
+
+    return path
 end
