@@ -2,7 +2,8 @@
 Include("\\script\\global\\vinh\\simcity\\controllers\\tongkim.lua")
 SimCityMainThanhThi = {
 	worldStatus = {},
-	autoAddThanhThi = STARTUP_AUTOADD_THANHTHI
+	autoAddThanhThi = STARTUP_AUTOADD_THANHTHI,
+	thanhThiSize = THANHTHI_SIZE
 }
 
 SimCityWorld:initThanhThi()
@@ -442,7 +443,7 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 
 
 		if SimCityWorld:IsThanhThiMap(nW) == 1 then
-			total = 200
+			total = self.thanhThiSize
 			map9x = 0
 		end
 
@@ -524,11 +525,20 @@ function processNextBatch(currentIndex, Map, config)
 	local batches = SimCityMainThanhThi.currentBatch
 	if currentIndex <= getn(batches) then
 		local batch = batches[currentIndex]
-		for i = 1, getn(batch) do
-			SimCityMainThanhThi:_createSingle(batch[i][1], batch[i][2], batch[i][3])
+		local counter = 0
+		for k, v in FighterManager.fighterList do
+			if getn(batch) > 0 and v.nMapId ~= nil and v.nMapId == batch[1][2] then
+				counter = counter + 1
+			end
 		end
-		-- Schedule next batch after 3 seconds
-		AddTimer(3 * 18, "processNextBatch", currentIndex + 1)
+
+		if counter < SimCityMainThanhThi.thanhThiSize then
+			for i = 1, getn(batch) do
+				SimCityMainThanhThi:_createSingle(batch[i][1], batch[i][2], batch[i][3])
+			end
+			-- Schedule next batch after 3 seconds
+			AddTimer(3 * 18, "processNextBatch", currentIndex + 1)
+		end
 	end
 end
 
