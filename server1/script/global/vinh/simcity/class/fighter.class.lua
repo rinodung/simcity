@@ -514,24 +514,7 @@ function NpcFighter:HardResetPos()
                 if not walkAreas then
                     return 0
                 end
-
-                -- Try to generate path from walkGraph first
-                if worldInfo.walkGraph then
-                    local pathLength = AI_CITY_PATH_LENGTH  -- Default for city NPCs
-                    if self.mode == "train" then
-                        pathLength = AI_TRAIN_PATH_LENGTH     -- Training NPCs stay in smaller areas
-                    end
-                    
-                    -- For initial path, start from current position if specified
-                    local startX = self.goX
-                    local startY = self.goY
-                    local graphPath = SimCityWorld:GenerateRandomPath(worldInfo.walkGraph, pathLength)
-                    if graphPath then
-                        self.originalWalkPath = graphPath
-                        self.usingGraphPath = 1  -- Mark that we're using a graph-generated path
-                    end
-                end
-
+               
                 -- Fall back to old method if graph path generation failed
                 if not self.originalWalkPath then
                     local walkIndex = random(1, getn(walkAreas))
@@ -776,24 +759,6 @@ function NpcFighter:Breath()
                     if self.noBackward == 1 then
                         self:NextMap()
                         return 1
-                    end
-
-                    -- If using graph paths, generate a new path instead of flipping
-                    if self.usingGraphPath and self.mode ~= "train" then
-                        local worldInfo = SimCityWorld:Get(self.nMapId)
-                        if worldInfo and worldInfo.walkGraph then
-                            local pathLength = AI_CITY_PATH_LENGTH  -- Default for city NPCs
-                            -- Get current position for new path start
-                            local currX = floor(nX32 / 32)
-                            local currY = floor(nY32 / 32)
-                            local graphPath = SimCityWorld:GenerateRandomPath(worldInfo.walkGraph, pathLength, currX, currY)
-                            if graphPath then
-                                self.originalWalkPath = graphPath
-                                self:GenWalkPath(0)
-                                self.nPosId = 1
-                                return 1
-                            end
-                        end
                     end
 
                     -- Fall back to flipping if not using graph paths or if generation failed
