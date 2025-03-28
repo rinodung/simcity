@@ -301,7 +301,8 @@ function SimCityMainThanhThi:mainMenu()
 			"TriÖu MÉn: b¶n ®å nµy ch­a ®­îc më.<enter><enter>C¸c h¹ cã thÓ ®ãng gãp <color=yellow>b¶n ®å ®­îc ®­êng ®i<color> ®Õn t¸c gi¶ trªn fb héi qu¸n kh«ng?")
 	else
 		local counter = 0
-		for k, v in FighterManager.fighterList do
+		for k, id in FighterManager.fighterList do
+			local v = FighterManager:Get(id)
 			if v.nMapId and v.nMapId == nW then
 				counter = counter + 1
 			end
@@ -526,7 +527,8 @@ function processNextBatch(currentIndex, Map, config)
 	if currentIndex <= getn(batches) then
 		local batch = batches[currentIndex]
 		local counter = 0
-		for k, v in FighterManager.fighterList do
+		for k, id in FighterManager.fighterList do
+			local v = FighterManager:Get(id)
 			if getn(batch) > 0 and v.nMapId ~= nil and v.nMapId == batch[1][2] then
 				counter = counter + 1
 			end
