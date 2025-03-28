@@ -33,7 +33,7 @@ function NpcFighter:New(nListId, fighter)
     end
 
     -- Bugfix series
-    tbNpc.series = SimCityNPCInfo:GetSeries(tbNpc.originalConfig.nNpcId)
+    tbNpc.series = SimCityNPCInfo:GetSeries(tbNpc.nNpcId)
 
     -- Create the character on screen
     self:Show(nListId, 1, tbNpc.goX, tbNpc.goY)
@@ -730,7 +730,7 @@ function NpcFighter:Breath(nListId)
                     local checkDistance = tbNpc.RADIUS_FIGHT_NPC or RADIUS_FIGHT_NPC
                     if distance < checkDistance then
                         countFighting = countFighting + 1
-                        FighterManager:Get(fighter2.id):JoinFight(nListId, "caused by others " ..
+                        self:JoinFight(fighter2.id, "caused by others " ..
                             distance .. " (" .. otherPosX ..
                             " " .. otherPosY .. ") (" .. myPosX .. " " .. myPosY .. ")")
                     end
@@ -943,7 +943,7 @@ function NpcFighter:OnDeath(nListId)
         local child
 
         for i = 1, getn(tbNpc.children) do
-            local each = FighterManager:Get(tbNpc.children[i])
+            local each = self:getTbNpc(tbNpc.children[i])
             if each and each.isDead ~= 1 then
                 child = each
 
@@ -1005,7 +1005,7 @@ function NpcFighter:OnDeath(nListId)
         -- No revive? Do removal
         if tbNpc.noRevive == 1 then
             if tbNpc.role == "citizen" then
-                FighterManager:Remove(tbNpc.id)
+                self:Remove(tbNpc.id)
             end
 
             if tbNpc.role == "vantieu" then
@@ -1056,7 +1056,7 @@ function NpcFighter:SetupChildren(nListId)
             end
             childConfig.goX = nX
             childConfig.goY = nY
-            local childId = FighterManager:Add(childConfig)
+            local childId = self:Add(childConfig)
             tinsert(createdChildren, childId)
         end
 
@@ -1084,11 +1084,11 @@ function NpcFighter:CalculateChildrenPosition(nListId, X, Y)
 
     if tbNpc.walkMode and tbNpc.walkMode == "formation" then
         local centerCharId = getCenteredCell(createFormation(size))
-        local fighter = FighterManager:Get(tbNpc.children[centerCharId])
+        local fighter = self:getTbNpc(tbNpc.children[centerCharId])
 
         if fighter and fighter.isDead == 1 then
             for i = 1, size do
-                fighter = FighterManager:Get(tbNpc.children[i])
+                fighter = self:getTbNpc(tbNpc.children[i])
                 if fighter and fighter.isDead ~= 1 then
                     break
                 end
@@ -1119,7 +1119,7 @@ function NpcFighter:ChildrenArrived(nListId)
     end
 
     for i = 1, size do
-        local child = FighterManager:Get(tbNpc.children[i])
+        local child = self:getTbNpc(tbNpc.children[i])
         if child and child.isDead ~= 1 and child:HasArrived() == 0 then
             return 0
         end
@@ -1138,7 +1138,7 @@ function NpcFighter:ChildrenJoinFight(nListId, code)
     end
 
     for i = 1, size do
-        local child = FighterManager:Get(tbNpc.children[i])
+        local child = self:getTbNpc(tbNpc.children[i])
         if child then
             child:JoinFight(nListId, code)
         end
@@ -1157,7 +1157,7 @@ function NpcFighter:ChildrenLeaveFight(nListId, code, reason)
     end
 
     for i = 1, size do
-        local child = FighterManager:Get(tbNpc.children[i])
+        local child = self:getTbNpc(tbNpc.children[i])
         if child then
             child:LeaveFight(nListId, code, reason)
         end
@@ -1168,7 +1168,7 @@ end
 -- For child
 function NpcFighter:GetParentPos(nListId)
     local tbNpc = self:getTbNpc(nListId)
-    local foundParent = FighterManager:Get(tbNpc.parentID)
+    local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent then
         local nX32, nY32, nW32 = GetNpcPos(foundParent.finalIndex)
         local nW = SubWorldIdx2ID(nW32)
@@ -1180,7 +1180,7 @@ end
 
 function NpcFighter:GetMyPosFromParent(nListId)
     local tbNpc = self:getTbNpc(nListId)
-    local foundParent = FighterManager:Get(tbNpc.parentID)
+    local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent then
         return foundParent:GiveChildPos(tbNpc.childID)
     end
@@ -1190,7 +1190,7 @@ end
 
 function NpcFighter:IsParentFighting(nListId)
     local tbNpc = self:getTbNpc(nListId)
-    local foundParent = FighterManager:Get(tbNpc.parentID)
+    local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent and foundParent.isFighting == 1 then
         return 1
     end
@@ -1312,7 +1312,7 @@ end
 function NpcFighter:OwnerLostOnTransport(nListId)
     local tbNpc = self:getTbNpc(nListId)
     self:NotifyOwner(nListId, 2)
-    FighterManager:Remove(tbNpc.id)
+    self:Remove(tbNpc.id)
 end
 
 function NpcFighter:OnPlayerLeaveMap(nListId, nX2, nY2, nMapIndex2)
