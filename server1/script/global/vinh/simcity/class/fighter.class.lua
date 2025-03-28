@@ -396,7 +396,7 @@ end
 
 function NpcFighter:TriggerFightWithNPC(nListId)
     if (self:IsNpcEnemyAround(nListId) == 1) then
-        return self:JoinFight(nListId. "enemy around")
+        return self:JoinFight(nListId, "enemy around")
     end
     return 0
 end
@@ -419,7 +419,7 @@ function NpcFighter:TriggerFightWithPlayer(nListId)
                         floor(lastPos[1] / 8) .. " " .. floor(lastPos[2] / 16) .. "")
                 end
             end
-            return self:JoinFight(nListId. "player around")
+            return self:JoinFight(nListId, "player around")
         end
     end
 
@@ -631,7 +631,7 @@ function NpcFighter:Breath(nListId)
         pW, pX, pY = self:GetParentPos(nListId)
         cachNguoiChoi = GetDistanceRadius(myPosX, myPosY, pX, pY)
         if self:IsParentFighting(nListId) == 1 and tbNpc.isFighting == 0 then
-            return self:JoinFight(nListId. "parent dang danh nhau")
+            return self:JoinFight(nListId, "parent dang danh nhau")
         end
     elseif tbNpc.role == "keoxe" or tbNpc.role == "vantieu" then
         worldInfo.allowFighting = 1
@@ -648,29 +648,29 @@ function NpcFighter:Breath(nListId)
     if tbNpc.isFighting == 1 then
         if tbNpc.role == "vantieu" then
             if (self:CanLeaveFight(nListId) == 1) then
-                self:LeaveFight(nListId. 0, "khong tim thay quai")
+                self:LeaveFight(nListId, 0, "khong tim thay quai")
             end
             return 1
         end
 
         -- Case 1: toi gio chuyen doi
         if tbNpc.tick_canswitch < tbNpc.tick_breath then
-            return self:LeaveFight(nListId. 0, "toi gio thay doi trang thai")
+            return self:LeaveFight(nListId, 0, "toi gio thay doi trang thai")
         end
 
         -- Case 2: tu dong thoat danh khi khong con ai
         if self:CanLeaveFight(nListId) == 1 then
-            -- self:LeaveFight(nListId. 0, "khong tim thay quai")
+            -- self:LeaveFight(nListId, 0, "khong tim thay quai")
             return 1
         end
 
         -- Case 3: qua xa nguoi choi phai chay theo ngay
         if (tbNpc.role == "keoxe" and cachNguoiChoi > DISTANCE_FOLLOW_PLAYER) then
             tbNpc.tick_canswitch = tbNpc.tick_breath - 1
-            self:LeaveFight(nListId. 0, "chay theo nguoi choi")
+            self:LeaveFight(nListId, 0, "chay theo nguoi choi")
         elseif (tbNpc.role == "child" and cachNguoiChoi > DISTANCE_FOLLOW_PLAYER) then
             --tbNpc.tick_canswitch = tbNpc.tick_breath - 1
-            --self:LeaveFight(nListId. 0, "chay theo parent")
+            --self:LeaveFight(nListId, 0, "chay theo parent")
             return 1
         else
             return 1
@@ -730,7 +730,7 @@ function NpcFighter:Breath(nListId)
                     local checkDistance = tbNpc.RADIUS_FIGHT_NPC or RADIUS_FIGHT_NPC
                     if distance < checkDistance then
                         countFighting = countFighting + 1
-                        FighterManager:Get(fighter2.id):JoinFight(nListId. "caused by others " ..
+                        FighterManager:Get(fighter2.id):JoinFight(nListId, "caused by others " ..
                             distance .. " (" .. otherPosX ..
                             " " .. otherPosY .. ") (" .. myPosX .. " " .. myPosY .. ")")
                     end
@@ -740,7 +740,7 @@ function NpcFighter:Breath(nListId)
             -- If someone is around or I am not crazy then I fight
             if countFighting > 0 or tbNpc.attackNpcChance > 1 then
                 countFighting = countFighting + 1
-                self:JoinFight(nListId. "I start a fight")
+                self:JoinFight(nListId, "I start a fight")
             end
 
             if countFighting > 0 and worldInfo.showFightingArea == 1 then
@@ -1014,7 +1014,7 @@ function NpcFighter:OnDeath(nListId)
             return 1
         end
         -- Do revive? Reset and leave fight
-        self:LeaveFight(nListId. 1, "die toan bo")
+        self:LeaveFight(nListId, 1, "die toan bo")
     end
 end
 
@@ -1140,7 +1140,7 @@ function NpcFighter:ChildrenJoinFight(nListId, code)
     for i = 1, size do
         local child = FighterManager:Get(tbNpc.children[i])
         if child then
-            child:JoinFight(nListId. code)
+            child:JoinFight(nListId, code)
         end
     end
     return 1
@@ -1159,7 +1159,7 @@ function NpcFighter:ChildrenLeaveFight(nListId, code, reason)
     for i = 1, size do
         local child = FighterManager:Get(tbNpc.children[i])
         if child then
-            child:LeaveFight(nListId. code, reason)
+            child:LeaveFight(nListId, code, reason)
         end
     end
     return 1
