@@ -558,11 +558,14 @@ function NpcFighter:Breath()
     local cachNguoiChoi = 0
 
 
-    self.lastKnownPos = {
-        nX32 = nX32,
-        nY32 = nY32,
-        nW = nW
-    }
+    -- Initialize once
+    if not self.lastKnownPos then
+        self.lastKnownPos = {nX32 = 0, nY32 = 0, nW = 0}
+    end
+    -- Just update values
+    self.lastKnownPos.nX32 = nX32
+    self.lastKnownPos.nY32 = nY32
+    self.lastKnownPos.nW = nW
 
     if self.role == "vantieu" then
         self:OwnerPos()
