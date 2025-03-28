@@ -628,7 +628,11 @@ map_tuongduong = {
 		tuongduong_trongthanh, 
 		tuongduong_DHT, 
 		tuongduong_1vongTK,
-		tuongduong_daochoi
+		tuongduong_daochoi,
+		tuongduong_tong1,
+		tuongduong_kim1,
+		tuongduong_kim2,
+		tuongduong_tong2
 	}, 
 	decoration = tuongduong_nhacua,
 	chientranh = {

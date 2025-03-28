@@ -148,7 +148,8 @@ function Simcity_GetNpcAroundNpcList(nNpcIndex, radius)
         local nW = SubWorldIdx2ID(nW32)
 
         -- Get info for npc in this world
-        for key, fighter in FighterManager.fighterList do
+        for key, id in FighterManager.fighterList do
+            local fighter = FighterManager:Get(id)
             if fighter.isDead == 0 and fighter.nMapId == nW and fighter.id ~= myListId then
                 local oX32, oY32 = GetNpcPos(fighter.finalIndex)
                 local oX = oX32 / 32

@@ -6,7 +6,7 @@ SimCityWorld = {
 
 function SimCityWorld:New(data)
 	if not data then
-		return 1
+		return nil
 	end
 	if self.data["w" .. data.worldId] == nil then
 		data.showingId = 0
@@ -15,7 +15,6 @@ function SimCityWorld:New(data)
 		data.showFightingArea = 1
 		data.showName = 1
 		data.showDecoration = 0
-
 		data.name = data.name or ""
 		data.walkAreas = data.walkAreas or {}
 		data.decoration = data.decoration or {}
@@ -23,9 +22,11 @@ function SimCityWorld:New(data)
 
 		data.tick = 0
 		data.announceBXHTick = 3
-
+		
 		self.data["w" .. data.worldId] = data
+		return self.data["w" .. data.worldId]
 	end
+	return self.data["w" .. data.worldId]
 end
 
 function SimCityWorld:Get(nW)
@@ -85,9 +86,8 @@ end
 
 function SimCityWorld:initThanhThi()
 	for i=1, getn(allSimcityMap) do
-		local targetMap = allSimcityMap[i]
-		targetMap.walkGraph = self:ComputeWalkGraph(targetMap.walkAreas)
-		self:New(targetMap)
+		local targetMap = self:New(allSimcityMap[i])		
+		self:ComputeWalkGraph(targetMap)
 	end
 	if self.m_TimerId then
 		TimerList:DelTimer(self.m_TimerId)
@@ -123,7 +123,8 @@ function SimCityWorld:OnTime()
 	self.m_TimerId = TimerList:AddTimer(self, 60 * 18)
 end
 
-function SimCityWorld:ComputeWalkGraph(walkAreas)
+function SimCityWorld:ComputeWalkGraph(worldMap)
+	local walkAreas = worldMap.walkAreas
 	-- Store all exact points (priority points) first
 	local exactPoints = {}
 	local normalPoints = {}
@@ -135,7 +136,7 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 		for j = 1, getn(path) do
 			local point = path[j]
 			if point[3] and point[3] == 1 then
-				tinsert(exactPoints, {point[1], point[2]})
+				tinsert(exactPoints, {point[1], point[2], 1})
 			else
 				tinsert(normalPoints, {point[1], point[2]})
 			end
@@ -147,7 +148,9 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 	local processedPoints = {}
 	local graph = {
 		nodes = {},  -- Store node coordinates
-		edges = {}   -- Store connections
+		edges = {},   -- Store connections
+
+		foundDialogNpc = {}
 	}
 	
 	-- First add all exact points to processed
@@ -224,98 +227,23 @@ function SimCityWorld:ComputeWalkGraph(walkAreas)
 				local key1 = pp1[1] .. "_" .. pp1[2]
 				local key2 = pp2[1] .. "_" .. pp2[2]
 				
+				-- Check if connection already exists
 				local found = nil
 				for k = 1, getn(graph.edges[key1]) do
-					local conn = graph.edges[key1][k]
-					if conn[1] == pp2[1] and conn[2] == pp2[2] then
+					if graph.edges[key1][k] == key2 then
 						found = 1
 						break
 					end
 				end
 				
 				if not found then
-					tinsert(graph.edges[key1], pp2)
-					tinsert(graph.edges[key2], pp1)
+					tinsert(graph.edges[key1], key2)
+					tinsert(graph.edges[key2], key1)
 				end
 			end
 		end
 	end
-	
-	return graph
+	worldMap.walkGraph = graph
+	return worldMap.walkGraph
 end
 
-
-function SimCityWorld:GenerateRandomPath(graph, length, startX, startY)
-    if not graph or not graph.nodes or not graph.edges then
-        return nil
-    end
-
-    -- Get all node keys
-    local nodeKeys = {}
-    local startKey = nil
-    
-    -- If we have a starting position, find the closest node
-    if startX and startY then
-        local minDist = 99999
-        for k, node in graph.nodes do
-            local dist = GetDistanceRadius(startX, startY, node[1], node[2])
-            if dist < minDist then
-                minDist = dist
-                startKey = k
-            end
-        end
-    end
-    
-    -- If no starting position or no close node found, collect all nodes
-    if not startKey then
-        for k, _ in graph.nodes do
-            tinsert(nodeKeys, k)
-        end
-        startKey = nodeKeys[random(1, getn(nodeKeys))]
-    end
-
-    -- Start from chosen node
-    local path = {}
-    local currentNode = graph.nodes[startKey]
-    tinsert(path, {currentNode[1], currentNode[2]})
-    local currentKey = startKey
-
-    -- Generate path by randomly walking the graph
-    local tries = 0
-    while getn(path) < length and tries < length * 2 do
-        tries = tries + 1
-        
-        -- Get available edges
-        local edges = graph.edges[currentKey]
-        if edges and getn(edges) > 0 then
-            -- Pick random neighbor
-            local nextNode = edges[random(1, getn(edges))]
-            local nextKey = nextNode[1].."_"..nextNode[2]
-            
-            -- Add to path if not creating a short loop
-            local canAdd = 1
-            if getn(path) >= 3 then
-                local lastThree = {path[getn(path)-2], path[getn(path)-1], path[getn(path)]}
-                for _, point in lastThree do
-                    if point[1] == nextNode[1] and point[2] == nextNode[2] then
-                        canAdd = nil
-                        break
-                    end
-                end
-            end
-            
-            if canAdd then
-                tinsert(path, {nextNode[1], nextNode[2]})
-                currentKey = nextKey
-                tries = 0
-            end
-        else
-            -- Dead end, start from a new random node
-            currentKey = nodeKeys[random(1, getn(nodeKeys))]
-            currentNode = graph.nodes[currentKey]
-            tinsert(path, {currentNode[1], currentNode[2]})
-        end
-    end
-
-    return path
-end

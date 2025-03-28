@@ -39,7 +39,7 @@ function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, cap)
 
 		walkMode = "random", -- optional: random, keoxe, or 1 for formation
 		walkVar = 2,   -- random walk of radius of 4*2
-		originalWalkPath = map,
+		
 
 		noStop = 1,          -- optional: cannot pause any stop (otherwise 90% walk 10% stop)
 		leaveFightWhenNoEnemy = 5, -- optional: leave fight instantly after no enemy, otherwise there's waiting period
@@ -106,7 +106,8 @@ function SimCityKeoXe:nv_tudo_xe(cap)
 end
 
 function SimCityKeoXe:removeAll()
-	for key, fighter in FighterManager.fighterList do
+	for key, id in FighterManager.fighterList do
+		local fighter = FighterManager:Get(id)
 		local name = GetName()
 		if fighter.playerID == name then
 			FighterManager:Remove(fighter.id)

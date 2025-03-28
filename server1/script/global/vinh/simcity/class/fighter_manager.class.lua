@@ -10,10 +10,6 @@ FighterManager = {
 }
 
 function FighterManager:Add(config)
-    -- Not a valid char ?
-    if config.role ~= "vantieu" and SimCityNPCInfo:IsValidFighter(config.nNpcId) == 0 then
-        return 0
-    end
 
     local worldInfo = SimCityWorld:Get(config.nMapId)
 
@@ -136,53 +132,4 @@ function FighterManager:ThongBaoBXH(nW)
         end
         Msg2Map(nW, "<color=yellow>=================================<color>")
     end
-end
-
-
-function FighterManager:OnPlayerEnterMap()
-    local szName = GetName()
-    if not szName then
-        return
-    end
-
-    if not self.fighterByPlayer[szName] then
-        return
-    end
-    self:ExecPlayerFunction(1, szName)
-end
-
-function FighterManager:OnPlayerLeaveMap()
-    local szName = GetName()
-    if not szName then
-        return
-    end
-
-    if not self.fighterByPlayer[szName] then
-        return
-    end
-
-    self:ExecPlayerFunction(0, szName)
-end
-
-function FighterManager:ExecPlayerFunction(code, szName)
-    local nX2, nY2, nMapIndex2 = GetPos()
-
-    for i = 1, getn(self.fighterByPlayer[szName]) do
-        local id = self.fighterByPlayer[szName][i]
-        if id then
-            local v = self:Get(self.fighterList["n" .. id])
-            if v and v.role == "vantieu" and v.playerID == szName then
-                if code == 1 then
-                    v:OnPlayerEnterMap(nX2, nY2, nMapIndex2)
-                else
-                    v:OnPlayerLeaveMap(nX2, nY2, nMapIndex2)
-                end
-            end
-        end
-    end
-end
-
-function FighterManager:init()
-    EventSys:GetType("EnterMap"):Reg("ALL", self.OnPlayerEnterMap, self)
-    EventSys:GetType("LeaveMap"):Reg("ALL", self.OnPlayerLeaveMap, self)
-end
+end 
