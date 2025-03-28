@@ -10,8 +10,11 @@ function NpcFighter:getTbNpc(nListId)
     return self.fighterList["n"..nListId]
 end
 
-function NpcFighter:New(nListId, fighter)
-    local tbNpc = self:getTbNpc(nListId)
+function NpcFighter:New(fighter)
+
+    -- Setup minimum config
+    self:initCharConfig(fighter)
+
     local nListId = self.counter
     self.counter = self.counter + 1
 
@@ -48,7 +51,13 @@ function NpcFighter:Remove(nListId)
     local tbNpc = self:getTbNpc(nListId)
     if tbNpc then
         DelNpcSafe(tbNpc.finalIndex)
-        tbNpc.fighterList["n"..nListId] = nil
+
+        if tbNpc.children then
+            for i = 1, getn(tbNpc.children) do
+                self:Remove(tbNpc.children[i])
+            end
+        end
+        self.fighterList["n"..nListId] = nil
     end
 end
 
@@ -719,7 +728,7 @@ function NpcFighter:Breath(nListId)
 
             local countFighting = 0
 
-            for key, fighter2 in FighterManager.fighterList do
+            for key, fighter2 in self.fighterList do
                 if fighter2.id ~= tbNpc.id and fighter2.nMapId == tbNpc.nMapId and
                     (fighter2.isFighting == 0 and IsAttackableCamp(fighter2.camp, tbNpc.camp) == 1) then
                     local otherPosX, otherPosY, otherPosW = GetNpcPos(fighter2.finalIndex)
@@ -920,6 +929,9 @@ end
 
 function NpcFighter:OnTimer(nListId)
     local tbNpc = self:getTbNpc(nListId)
+    if tbNpc == nil then
+        return 0
+    end
     if tbNpc.killTimer == 1 then
         return 0
     end
@@ -937,8 +949,17 @@ function NpcFighter:OnTimer(nListId)
     return 1
 end
 
-function NpcFighter:OnDeath(nListId)
+function NpcFighter:OnDeath(nListId, nNpcIndex)
     local tbNpc = self:getTbNpc(nListId)
+    if tbNpc == nil then
+        return 0
+    end
+
+    if tbNpc.tongkim == 1 then
+        self:AddScoreToAroundNPC(nListId, nNpcIndex, tbNpc.rank or 1)
+        SimCityTongKim:OnDeath(nNpcIndex, tbNpc.rank or 1)
+    end
+
     if tbNpc.role == "citizen" and tbNpc.children then
         local child
 
@@ -1005,7 +1026,7 @@ function NpcFighter:OnDeath(nListId)
         -- No revive? Do removal
         if tbNpc.noRevive == 1 then
             if tbNpc.role == "citizen" then
-                self:Remove(tbNpc.id)
+                FighterManager:Remove(tbNpc.id)
             end
 
             if tbNpc.role == "vantieu" then
@@ -1056,7 +1077,7 @@ function NpcFighter:SetupChildren(nListId)
             end
             childConfig.goX = nX
             childConfig.goY = nY
-            local childId = self:Add(childConfig)
+            local childId = self:New(childConfig)
             tinsert(createdChildren, childId)
         end
 
@@ -1066,6 +1087,9 @@ end
 
 function NpcFighter:GiveChildPos(nListId, i)
     local tbNpc = self:getTbNpc(nListId)
+    if tbNpc == nil then
+        return 0, 0, 0
+    end
     if tbNpc.childrenPath and getn(tbNpc.childrenPath) >= i then
         return tbNpc.nMapId, tbNpc.childrenPath[i][1], tbNpc.childrenPath[i][2]
     end
@@ -1120,7 +1144,7 @@ function NpcFighter:ChildrenArrived(nListId)
 
     for i = 1, size do
         local child = self:getTbNpc(tbNpc.children[i])
-        if child and child.isDead ~= 1 and child:HasArrived() == 0 then
+        if child and child.isDead ~= 1 and self:HasArrived(child.id) == 0 then
             return 0
         end
     end
@@ -1140,7 +1164,7 @@ function NpcFighter:ChildrenJoinFight(nListId, code)
     for i = 1, size do
         local child = self:getTbNpc(tbNpc.children[i])
         if child then
-            child:JoinFight(nListId, code)
+            self:JoinFight(child.id, code)
         end
     end
     return 1
@@ -1159,7 +1183,7 @@ function NpcFighter:ChildrenLeaveFight(nListId, code, reason)
     for i = 1, size do
         local child = self:getTbNpc(tbNpc.children[i])
         if child then
-            child:LeaveFight(nListId, code, reason)
+            self:LeaveFight(child.id, code, reason)
         end
     end
     return 1
@@ -1182,7 +1206,7 @@ function NpcFighter:GetMyPosFromParent(nListId)
     local tbNpc = self:getTbNpc(nListId)
     local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent then
-        return foundParent:GiveChildPos(tbNpc.childID)
+        return self:GiveChildPos(tbNpc.parentID, tbNpc.childID)
     end
 
     return 0, 0, 0
@@ -1312,7 +1336,7 @@ end
 function NpcFighter:OwnerLostOnTransport(nListId)
     local tbNpc = self:getTbNpc(nListId)
     self:NotifyOwner(nListId, 2)
-    self:Remove(tbNpc.id)
+    FighterManager:Remove(tbNpc.id)
 end
 
 function NpcFighter:OnPlayerLeaveMap(nListId, nX2, nY2, nMapIndex2)
@@ -1357,5 +1381,74 @@ function NpcFighter:OnPlayerEnterMap(nListId, nX2, nY2, nMapIndex2)
         self:GenWalkPath(nListId,0)
         self:Respawn(nListId, 2, "chu xe tieu qua map")
         tbNpc.playerLeftMap = 0
+    end
+end
+
+
+
+function NpcFighter:AddScoreToAroundNPC(nListId, nNpcIndex, currRank)
+    --local tbNpc = self:getTbNpc(nListId)
+    local allNpcs, nCount = Simcity_GetNpcAroundNpcList(nNpcIndex, 15)
+    local foundfighters = {}
+    if nCount > 0 then
+        for i = 1, nCount do
+            local fighter2Kind = GetNpcKind(allNpcs[i])
+            local fighter2Camp = GetNpcCurCamp(allNpcs[i])
+            if (fighter2Kind == 0) then
+                if (fighter2Camp ~= fighter.camp) then
+                    local nListId2 = GetNpcParam(allNpcs[i], PARAM_LIST_ID) or 0
+                    if (nListId2 > 0) then
+                        tinsert(foundfighters, nListId2)
+                    end
+                end
+            end
+        end
+
+        local N = getn(foundfighters)
+        if N > 0 then
+            local scoreTotal = currRank * 1000
+            for key, fighter2 in self.fighterList do
+                if fighter2 and fighter2.id ~= fighter.id and fighter2.isFighting == 1 then
+                    fighter2.fightingScore = ceil(
+                        fighter2.fightingScore + (scoreTotal / N) + (scoreTotal / N) * fighter2.rank / 10)
+                    SimCityTongKim:updateRank(fighter2)
+                end
+            end
+        end
+    end
+
+    return 0
+end
+
+
+
+function NpcFighter:initCharConfig(config)
+    config.playerID = config.playerID or "" -- dang theo sau ai do
+
+
+    -- Init stats
+    config.isFighting = 0
+    config.tick_breath = 0
+    config.tick_canswitch = 0
+    config.camp = config.camp or random(1, 3)
+    config.walkMode = config.walkMode or "random"
+    config.noRevive = config.noRevive or 0
+    config.fightingScore = 0
+    config.rank = 1
+    local randomPos = 1
+    if config.originalWalkPath ~= nil then
+        randomPos = getn(config.originalWalkPath)
+        if randomPos < 1 then
+            randomPos = 1
+        end
+    end
+    config.hardsetPos = config.hardsetPos or random(1, randomPos)
+    config.ngoaitrang = config.ngoaitrang or 0
+    config.cap = config.cap or 1
+    config.role = config.role or "citizen"
+    config.level = config.level or 95
+    config.isAttackable = config.isAttackable or 0
+    if config.cap and config.cap ~= "auto" then
+        config.maxHP = SimCityNPCInfo:getHPByCap(config.cap)
     end
 end

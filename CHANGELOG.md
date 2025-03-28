@@ -1,9 +1,10 @@
-## 28-03-2025
+## 29-03-2025
 
-5.4.2
+5.4.3
 
 -   Cã thÓ chØnh sè l­îng trong file config. Default: 200
 -   Söa lçi t¹o qu¸ sè lu«ng trong mçi thµnh
+-   ChuyÓn sang AI ECS system
 
 ## 26-03-2025
 
