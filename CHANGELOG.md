@@ -2,9 +2,8 @@
 
 5.4.5
 
--   Cã thÓ chØnh sè l­îng trong file config. Default: 200
--   Söa lçi t¹o qu¸ sè lu«ng trong mçi thµnh
--   ChuyÓn sang AI ECS system
+-   Chuyển sang hệ thống ECS cho các sim
+-   Sửa lỗi tạo quá số lượng ở mỗi thành và giới hạn số lượng trong file config. (Mặc định: 200 sim)
 
 ## 26-03-2025
 
