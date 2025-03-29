@@ -31,6 +31,16 @@ function NpcFighter:New(fighter)
         last2VisitedEdges = {} -- Track last visited edges for more natural movement
     }
 
+    -- Check if worldInfo is nil
+    if (tbNpc.worldInfo == nil) then
+        return nil
+    end
+
+    -- Check if walkGraph is nil
+    if (tbNpc.worldInfo.walkGraph == nil) then
+        return nil
+    end
+
     for k, v in fighter do
         tbNpc[k] = v
     end
