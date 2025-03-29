@@ -3,11 +3,12 @@ IncludeLib("NPCINFO")
 NpcFighter = {
 
     fighterList = {},
-    counter = 1
+    counter = 1,
+    removedIds = {}
 }
 
 function NpcFighter:getTbNpc(nListId)
-    return self.fighterList["n"..nListId]
+    return self.fighterList[nListId]
 end
 
 function NpcFighter:New(fighter)
@@ -15,20 +16,27 @@ function NpcFighter:New(fighter)
     -- Setup minimum config
     self:initCharConfig(fighter)
 
-    local nListId = self.counter
-    self.counter = self.counter + 1
+    local nListId
+    if getn(self.removedIds) > 0 then
+        nListId = tremove(self.removedIds)
+    else
+        nListId = self.counter
+        self.counter = self.counter + 1
+    end
 
     local tbNpc = {
         id = nListId,
         children = nil,
-        originalConfig = objCopy(fighter)
+        worldInfo = SimCityWorld:Get(fighter.nMapId),
+        last2VisitedEdges = {} -- Track last visited edges for more natural movement
     }
 
     for k, v in fighter do
         tbNpc[k] = v
     end
 
-    self.fighterList["n"..nListId] = tbNpc
+    self.fighterList[nListId] = tbNpc
+    tbNpc.nPosId = self:GetRandomWalkPoint(nListId)
 
     -- Setup walk paths
     if self:HardResetPos(nListId) == 0 then
@@ -43,12 +51,12 @@ function NpcFighter:New(fighter)
 
 
     -- What about childrenSetup?
-    self:SetupChildren(nListId)
+    self:SetupChildren(nListId, fighter)
     return nListId
 end
 
 function NpcFighter:Remove(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if tbNpc then
         DelNpcSafe(tbNpc.finalIndex)
 
@@ -57,29 +65,30 @@ function NpcFighter:Remove(nListId)
                 self:Remove(tbNpc.children[i])
             end
         end
-        self.fighterList["n"..nListId] = nil
+        self.fighterList[nListId] = nil
+        tinsert(self.removedIds, nListId)
     end
 end
 
 function NpcFighter:Show(nListId, isNew, goX, goY)
-    local tbNpc = self:getTbNpc(nListId)
-    local originalWalkPath = tbNpc.originalWalkPath
-    local nPosId = tbNpc.hardsetPos
-
-    if (not nPosId) or (not originalWalkPath[nPosId]) then
-        nPosId = random(1, getn(originalWalkPath))
-    end
-
+    local tbNpc = self.fighterList[nListId]
+    
     local nMapIndex = SubWorldID2Idx(tbNpc.nMapId)
 
     if nMapIndex >= 0 then
         local nNpcIndex
 
-        local tX = tbNpc.walkPath[nPosId][1]
-        local tY = tbNpc.walkPath[nPosId][2]
+        local tX = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]
+        local tY = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]
 
         if tbNpc.role == "child" then
             local pW, pX, pY = self:GetParentPos(nListId)
+            tX = pX
+            tY = pY
+        end
+
+        if tbNpc.role == "keoxe" then
+            local pW, pX, pY = CallPlayerFunction(self:GetPlayer(nListId), GetWorldPos)
             tX = pX
             tY = pY
         end
@@ -119,17 +128,15 @@ function NpcFighter:Show(nListId, isNew, goX, goY)
                 tbNpc.isDead = 0
                 tbNpc.lastPos = {
                     nX32 = tX * 32,
-                    nY32 = tY * 32,
-                    nPosId = nPosId
+                    nY32 = tY * 32
                 }
 
                 -- Otherwise choose side
                 SetNpcCurCamp(nNpcIndex, tbNpc.camp)
 
-                local nPosCount = getn(originalWalkPath)
-                if nPosCount >= 1 then
+                local nPosCount = self:GetRandomWalkPoint(nListId)
+                if nPosCount ~= nil then
                     SetNpcActiveRegion(nNpcIndex, 1)
-                    tbNpc.nPosId = nPosId
                     SetNpcParam(nNpcIndex, PARAM_LIST_ID, tbNpc.id)
                     SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\fighter.timer.lua")
                     SetNpcTimer(nNpcIndex, REFRESH_RATE)
@@ -174,7 +181,7 @@ function NpcFighter:Show(nListId, isNew, goX, goY)
 end
 
 function NpcFighter:Respawn(nListId, code, reason)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     -- code: 0: con nv con song 1: da chet toan bo 2: keo xe qua map khac 3: chuyen sang chien dau 4: bi lag dung 1 cho nay gio ko di duoc
     --print(tbNpc.role .. " " .. tbNpc.szName .. ": respawn " .. code .. " " .. reason)
 
@@ -191,39 +198,34 @@ function NpcFighter:Respawn(nListId, code, reason)
     if code == 4 then
         nX = 0
         nY = 0
-        tbNpc.nPosId = random(1, getn(tbNpc.originalWalkPath))
+        tbNpc.nPosId = self:GetRandomWalkPoint(nListId)
         self:HardResetPos(nListId)
 
         -- 2 = qua map khac?
     elseif code == 2 then
         nX = 0
         nY = 0
-        tbNpc.nPosId = 1
         self:HardResetPos(nListId)
 
         -- otherwise reset
-    elseif isAllDead == 1 and (tbNpc.role == "vantieu" or tbNpc.role == "keoxe" or tbNpc.role == "child") then
-        nX = tbNpc.walkPath[1][1]
-        nY = tbNpc.walkPath[1][2]
-        tbNpc.nPosId = 1
+    elseif isAllDead == 1 and (tbNpc.role == "keoxe" or tbNpc.role == "child") then
+        nX = tbNpc.parentAppointPos[1]
+        nY = tbNpc.parentAppointPos[2]
     elseif (isAllDead == 1 and tbNpc.resetPosWhenRevive and tbNpc.resetPosWhenRevive >= 1) then
-        nX = tbNpc.walkPath[tbNpc.resetPosWhenRevive][1]
-        nY = tbNpc.walkPath[tbNpc.resetPosWhenRevive][2]
-        tbNpc.nPosId = tbNpc.resetPosWhenRevive
-        self:HardResetPos(nListId)
+        local newPosId = self:GetRandomWalkPoint(nListId)
+        nX = tbNpc.worldInfo.walkGraph.nodes[newPosId][1]
+        nY = tbNpc.worldInfo.walkGraph.nodes[newPosId][2]
+        tbNpc.nPosId = newPosId
     elseif (isAllDead == 1 and tbNpc.lastPos ~= nil) then
         nX = tbNpc.lastPos.nX32 / 32
         nY = tbNpc.lastPos.nY32 / 32
-        tbNpc.nPosId = tbNpc.lastPos.nPosId
     else
         tbNpc.lastPos = {
             nX32 = nX,
-            nY32 = nY,
-            nPosId = tbNpc.nPosId
+            nY32 = nY
         }
     end
 
-    tbNpc.hardsetPos = tbNpc.nPosId
     tbNpc.tick_checklag = nil
     tbNpc.lastHP = NPCINFO_GetNpcCurrentLife(tbNpc.finalIndex)
     if (isAllDead == 1) then
@@ -239,7 +241,7 @@ function NpcFighter:Respawn(nListId, code, reason)
 end
 
 function NpcFighter:IsNpcEnemyAround(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     local allNpcs = {}
     local nCount = 0
     local radius = tbNpc.RADIUS_FIGHT_SCAN or RADIUS_FIGHT_SCAN
@@ -262,13 +264,7 @@ function NpcFighter:IsNpcEnemyAround(nListId)
         local fighter2Kind = GetNpcKind(allNpcs[i])
         local fighter2Camp = GetNpcCurCamp(allNpcs[i])
         if fighter2Kind == 0 and (IsAttackableCamp(tbNpc.camp, fighter2Camp) == 1) then
-            if (tbNpc.role == "vantieu") then
-                if (NPCINFO_GetLevel(allNpcs[i]) >= 20) then
-                    return 1
-                end
-            else
-                return 1
-            end
+            return 1
         end
     end
 
@@ -276,10 +272,16 @@ function NpcFighter:IsNpcEnemyAround(nListId)
 end
 
 function NpcFighter:IsDialogNpcAround(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if tbNpc.mode ~= "thanhthi" then        
         return 0
     end
+
+    local foundDialogNpc = tbNpc.worldInfo.walkGraph.foundDialogNpc
+    if foundDialogNpc[tbNpc.nPosId] then
+        return 1
+    end
+
     local allNpcs = {}
     local nCount = 0
     local radius = 8    
@@ -289,6 +291,7 @@ function NpcFighter:IsDialogNpcAround(nListId)
         local fighter2Name = GetNpcName(allNpcs[i])
         local nNpcId = GetNpcSettingIdx(allNpcs[i])
         if fighter2Kind == 3 and (nNpcId == 108 or nNpcId == 198 or nNpcId == 203 or nNpcId == 384) then
+            foundDialogNpc[tbNpc.nPosId] = 1
             return 1
         end
     end
@@ -296,7 +299,7 @@ function NpcFighter:IsDialogNpcAround(nListId)
 end
 
 function NpcFighter:IsPlayerEnemyAround(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     -- FIGHT other player
     if GetNpcAroundPlayerList then
         local allNpcs, nCount = GetNpcAroundPlayerList(tbNpc.finalIndex, tbNpc.RADIUS_FIGHT_PLAYER or RADIUS_FIGHT_PLAYER)
@@ -312,11 +315,7 @@ function NpcFighter:IsPlayerEnemyAround(nListId)
 end
 
 function NpcFighter:JoinFight(nListId, reason)
-    local tbNpc = self:getTbNpc(nListId)
-    if (tbNpc.role == "vantieu" and tbNpc.isAttackable == 0) then
-        return 1
-    end
-
+    local tbNpc = self.fighterList[nListId]
     self:ChildrenJoinFight(nListId, reason)
     tbNpc.isFighting = 1
     tbNpc.tick_canswitch = tbNpc.tick_breath +
@@ -347,16 +346,12 @@ function NpcFighter:JoinFight(nListId, reason)
         W = currW
     }
 
-    if (tbNpc.role == "vantieu") then
-        self:NotifyOwner(nListId, 3)
-    end
-
     self:Respawn(nListId, 3, "JoinFight " .. reason)
     return 1
 end
 
 function NpcFighter:LeaveFight(nListId, isAllDead, reason)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     self:ChildrenLeaveFight(nListId,isAllDead, reason)
 
     isAllDead = isAllDead or 0
@@ -368,8 +363,7 @@ function NpcFighter:LeaveFight(nListId, isAllDead, reason)
     reason = reason or "no reason"
 
     -- Do not need to respawn just disable fighting
-    if (isAllDead ~= 1 and (tbNpc.kind ~= 4 or tbNpc.isAttackable == 1)) then
-        self:Walk2ClosestPoint(nListId)
+    if (isAllDead ~= 1 and (tbNpc.kind ~= 4 or tbNpc.isAttackable == 1)) then        
         self:SetFightState(nListId, 0)
     else
         self:Respawn(nListId, isAllDead, reason)
@@ -377,7 +371,7 @@ function NpcFighter:LeaveFight(nListId, isAllDead, reason)
 end
 
 function NpcFighter:CanLeaveFight(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if tbNpc.isDead == 1 then
         return 0
     end
@@ -399,7 +393,7 @@ function NpcFighter:CanLeaveFight(nListId)
 end
 
 function NpcFighter:SetFightState(nListId, mode)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     SetNpcAI(tbNpc.finalIndex, mode)
 end
 
@@ -411,21 +405,19 @@ function NpcFighter:TriggerFightWithNPC(nListId)
 end
 
 function NpcFighter:TriggerFightWithPlayer(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     -- FIGHT other player
     if GetNpcAroundPlayerList then
         if self:IsPlayerEnemyAround(nListId) == 1 then
-            local nW = tbNpc.nMapId
-            if tbNpc.role == "citizen" then
-                local worldInfo = SimCityWorld:Get(nW)
-                if worldInfo.showFightingArea == 1 then
+            if tbNpc.role == "citizen" then                
+                if tbNpc.worldInfo.showFightingArea == 1 then
                     local name = GetNpcName(tbNpc.finalIndex)
-                    local lastPos = tbNpc.originalWalkPath[tbNpc.nPosId]
-
-
-                    Msg2Map(tbNpc.nMapId,
-                        "<color=white>" .. name .. "<color> Æ∏nh ng≠Íi tπi " .. worldInfo.name .. " " ..
-                        floor(lastPos[1] / 8) .. " " .. floor(lastPos[2] / 16) .. "")
+                    local lastPos = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId]
+                    if lastPos ~= nil then
+                        Msg2Map(tbNpc.nMapId,
+                            "<color=white>" .. name .. "<color> Æ∏nh ng≠Íi tπi " .. tbNpc.worldInfo.name .. " " ..
+                            floor(lastPos[1] / 8) .. " " .. floor(lastPos[2] / 16) .. "")
+                    end
                 end
             end
             return self:JoinFight(nListId, "player around")
@@ -436,7 +428,7 @@ function NpcFighter:TriggerFightWithPlayer(nListId)
 end
 
 function NpcFighter:HasArrived(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     local nX32, nY32 = GetNpcPos(tbNpc.finalIndex)
     local oX = nX32 / 32;
     local oY = nY32 / 32;
@@ -445,7 +437,7 @@ function NpcFighter:HasArrived(nListId)
     local nY
     local checkDistance = DISTANCE_CAN_CONTINUE
 
-    if tbNpc.role == "child" or tbNpc.parent == "vantieu" then
+    if tbNpc.role == "child" then
         nX = tbNpc.parentAppointPos and tbNpc.parentAppointPos[1] or 0
         nY = tbNpc.parentAppointPos and tbNpc.parentAppointPos[2] or 0
 
@@ -454,14 +446,11 @@ function NpcFighter:HasArrived(nListId)
         end
     else
         local posIndex = tbNpc.nPosId
-        local parentPos = tbNpc.walkPath[posIndex]
-
-        local isExact = tbNpc.originalWalkPath[posIndex][3]
-        nX = parentPos[1]
-        nY = parentPos[2]
-        if isExact == 1 then
-            nX = tbNpc.originalWalkPath[posIndex][1]
-            nY = tbNpc.originalWalkPath[posIndex][2]
+        if posIndex ~= nil then
+            nX = tbNpc.worldInfo.walkGraph.nodes[posIndex][1]
+            nY = tbNpc.worldInfo.walkGraph.nodes[posIndex][2]
+        else
+            return 0
         end
     end
 
@@ -473,122 +462,40 @@ function NpcFighter:HasArrived(nListId)
     return 0
 end
 
-function NpcFighter:Walk2ClosestPoint(nListId)
-    local tbNpc = self:getTbNpc(nListId)
-    local currPointer = tbNpc.nPosId
-    local closestPointer = -1
-    local closestDistance = 99999
-    local maxPointer = getn(tbNpc.originalWalkPath)
-    local pX, pY, _ = GetNpcPos(tbNpc.finalIndex)
-    pX = pX / 32
-    pY = pY / 32
-
-    local tmp
-    for i = currPointer - 5, currPointer + 5 do
-        if (i > 0 and i <= maxPointer) then
-            tmp = GetDistanceRadius(pX, pY, tbNpc.originalWalkPath[i][1], tbNpc.originalWalkPath[i][2])
-            if (tmp < closestDistance) then
-                closestDistance = tmp
-                closestPointer = i
-            end
-        end
-    end
-
-    if closestPointer ~= -1 then
-        tbNpc.nPosId = closestPointer
-    end
-end
-
-function NpcFighter:GenWalkPath(nListId, hasJustBeenFlipped)
-    local tbNpc = self:getTbNpc(nListId)
-    -- Generate walkpath for myself
-    local WalkSize = getn(tbNpc.originalWalkPath)
-    tbNpc.walkPath = {}
-    for i = 1, WalkSize do
-        local point = tbNpc.originalWalkPath[i]
-        if hasJustBeenFlipped == 0 then
-            tinsert(tbNpc.walkPath, randomRange(point, tbNpc.walkVar or 2))
-        else
-            tinsert(tbNpc.walkPath, randomRange(point, tbNpc.walkVar or 2))
-        end
-    end
-end
 
 function NpcFighter:HardResetPos(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     local nW = tbNpc.nMapId
-    local worldInfo = {}
-    local walkAreas = {}
 
-    -- Co duong di bao gom map
-    if tbNpc.mapData then
-        local mapData = tbNpc.mapData
-        for i = 1, getn(mapData) do
-            local dataPoint = mapData[i]
-            if (dataPoint[1] == nW) then
-                tinsert(walkAreas, { dataPoint[2], dataPoint[3] })
-            end
-        end
-        tbNpc.originalWalkPath = arrCopy(walkAreas)
-    else
-        -- Dang di theo sau npc khac
+    -- Dang di theo sau npc khac
+    if tbNpc.role == "child" or tbNpc.role == "keoxe" then
+        local pW, pX, pY 
         if tbNpc.role == "child" then
-            local pW, pX, pY = self:GetParentPos(nListId)
-            tbNpc.originalWalkPath = { { pX, pY } }
-            tbNpc.nPosId = 1
-            walkAreas = { { { pX, pY } } }
-
-            -- Dang theo sau thi lay dia diem cua nguoi choi
-        elseif tbNpc.role == "keoxe" or tbNpc.role == "vantieu" then
-            local pW, pX, pY = CallPlayerFunction(self:GetPlayer(nListId), GetWorldPos)
-            worldInfo.showName = 1
-            tbNpc.originalWalkPath = { { pX, pY } }
-            tbNpc.nPosId = 1
-            walkAreas = { { { pX, pY } } }
-
-            -- hoac la sim thanh thi di tum lum
+            pW, pX, pY = self:GetParentPos(nListId)
         else
-            if not tbNpc.originalWalkPath then
-                worldInfo = SimCityWorld:Get(nW)
-                walkAreas = worldInfo.walkAreas
-                if not walkAreas then
-                    return 0
-                end
-               
-                -- Fall back to old method if graph path generation failed
-                if not tbNpc.originalWalkPath then
-                    local walkIndex = random(1, getn(walkAreas))
-                    tbNpc.originalWalkPath = arrCopy(walkAreas[walkIndex])
-                end               
-
-                tbNpc.hardsetPos = random(1, getn(tbNpc.originalWalkPath))
-            end
+            pW, pX, pY = CallPlayerFunction(self:GetPlayer(nListId), GetWorldPos)
         end
+        local targetPos = randomRange({pX, pY }, tbNpc.walkVar or 2)
+        tbNpc.parentAppointPos[1] = targetPos[1]
+        tbNpc.parentAppointPos[2] = targetPos[2]
+        return 1
     end
-
-    -- No path to walk?
-    if not tbNpc.originalWalkPath or getn(tbNpc.originalWalkPath) < 1 then
-        return 0
-    end
-
 
     -- Startup position
-    tbNpc.hardsetPos = tbNpc.hardsetPos or random(1, getn(tbNpc.originalWalkPath))
-
-    -- Calculate walk path for main
-    self:GenWalkPath(nListId, 0)
-end
-
-function NpcFighter:NextMap(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local walkPoint = self:GetRandomWalkPoint(nListId)
+    if walkPoint == nil then
+        return 0
+    end
+    
+    tbNpc.nPosId = walkPoint
+    
     return 1
 end
 
 function NpcFighter:Breath(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     local nX32, nY32, nW32 = GetNpcPos(tbNpc.finalIndex)
     local nW = SubWorldIdx2ID(nW32)
-    local worldInfo = {}
 
     local pW = 0
     local pX = 0
@@ -609,17 +516,11 @@ function NpcFighter:Breath(nListId)
     tbNpc.lastKnownPos.nY32 = nY32
     tbNpc.lastKnownPos.nW = nW
 
-    if tbNpc.role == "vantieu" then
-        self:OwnerPos(nListId)
-    end
-
-    -- CHAT FEATRUE - Khong dang theo sau ai het
-    worldInfo = SimCityWorld:Get(nW)
-
+    
     -- Di 1 minh
     if tbNpc.role == "citizen" then
         -- Otherwise just Random chat
-        if worldInfo.allowChat == 1 then
+        if tbNpc.worldInfo.allowChat == 1 then
             if tbNpc.isFighting == 1 then
                 if random(1, CHANCE_CHAT / 2) <= 2 then
                     NpcChat(tbNpc.finalIndex, SimCityChat:getChatFight())
@@ -632,7 +533,7 @@ function NpcFighter:Breath(nListId)
         end
 
         -- Show my ID
-        if (worldInfo.showingId == 1) then
+        if (tbNpc.worldInfo.showingId == 1) then
             local dbMsg = tbNpc.debugMsg or ""
             NpcChat(tbNpc.finalIndex, tbNpc.id .. " " .. tbNpc.nNpcId)
         end
@@ -642,9 +543,9 @@ function NpcFighter:Breath(nListId)
         if self:IsParentFighting(nListId) == 1 and tbNpc.isFighting == 0 then
             return self:JoinFight(nListId, "parent dang danh nhau")
         end
-    elseif tbNpc.role == "keoxe" or tbNpc.role == "vantieu" then
-        worldInfo.allowFighting = 1
-        worldInfo.showFightingArea = 0
+    elseif tbNpc.role == "keoxe" then
+        tbNpc.worldInfo.allowFighting = 1
+        tbNpc.worldInfo.showFightingArea = 0
 
         local pID = self:GetPlayer(nListId)
         if pID > 0 then
@@ -655,13 +556,6 @@ function NpcFighter:Breath(nListId)
 
     -- Is fighting? Do nothing except leave fight if possible
     if tbNpc.isFighting == 1 then
-        if tbNpc.role == "vantieu" then
-            if (self:CanLeaveFight(nListId) == 1) then
-                self:LeaveFight(nListId, 0, "khong tim thay quai")
-            end
-            return 1
-        end
-
         -- Case 1: toi gio chuyen doi
         if tbNpc.tick_canswitch < tbNpc.tick_breath then
             return self:LeaveFight(nListId, 0, "toi gio thay doi trang thai")
@@ -686,20 +580,11 @@ function NpcFighter:Breath(nListId)
         end
     end
 
-    -- Up to here means walking
-    local nNextPosId = tbNpc.nPosId
-    local originalWalkPath = tbNpc.originalWalkPath
-    local WalkSize = getn(originalWalkPath)
-    if tbNpc.role == "citizen" and (nNextPosId == 0 or WalkSize < 2) then
-        return 0
-    end
-
-    
 
     -- Binh thuong
     if ((tbNpc.role == "keoxe" and cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER) or
             (tbNpc.role == "child" and cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER) or
-            tbNpc.role == "citizen") and worldInfo.allowFighting == 1 and
+            tbNpc.role == "citizen") and tbNpc.worldInfo.allowFighting == 1 and
         (tbNpc.isFighting == 0 and tbNpc.tick_canswitch < tbNpc.tick_breath) then
         local isDialogNpcAround = self:IsDialogNpcAround(nListId)
         if (isDialogNpcAround == 0 and tbNpc.role == "citizen") or tbNpc.role == "keoxe" then
@@ -752,30 +637,13 @@ function NpcFighter:Breath(nListId)
                 self:JoinFight(nListId, "I start a fight")
             end
 
-            if countFighting > 0 and worldInfo.showFightingArea == 1 then
+            if countFighting > 0 and tbNpc.worldInfo.showFightingArea == 1 then
                 Msg2Map(nW,
-                    "C„ " .. countFighting .. " nh©n s‹ Æang Æ∏nh nhau tπi " .. worldInfo.name ..
+                    "C„ " .. countFighting .. " nh©n s‹ Æang Æ∏nh nhau tπi " .. tbNpc.worldInfo.name ..
                     " <color=yellow>" .. floor(myPosX / 8) .. " " .. floor(myPosY / 16) .. "<color>")
             end
 
             if (countFighting > 0) then
-                return 1
-            end
-        end
-    end
-
-    -- Van tieu
-    if (tbNpc.role == "vantieu") then
-        -- Co NPC dang tan cong?
-        if (tbNpc.CHANCE_ATTACK_NPC and random(0, tbNpc.CHANCE_ATTACK_NPC) <= 2) then
-            if self:TriggerFightWithNPC(nListId) == 1 then
-                return 1
-            end
-        end
-
-        -- Co Nguoi choi dang tan cong?
-        if (tbNpc.CHANCE_ATTACK_PLAYER and random(0, tbNpc.CHANCE_ATTACK_PLAYER) <= 2) then
-            if self:TriggerFightWithPlayer(nListId) == 1 then
                 return 1
             end
         end
@@ -797,24 +665,8 @@ function NpcFighter:Breath(nListId)
             end
 
             if (tbNpc.noStop == 1 or random(1, 100) < keepWalkingRate) then
-                nNextPosId = nNextPosId + 1
-
-                -- End of the array
-                if nNextPosId > WalkSize then
-                    if tbNpc.noBackward == 1 then
-                        self:NextMap(nListId)
-                        return 1
-                    end
-
-                    -- Fall back to flipping if not using graph paths or if generation failed
-                    tbNpc.originalWalkPath = arrFlip(tbNpc.originalWalkPath)
-                    nNextPosId = 1
-                    tbNpc.nPosId = nNextPosId
-
-                    self:GenWalkPath(nListId, 1)
-                else
-                    tbNpc.nPosId = nNextPosId
-                end
+                local nNextPosId = self:GetRandomWalkPoint(nListId, tbNpc.nPosId)
+                tbNpc.nPosId = nNextPosId 
             else
                 return 1
             end
@@ -828,11 +680,20 @@ function NpcFighter:Breath(nListId)
             end
         end
 
-        local targetPos = tbNpc.walkPath[nNextPosId]
+        local targetPos = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId]
+
+        if targetPos == nil then
+            return 0
+        end
+
         local nX = targetPos[1]
         local nY = targetPos[2]
 
-        NpcWalk(tbNpc.finalIndex, nX, nY)
+        if targetPos[3] == 1 then
+            NpcWalk(tbNpc.finalIndex, nX, nY)
+        else
+            NpcWalk(tbNpc.finalIndex, nX+ random(-2, 2), nY+ random(-2, 2))            
+        end
         self:CalculateChildrenPosition(nListId, nX, nY)
     elseif tbNpc.role == "child" then
         -- Mode 2: follow parent NPC
@@ -854,10 +715,9 @@ function NpcFighter:Breath(nListId)
                 tbNpc.nMapId = pW
                 tbNpc.isFighting = 0
                 tbNpc.tick_canswitch = tbNpc.tick_breath
-                tbNpc.originalWalkPath = { { pX, pY } }
-                tbNpc.nPosId = 1
-                self:GenWalkPath(nListId, 0)
-                self:Respawn(nListId, 2, "qua xa parent")
+                tbNpc.parentAppointPos[1] = pX
+                tbNpc.parentAppointPos[2] = pY
+                self:Respawn(nListId, 2, "qua xa nguoi choi")
                 return 1
             end
         else
@@ -870,15 +730,9 @@ function NpcFighter:Breath(nListId)
 
         -- Parent gave info?
         if targetW > 0 and targetX > 0 and targetY > 0 then
-            tbNpc.parentAppointPos = { targetX, targetY }
+            tbNpc.parentAppointPos[1] = targetX
+            tbNpc.parentAppointPos[2] = targetY
             NpcWalk(tbNpc.finalIndex, targetX, targetY)
-
-            -- No info we would work by ourself
-        else
-            local targetPos = tbNpc.walkPath[nNextPosId]
-            local nX = targetPos[1]
-            local nY = targetPos[2]
-            NpcWalk(tbNpc.finalIndex, nX, nY)
         end
     elseif tbNpc.role == "keoxe" then
         -- Mode 3: follow parent player
@@ -896,39 +750,21 @@ function NpcFighter:Breath(nListId)
             tbNpc.nMapId = pW
             tbNpc.isFighting = 0
             tbNpc.tick_canswitch = tbNpc.tick_breath
-            tbNpc.originalWalkPath = { { pX, pY } }
-            tbNpc.nPosId = 1
-            self:GenWalkPath(nListId, 0)
+            tbNpc.parentAppointPos[1] = pX
+            tbNpc.parentAppointPos[2] = pY
             self:Respawn(nListId, 2, "qua xa nguoi choi")
             return 1
         end
 
 
         -- Otherwise walk toward parent
-        if tbNpc.parentAppointPos then
-            NpcWalk(tbNpc.finalIndex, tbNpc.parentAppointPos[1], tbNpc.parentAppointPos[2])
-        else
-            NpcWalk(tbNpc.finalIndex, pX + random(-2, 2), pY + random(-2, 2))
-        end
-    elseif tbNpc.role == "vantieu" then
-        -- Mode 4: follow parent player
-        -- Player has gone different map? Do nothing
-        if tbNpc.nMapId ~= pW then
-            return 1
-        end
-
-        -- Otherwise walk toward parent
-        if tbNpc.bOwnerHere == 1 then
-            if tbNpc.parentAppointPos then
-                NpcWalk(tbNpc.finalIndex, tbNpc.parentAppointPos[1], tbNpc.parentAppointPos[2])
-            end
-        end
+        NpcWalk(tbNpc.finalIndex, pX + random(-2, 2), pY + random(-2, 2))
     end
     return 1
 end
 
 function NpcFighter:OnTimer(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if tbNpc == nil then
         return 0
     end
@@ -950,7 +786,7 @@ function NpcFighter:OnTimer(nListId)
 end
 
 function NpcFighter:OnDeath(nListId, nNpcIndex)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if tbNpc == nil then
         return 0
     end
@@ -1028,10 +864,6 @@ function NpcFighter:OnDeath(nListId, nNpcIndex)
             if tbNpc.role == "citizen" then
                 FighterManager:Remove(tbNpc.id)
             end
-
-            if tbNpc.role == "vantieu" then
-                self:NotifyOwner(nListId, 1)
-            end
             return 1
         end
         -- Do revive? Reset and leave fight
@@ -1040,13 +872,13 @@ function NpcFighter:OnDeath(nListId, nNpcIndex)
 end
 
 function NpcFighter:KillTimer(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     tbNpc.killTimer = 1
 end
 
 -- For keo xe
 function NpcFighter:GetPlayer(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if tbNpc.playerID == "" then
         return 0
     end
@@ -1054,8 +886,8 @@ function NpcFighter:GetPlayer(nListId)
 end
 
 -- For parent
-function NpcFighter:SetupChildren(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+function NpcFighter:SetupChildren(nListId, parentConfig)
+    local tbNpc = self.fighterList[nListId]
     if tbNpc.childrenSetup and getn(tbNpc.childrenSetup) > 0 then
         local createdChildren = {}
 
@@ -1066,7 +898,7 @@ function NpcFighter:SetupChildren(nListId)
 
         -- Create children
         for i = 1, getn(tbNpc.childrenSetup) do
-            local childConfig = objCopy(tbNpc.originalConfig)
+            local childConfig = objCopy(parentConfig)
             childConfig.parentID = tbNpc.id
             childConfig.childID = i
             childConfig.role = "child"
@@ -1086,7 +918,7 @@ function NpcFighter:SetupChildren(nListId)
 end
 
 function NpcFighter:GiveChildPos(nListId, i)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if tbNpc == nil then
         return 0, 0, 0
     end
@@ -1097,7 +929,7 @@ function NpcFighter:GiveChildPos(nListId, i)
 end
 
 function NpcFighter:CalculateChildrenPosition(nListId, X, Y)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if not tbNpc.children then
         return 1
     end
@@ -1133,7 +965,7 @@ function NpcFighter:CalculateChildrenPosition(nListId, X, Y)
 end
 
 function NpcFighter:ChildrenArrived(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if not tbNpc.children then
         return 1
     end
@@ -1152,7 +984,7 @@ function NpcFighter:ChildrenArrived(nListId)
 end
 
 function NpcFighter:ChildrenJoinFight(nListId, code)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if not tbNpc.children then
         return 1
     end
@@ -1171,7 +1003,7 @@ function NpcFighter:ChildrenJoinFight(nListId, code)
 end
 
 function NpcFighter:ChildrenLeaveFight(nListId, code, reason)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     if not tbNpc.children then
         return 1
     end
@@ -1191,7 +1023,7 @@ end
 
 -- For child
 function NpcFighter:GetParentPos(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent then
         local nX32, nY32, nW32 = GetNpcPos(foundParent.finalIndex)
@@ -1203,7 +1035,7 @@ function NpcFighter:GetParentPos(nListId)
 end
 
 function NpcFighter:GetMyPosFromParent(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent then
         return self:GiveChildPos(tbNpc.parentID, tbNpc.childID)
@@ -1213,181 +1045,19 @@ function NpcFighter:GetMyPosFromParent(nListId)
 end
 
 function NpcFighter:IsParentFighting(nListId)
-    local tbNpc = self:getTbNpc(nListId)
+    local tbNpc = self.fighterList[nListId]
     local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent and foundParent.isFighting == 1 then
         return 1
     end
     return 0
 end
-
--- Van tieu
-function NpcFighter:OwnerPos(nListId)
-    local tbNpc = self:getTbNpc(nListId)
-    local nOwnerIndex = SearchPlayer(tbNpc.playerID)
-    if not (nOwnerIndex > 0) then
-        return not self:OwnerFarAway(nListId)
-    end
-
-    local nOwnerX32, nOwnerY32, nOwnerMapIndex = CallPlayerFunction(nOwnerIndex, GetPos)
-    if not nOwnerX32 then
-        return not self:OwnerFarAway(nListId)
-    end
-
-    local nSelfX32, nSelfY32, nSelfMapIndex = GetNpcPos(tbNpc.finalIndex)
-    local nDis = ((nOwnerX32 - nSelfX32) ^ 2) + ((nOwnerY32 - nSelfY32) ^ 2)
-    if nOwnerMapIndex ~= nSelfMapIndex or nDis >= 750 * 750 then
-        return not self:OwnerFarAway(nListId)
-    end
-
-    self:OwnerNear(nListId)
-end
-
-function NpcFighter:OwnerNear(nListId)
-    local tbNpc = self:getTbNpc(nListId)
-    local nOwnerIndex = SearchPlayer(tbNpc.playerID)
-
-    local pFightState = CallPlayerFunction(nOwnerIndex, GetFightState)
-
-    if pFightState == 1 and tbNpc.isAttackable == 0 then
-        tbNpc.isAttackable = pFightState
-        self:Respawn(nListId, 0, "chuyen sang attackable")
-    end
-
-    tbNpc.isAttackable = pFightState
-
-    if not tbNpc.bOwnerHere then
-        self:OnOwnerEnter(nListId)
-        tbNpc.bOwnerHere = 1
-    end
-end
-
-function NpcFighter:OnOwnerEnter(nListId)
-    local tbNpc = self:getTbNpc(nListId)
-    local nOwnerIndex = SearchPlayer(tbNpc.playerID)
-    KhoaTHP(nOwnerIndex, 1)
-end
-
-function NpcFighter:OwnerFarAway(nListId)
-    local tbNpc = self:getTbNpc(nListId)
-    if tbNpc.bOwnerHere then
-        tbNpc.bOwnerHere = nil
-        self:OnOwnerLeave(nListId)
-        --else
-        --if GetCurServerTime() - tbNpc.nPlayerLeaveTime >= 5 * 60 then
-        --	local _, _, nMapIndex = GetNpcPos(tbNpc.nNpcIndex)
-        --	-- do someting when owner leave for 5 minutes here
-        --	return 1
-        --end
-    end
-end
-
-function NpcFighter:OnOwnerLeave(nListId)
-    local tbNpc = self:getTbNpc(nListId)
-    local nOwnerIndex = SearchPlayer(tbNpc.playerID)
-    local nCurTime = GetCurServerTime()
-    tbNpc.isAttackable = 1
-    tbNpc.nPlayerLeaveTime = nCurTime
-    if nOwnerIndex > 0 then
-        self:NotifyOwner(nListId, 0)
-        KhoaTHP(nOwnerIndex, 0)
-    end
-end
-
-function NpcFighter:NotifyOwner(nListId, code)
-    local tbNpc = self:getTbNpc(nListId)
-    local nOwnerIndex = SearchPlayer(tbNpc.playerID)
-    if (not tbNpc.playerLeftMap or tbNpc.playerLeftMap == 0) and nOwnerIndex > 0 then
-        local name = "<color=cyan>" .. tbNpc.szName .. "<color=white>"
-        local msg = ""
-        local location = ""
-
-        -- Find out the location
-        local worldInfo = SimCityWorld:Get(tbNpc.nMapId)
-        local lastPos = tbNpc.lastKnownPos
-        if worldInfo and worldInfo.name then
-            if lastPos then
-                location = "tπi <color=yellow>" .. worldInfo.name .. " <color=red>" ..
-                    floor(lastPos.nX32 / (32 * 8)) .. " " .. floor(lastPos.nY32 / (32 * 16)) .. ""
-            else
-                location = "tπi <color=yellow>" .. worldInfo.name
-            end
-        end
-
-        -- Output the msg
-        if code == 0 then
-            msg = name .. " Æang bﬁ b· lπi ph›a sau " .. location
-        end
-        if code == 1 then
-            msg = name .. " m t t›ch " .. location
-        end
-        if code == 2 then
-            msg = name .. " kh´ng may ch’t trong khi di chuy”n"
-        end
-        if code == 3 then
-            msg = name .. " Æang bﬁ t n c´ng " .. location
-        end
-
-        -- Send to the user
-        CallPlayerFunction(nOwnerIndex, Msg2Player, msg)
-    end
-end
-
-function NpcFighter:OwnerLostOnTransport(nListId)
-    local tbNpc = self:getTbNpc(nListId)
-    self:NotifyOwner(nListId, 2)
-    FighterManager:Remove(tbNpc.id)
-end
-
-function NpcFighter:OnPlayerLeaveMap(nListId, nX2, nY2, nMapIndex2)
-    local tbNpc = self:getTbNpc(nListId)
-    if tbNpc.isFighting == 1 then
-        return
-    end
-    local nX1, nY1, nMapIndex1 = GetNpcPos(tbNpc.finalIndex)
-    if nMapIndex1 ~= nMapIndex2 then
-        return
-    end
-
-    local nDis = ((nX1 - nX2) ^ 2) + ((nY1 - nY2) ^ 2)
-    if nDis <= 750 * 750 then
-        tbNpc.playerLeftMap = 1
-    end
-end
-
-function NpcFighter:OnPlayerEnterMap(nListId, nX2, nY2, nMapIndex2)
-    local tbNpc = self:getTbNpc(nListId)
-    if tbNpc.playerLeftMap == 1 then
-        local playerIndex = self:GetPlayer(nListId)
-
-        if playerIndex > 0 and IsNearStation(playerIndex) == 1 then
-            if (random(1, 99) <= 95) then
-                tbNpc.playerLeftMap = 0
-                self:OwnerLostOnTransport(nListId)
-                return 0
-            end
-        end
-
-        local pW, pX, pY = CallPlayerFunction(playerIndex, GetWorldPos)
-        tbNpc.nMapId = pW
-        tbNpc.goX = pX
-        tbNpc.goY = pY
-
-        tbNpc.isFighting = 0
-        tbNpc.tick_canswitch = tbNpc.tick_breath
-        tbNpc.originalWalkPath = { { pX, pY } }
-        tbNpc.walkPath = { { pX, pY } }
-        tbNpc.nPosId = 1
-        self:GenWalkPath(nListId,0)
-        self:Respawn(nListId, 2, "chu xe tieu qua map")
-        tbNpc.playerLeftMap = 0
-    end
-end
-
-
+ 
+   
+ 
 
 function NpcFighter:AddScoreToAroundNPC(nListId, nNpcIndex, currRank)
-    --local tbNpc = self:getTbNpc(nListId)
+    --local tbNpc = self.fighterList[nListId]
     local allNpcs, nCount = Simcity_GetNpcAroundNpcList(nNpcIndex, 15)
     local foundfighters = {}
     if nCount > 0 then
@@ -1420,8 +1090,6 @@ function NpcFighter:AddScoreToAroundNPC(nListId, nNpcIndex, currRank)
     return 0
 end
 
-
-
 function NpcFighter:initCharConfig(config)
     config.playerID = config.playerID or "" -- dang theo sau ai do
 
@@ -1435,14 +1103,6 @@ function NpcFighter:initCharConfig(config)
     config.noRevive = config.noRevive or 0
     config.fightingScore = 0
     config.rank = 1
-    local randomPos = 1
-    if config.originalWalkPath ~= nil then
-        randomPos = getn(config.originalWalkPath)
-        if randomPos < 1 then
-            randomPos = 1
-        end
-    end
-    config.hardsetPos = config.hardsetPos or random(1, randomPos)
     config.ngoaitrang = config.ngoaitrang or 0
     config.cap = config.cap or 1
     config.role = config.role or "citizen"
@@ -1451,4 +1111,66 @@ function NpcFighter:initCharConfig(config)
     if config.cap and config.cap ~= "auto" then
         config.maxHP = SimCityNPCInfo:getHPByCap(config.cap)
     end
+    config.parentAppointPos = {0, 0}
+end
+
+
+
+
+function NpcFighter:GetRandomWalkPoint(nListId, currentPosId)
+    local tbNpc = self.fighterList[nListId]
+
+	-- If current position ID is provided, get next node from edges
+	if currentPosId ~= nil then
+		local edges = tbNpc.worldInfo.walkGraph.edges[currentPosId]
+		if edges and getn(edges) > 0 then
+            -- Get edges that weren't recently visited
+            local availableEdges = {}
+            local recentlyVisitedEdges = {}
+            
+            for i = 1, getn(edges) do
+                local edgeId = edges[i]
+                local wasRecentlyVisited = false
+                
+                -- Check if this edge was recently visited
+                for j = 1, getn(tbNpc.last2VisitedEdges) do
+                    if tbNpc.last2VisitedEdges[j] == edgeId then
+                        wasRecentlyVisited = true
+                        tinsert(recentlyVisitedEdges, edgeId)
+                        break
+                    end
+                end
+                
+                if not wasRecentlyVisited then
+                    tinsert(availableEdges, edgeId)
+                end
+            end
+            
+            -- If we have edges that weren't recently visited, pick one of those
+            -- Otherwise fall back to any edge
+            local selectedEdges = (getn(availableEdges) > 0) and availableEdges or edges
+            local selectedEdge = selectedEdges[random(1, getn(selectedEdges))]
+            
+            -- Update the last visited edges (keep only the last 2)
+            tinsert(tbNpc.last2VisitedEdges, 1, selectedEdge)
+            if getn(tbNpc.last2VisitedEdges) > 2 then
+                tremove(tbNpc.last2VisitedEdges, 3)
+            end
+            
+			return selectedEdge
+		end
+	end
+	-- Otherwise pick a random node
+	local nodeIds = {}
+	for id, _ in tbNpc.worldInfo.walkGraph.nodes do
+		tinsert(nodeIds, id)
+	end
+
+	local total = getn(nodeIds)
+
+	if total == 0 then
+		return nil
+	end
+
+	return nodeIds[random(1, total)]
 end

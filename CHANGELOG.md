@@ -1,6 +1,6 @@
 ## 29-03-2025
 
-5.4.3
+5.4.5
 
 -   Cã thÓ chØnh sè l­îng trong file config. Default: 200
 -   Söa lçi t¹o qu¸ sè lu«ng trong mçi thµnh
