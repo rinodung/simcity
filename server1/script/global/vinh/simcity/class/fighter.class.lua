@@ -288,7 +288,26 @@ function NpcFighter:IsDialogNpcAround(nListId)
     end
 
     local foundDialogNpc = tbNpc.worldInfo.walkGraph.foundDialogNpc
-    if foundDialogNpc[tbNpc.nPosId] then
+    if foundDialogNpc[tbNpc.nPosId] ~= nil then
+
+        -- chance to drop 5 hoa
+        if foundDialogNpc[tbNpc.nPosId] == 203 then
+            if random(1, 10000) <= CHANCE_DROP_MONEY then
+                for i=1, 10 do 
+                    DropItem(SubWorldID2Idx(tbNpc.nMapId), tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]*32, tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]*32, -1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                end
+            end
+        end
+
+        -- chance to drop tdp
+        if foundDialogNpc[tbNpc.nPosId] == 384 then
+            if random(1, 10000) <= CHANCE_DROP_MONEY then
+                for i=1, 3 do 
+                    DropItem(SubWorldID2Idx(tbNpc.nMapId), tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]*32, tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]*32, -1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                end
+            end
+        end
+
         return 1
     end
 
@@ -301,7 +320,7 @@ function NpcFighter:IsDialogNpcAround(nListId)
         local fighter2Name = GetNpcName(allNpcs[i])
         local nNpcId = GetNpcSettingIdx(allNpcs[i])
         if fighter2Kind == 3 and (nNpcId == 108 or nNpcId == 198 or nNpcId == 203 or nNpcId == 384) then
-            foundDialogNpc[tbNpc.nPosId] = 1
+            foundDialogNpc[tbNpc.nPosId] = nNpcId
             return 1
         end
     end
@@ -529,14 +548,20 @@ function NpcFighter:Breath(nListId)
     
     -- Di 1 minh
     if tbNpc.role == "citizen" then
+
+        -- Random rot tien
+        if random(1, 10000) <= CHANCE_DROP_MONEY then
+            NpcDropMoney(tbNpc.finalIndex, random(1000, 10000), -1)
+        end
+
         -- Otherwise just Random chat
         if tbNpc.worldInfo.allowChat == 1 then
             if tbNpc.isFighting == 1 then
-                if random(1, CHANCE_CHAT / 2) <= 2 then
+                if random(1, 1000) <= CHANCE_CHAT then
                     NpcChat(tbNpc.finalIndex, allSimcityChat.fighting[random(1, getn(allSimcityChat.fighting))])
                 end
             else
-                if random(1, CHANCE_CHAT) <= 2 then
+                if random(1, 1000) <= CHANCE_CHAT then
                     NpcChat(tbNpc.finalIndex, allSimcityChat.general[random(1, getn(allSimcityChat.general))])
                 end
             end
@@ -804,6 +829,13 @@ function NpcFighter:OnDeath(nListId, nNpcIndex)
     if tbNpc.tongkim == 1 then
         self:AddScoreToAroundNPC(nListId, nNpcIndex, tbNpc.rank or 1)
         SimCityTongKim:OnDeath(nNpcIndex, tbNpc.rank or 1)
+    end
+
+    if tbNpc.role == "citizen" then
+        -- Random rot tien
+        if random(1, 1000) <= CHANCE_DROP_MONEY then
+            NpcDropMoney(tbNpc.finalIndex, random(1000, 100000), -1)
+        end
     end
 
     if tbNpc.role == "citizen" and tbNpc.children then

@@ -9,7 +9,9 @@ RADIUS_FIGHT_NPC = 8         -- tam quet NPC chung quanh va tan cong
 RADIUS_FIGHT_SCAN = 8        -- tam quet dam danh nhau chung quanh de tham gia
 
 
-CHANCE_CHAT = 200 -- 1/200 co hoi noi chuyen
+CHANCE_CHAT = 5                -- 5/1000 co hoi noi chuyen moi giay
+CHANCE_DROP_MONEY = 1 		   -- 1/10000 co hoi lam rot tien khi duy chuyen
+
 
 TIME_FIGHTING = { -- khoang thoi gian danh nhau  (45-120giay)
 	minTs = 45,
@@ -38,6 +40,3 @@ DISTANCE_SUPPORT_PLAYER = 8        -- neu gan nguoi choi khoang cach 12 thi chuy
 DISTANCE_FOLLOW_PLAYER_TOOFAR = 30 -- neu qua xa nguoi choi vi chay nhanh thi phai bien hinh theo
 DISTANCE_VISION = 15               -- qua 15 = phai respawn vi no se quay ve cho cu
 
-
-AI_TRAIN_PATH_LENGTH = 3
-AI_CITY_PATH_LENGTH = 100
