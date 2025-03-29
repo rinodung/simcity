@@ -1,6 +1,5 @@
-SimCityChat = {}
-
-SimCityChat.chatCollection = {
+allSimcityChat = {}
+allSimcityChat.general = {
 
 	"Chµ, ®«ng qu¸ nhØ!",
 
@@ -1972,7 +1971,7 @@ SimCityChat.chatCollection = {
 
 }
 
-SimCityChat.chatCollectionFight = {
+allSimcityChat.fighting = {
 	"Ngon nhµo v«!",
 	"§­êng nµy do ta më!",
 	"Mau ®ãng tiÒn b¶o kª!",
@@ -2902,15 +2901,3 @@ SimCityChat.chatCollectionFight = {
 	"CÇu xin ng­¬i",
 	"H·y ®Ó ta yªn"
 }
-
-
-
-
--- General Helpers
-function SimCityChat:getChat()
-	return self.chatCollection[random(1, getn(self.chatCollection))]
-end
-
-function SimCityChat:getChatFight()
-	return self.chatCollectionFight[random(1, getn(self.chatCollectionFight))]
-end

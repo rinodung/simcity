@@ -1054,11 +1054,11 @@ function GroupFighter:Breath(nListId)
 		if worldInfo.allowChat == 1 then
 			if tbNpc.isFighting == 1 then
 				if random(1, CHANCE_CHAT / 2) <= 2 then
-					NpcChat(nNpcIndex, SimCityChat:getChatFight())
+					NpcChat(nNpcIndex, allSimcityChat.fighting[random(1, getn(allSimcityChat.fighting))])
 				end
 			else
 				if random(1, CHANCE_CHAT) <= 2 then
-					NpcChat(nNpcIndex, SimCityChat:getChat())
+					NpcChat(nNpcIndex, allSimcityChat.general[random(1, getn(allSimcityChat.general))])
 				end
 			end
 		end

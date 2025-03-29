@@ -117,7 +117,7 @@ Include("\\script\\global\\vinh\\simcity\\data\\mmaccaoquat.lua")
 Include("\\script\\global\\vinh\\simcity\\data\\mlamduquan.lua")
 Include("\\script\\global\\vinh\\simcity\\data\\mngochoadong.lua")
 Include("\\script\\global\\vinh\\simcity\\data\\vantieu\\index.lua")
-
+Include("\\script\\global\\vinh\\simcity\\data\\chat\\index.lua")
 allSimcityMap = {
     map_tuongduong,
     map_bienkinh,

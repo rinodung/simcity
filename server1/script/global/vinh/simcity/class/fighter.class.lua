@@ -533,11 +533,11 @@ function NpcFighter:Breath(nListId)
         if tbNpc.worldInfo.allowChat == 1 then
             if tbNpc.isFighting == 1 then
                 if random(1, CHANCE_CHAT / 2) <= 2 then
-                    NpcChat(tbNpc.finalIndex, SimCityChat:getChatFight())
+                    NpcChat(tbNpc.finalIndex, allSimcityChat.fighting[random(1, getn(allSimcityChat.fighting))])
                 end
             else
                 if random(1, CHANCE_CHAT) <= 2 then
-                    NpcChat(tbNpc.finalIndex, SimCityChat:getChat())
+                    NpcChat(tbNpc.finalIndex, allSimcityChat.general[random(1, getn(allSimcityChat.general))])
                 end
             end
         end
