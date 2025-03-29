@@ -1120,36 +1120,60 @@ end
 function NpcFighter:GetRandomWalkPoint(nListId, currentPosId)
     local tbNpc = self.fighterList[nListId]
 
-	-- If current position ID is provided, get next node from edges
-	if currentPosId ~= nil then
-		local edges = tbNpc.worldInfo.walkGraph.edges[currentPosId]
-		if edges and getn(edges) > 0 then
-            -- Get edges that weren't recently visited
-            local availableEdges = {}
-            local recentlyVisitedEdges = {}
-            
+    -- If current position ID is provided, get next node from edges
+    if currentPosId ~= nil then
+        local edges = tbNpc.worldInfo.walkGraph.edges[currentPosId]
+        if edges and getn(edges) > 0 then
+            -- Count unvisited edges first
+            local unvisitedCount = 0
             for i = 1, getn(edges) do
                 local edgeId = edges[i]
-                local wasRecentlyVisited = false
+                local isVisited = false
                 
                 -- Check if this edge was recently visited
                 for j = 1, getn(tbNpc.last2VisitedEdges) do
                     if tbNpc.last2VisitedEdges[j] == edgeId then
-                        wasRecentlyVisited = true
-                        tinsert(recentlyVisitedEdges, edgeId)
+                        isVisited = true
                         break
                     end
                 end
                 
-                if not wasRecentlyVisited then
-                    tinsert(availableEdges, edgeId)
+                if not isVisited then
+                    unvisitedCount = unvisitedCount + 1
                 end
             end
             
-            -- If we have edges that weren't recently visited, pick one of those
-            -- Otherwise fall back to any edge
-            local selectedEdges = (getn(availableEdges) > 0) and availableEdges or edges
-            local selectedEdge = selectedEdges[random(1, getn(selectedEdges))]
+            -- Choose which selection method to use
+            local selectedEdge
+            if unvisitedCount > 0 then
+                -- Select from unvisited edges
+                local targetUnvisited = random(1, unvisitedCount)
+                local currentUnvisited = 0
+                
+                for i = 1, getn(edges) do
+                    local edgeId = edges[i]
+                    local isVisited = false
+                    
+                    -- Check if this edge was recently visited
+                    for j = 1, getn(tbNpc.last2VisitedEdges) do
+                        if tbNpc.last2VisitedEdges[j] == edgeId then
+                            isVisited = true
+                            break
+                        end
+                    end
+                    
+                    if not isVisited then
+                        currentUnvisited = currentUnvisited + 1
+                        if currentUnvisited == targetUnvisited then
+                            selectedEdge = edgeId
+                            break
+                        end
+                    end
+                end
+            else
+                -- All edges were visited, just pick any edge
+                selectedEdge = edges[random(1, getn(edges))]
+            end
             
             -- Update the last visited edges (keep only the last 2)
             tinsert(tbNpc.last2VisitedEdges, 1, selectedEdge)
@@ -1157,20 +1181,23 @@ function NpcFighter:GetRandomWalkPoint(nListId, currentPosId)
                 tremove(tbNpc.last2VisitedEdges, 3)
             end
             
-			return selectedEdge
-		end
-	end
-	-- Otherwise pick a random node
-	local nodeIds = {}
-	for id, _ in tbNpc.worldInfo.walkGraph.nodes do
-		tinsert(nodeIds, id)
-	end
+            return selectedEdge
+        end
+    end
+    
+    -- Otherwise pick a random node
+    local nodeCount = 0
+    for id, _ in tbNpc.worldInfo.walkGraph.nodes do
+        nodeCount = nodeCount + 1
+    end
+    if nodeCount == 0 then return nil end
 
-	local total = getn(nodeIds)
-
-	if total == 0 then
-		return nil
-	end
-
-	return nodeIds[random(1, total)]
+    local targetIndex = random(1, nodeCount)
+    local currentIndex = 0
+    for id, _ in tbNpc.worldInfo.walkGraph.nodes do
+        currentIndex = currentIndex + 1
+        if currentIndex == targetIndex then
+            return id
+        end
+    end
 end
