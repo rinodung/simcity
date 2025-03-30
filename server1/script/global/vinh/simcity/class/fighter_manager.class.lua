@@ -53,7 +53,7 @@ function FighterManager:ClearMap(nW, targetListId)
     -- Get info for npc in this world
     for key, id in self.fighterList do
         local fighter = self:Get(id)
-        if fighter.nMapId == nW and fighter.role ~= "vantieu" then
+        if fighter.nMapId == nW and fighter.role ~= "vantieu" and fighter.role ~= "keoxe" then
             if (not targetListId) or (targetListId == fighter.id) then
                 self:Remove(fighter.id)
             end
