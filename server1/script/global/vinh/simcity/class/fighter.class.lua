@@ -36,14 +36,15 @@ function NpcFighter:New(fighter)
         return nil
     end
 
-    -- Check if walkGraph is nil
-    if (tbNpc.worldInfo.walkGraph == nil) then
-        return nil
-    end
-
     for k, v in fighter do
         tbNpc[k] = v
     end
+
+    -- Check if walkGraph is nil
+    if (tbNpc.role == "citizen" and tbNpc.worldInfo.walkGraph == nil) then
+        return nil
+    end
+
 
     self.fighterList[nListId] = tbNpc
     tbNpc.nPosId = self:GetRandomWalkPoint(nListId)
@@ -54,7 +55,7 @@ function NpcFighter:New(fighter)
     end
 
     -- Bugfix series
-    tbNpc.series = SimCityNPCInfo:GetSeries(tbNpc.nNpcId)
+    tbNpc.series = random(0,4)
 
     -- Create the character on screen
     self:Show(nListId, 1, tbNpc.goX, tbNpc.goY)
@@ -88,19 +89,18 @@ function NpcFighter:Show(nListId, isNew, goX, goY)
     if nMapIndex >= 0 then
         local nNpcIndex
 
-        local tX = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]
-        local tY = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]
-
+        local tX, tY
         if tbNpc.role == "child" then
             local pW, pX, pY = self:GetParentPos(nListId)
             tX = pX
             tY = pY
-        end
-
-        if tbNpc.role == "keoxe" then
+        elseif tbNpc.role == "keoxe" then
             local pW, pX, pY = CallPlayerFunction(self:GetPlayer(nListId), GetWorldPos)
             tX = pX
             tY = pY
+        elseif tbNpc.role == "citizen" then
+            tX = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]
+            tY = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]
         end
 
         if goX and goY and goX > 0 and goY > 0 then
@@ -1161,6 +1161,14 @@ end
 
 function NpcFighter:GetRandomWalkPoint(nListId, currentPosId)
     local tbNpc = self.fighterList[nListId]
+
+    if tbNpc.role == "keoxe" or tbNpc.role == "child" then
+        return "none"
+    end
+
+    if not tbNpc.worldInfo or not tbNpc.worldInfo.walkGraph then
+        return "none"
+    end
 
     -- If current position ID is provided, get next node from edges
     if currentPosId ~= nil then
