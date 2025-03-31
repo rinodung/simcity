@@ -254,8 +254,8 @@ function GroupFighter:Show(tbNpc, isNew, goX, goY)
 
 
 				-- Set NPC life
-				if tbNpc.cap and tbNpc.cap < 2 and NPCINFO_SetNpcCurrentLife then
-					local maxHP = SimCityNPCInfo:getHPByCap(tbNpc.cap)
+				if tbNpc.capHP and tbNpc.capHP < 2 and NPCINFO_SetNpcCurrentLife then
+					local maxHP = SimCityNPCInfo:getHPByCap(tbNpc.capHP)
 					NPCINFO_SetNpcCurrentMaxLife(nNpcIndex, maxHP)
 					NPCINFO_SetNpcCurrentLife(nNpcIndex, maxHP)
 				end
@@ -395,7 +395,7 @@ function GroupFighter:IsNpcEnemyAround(tbNpc, nNpcIndex, radius)
 	end
 
 	-- Thanh thi / tong kim / chien loan
-	allNpcs, nCount = Simcity_GetNpcAroundNpcList(nNpcIndex, radius)
+	allNpcs, nCount = GetNpcAroundNpcList(nNpcIndex, radius)
 	for i = 1, nCount do
 		local fighter2Kind = GetNpcKind(allNpcs[i])
 		local fighter2Camp = GetNpcCurCamp(allNpcs[i])
@@ -1474,8 +1474,8 @@ function GroupFighter:ChildrenAdd(nListId, childID)
 					SimCityNgoaiTrang:makeup(child, nNpcIndex)
 				end
 
-				if tbNpc.cap and tbNpc.cap < 2 and NPCINFO_SetNpcCurrentLife then
-					local maxHP = SimCityNPCInfo:getHPByCap(tbNpc.cap)
+				if tbNpc.capHP and tbNpc.capHP < 2 and NPCINFO_SetNpcCurrentLife then
+					local maxHP = SimCityNPCInfo:getHPByCap(tbNpc.capHP)
 					NPCINFO_SetNpcCurrentMaxLife(nNpcIndex, maxHP)
 					NPCINFO_SetNpcCurrentLife(nNpcIndex, maxHP)
 				end
@@ -1721,7 +1721,7 @@ function _sortByScore(tb1, tb2)
 end
 
 function GroupFighter:_calculateFightingScore(tbNpc, nNpcIndex, currRank)
-	local allNpcs, nCount = Simcity_GetNpcAroundNpcList(nNpcIndex, 15)
+	local allNpcs, nCount = GetNpcAroundNpcList(nNpcIndex, 15)
 	local foundTbNpcs = {}
 
 	if nCount > 0 then

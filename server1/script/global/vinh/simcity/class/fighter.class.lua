@@ -37,17 +37,6 @@ function NpcFighter:New(fighter)
     end
 
 
-    -- All good generate name for Thanh Thi
-    if tbNpc.mode == nil or tbNpc.mode == "thanhthi" or tbNpc.mode == "train" then
-        if tbNpc.worldInfo.showName == 1 then
-            if (not tbNpc.szName) or tbNpc.szName == "" then
-                tbNpc.szName = SimCityNPCInfo:getName(tbNpc.nNpcId)
-            end
-        else
-            tbNpc.szName = " "
-        end
-    end
-
     for k, v in fighter do
         tbNpc[k] = v
     end
@@ -58,6 +47,18 @@ function NpcFighter:New(fighter)
     end
 
 
+
+    -- All good generate name for Thanh Thi
+    if tbNpc.mode == nil or tbNpc.mode == "thanhthi" or tbNpc.mode == "train" then
+        if tbNpc.worldInfo.showName == 1 then
+            if (not tbNpc.szName) or tbNpc.szName == "" then
+                tbNpc.szName = SimCityNPCInfo:getName(tbNpc.nNpcId)
+            end
+        else
+            tbNpc.szName = " "
+        end
+    end
+    
     self.fighterList[nListId] = tbNpc
     tbNpc.nPosId = self:GetRandomWalkPoint(nListId)
 
@@ -281,7 +282,7 @@ function NpcFighter:IsNpcEnemyAround(nListId)
     end
 
     -- Thanh thi / tong kim / chien loan
-    allNpcs, nCount = Simcity_GetNpcAroundNpcList(tbNpc.finalIndex, radius)
+    allNpcs, nCount = GetNpcAroundNpcList(tbNpc.finalIndex, radius)
     for i = 1, nCount do
         local fighter2Kind = GetNpcKind(allNpcs[i])
         local fighter2Camp = GetNpcCurCamp(allNpcs[i])
@@ -326,7 +327,7 @@ function NpcFighter:IsDialogNpcAround(nListId)
     local allNpcs = {}
     local nCount = 0
     local radius = 8    
-    allNpcs, nCount = Simcity_GetNpcAroundNpcList(tbNpc.finalIndex, radius)
+    allNpcs, nCount = GetNpcAroundNpcList(tbNpc.finalIndex, radius)
     for i = 1, nCount do
         local fighter2Kind = GetNpcKind(allNpcs[i])
         local fighter2Name = GetNpcName(allNpcs[i])
@@ -1111,8 +1112,8 @@ end
  
 
 function NpcFighter:AddScoreToAroundNPC(nListId, nNpcIndex, currRank)
-    --local tbNpc = self.fighterList[nListId]
-    local allNpcs, nCount = Simcity_GetNpcAroundNpcList(nNpcIndex, 15)
+    local fighter = self.fighterList[nListId]
+    local allNpcs, nCount = GetNpcAroundNpcList(nNpcIndex, 15)
     local foundfighters = {}
     if nCount > 0 then
         for i = 1, nCount do
@@ -1158,12 +1159,12 @@ function NpcFighter:initCharConfig(config)
     config.fightingScore = 0
     config.rank = 1
     config.ngoaitrang = config.ngoaitrang or 0
-    config.cap = config.cap or 1
+    config.capHP = config.capHP or 1
     config.role = config.role or "citizen"
     config.level = config.level or 95
     config.isAttackable = config.isAttackable or 0
-    if config.cap and config.cap ~= "auto" then
-        config.maxHP = SimCityNPCInfo:getHPByCap(config.cap)
+    if config.capHP and config.capHP ~= "auto" then
+        config.maxHP = SimCityNPCInfo:getHPByCap(config.capHP)
     end
     config.parentAppointPos = {0, 0}
 end

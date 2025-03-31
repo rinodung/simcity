@@ -100,13 +100,13 @@ function SimCityMainThanhThi:CreatePatrol(nW)
 	end
 end
 
-function SimCityMainThanhThi:createAnhHung(cap, perPage, ngoaitrang)
-	local pool = SimCityNPCInfo:getPoolByCap(cap)
+function SimCityMainThanhThi:createAnhHung(capHP, perPage, ngoaitrang)
+	local pool = SimCityNPCInfo:getPoolByCap(capHP)
 
 	local mapID, nX, nY = GetWorldPos()
 	for i = 1, perPage do
 		local id = pool[random(1, getn(pool))]
-		self:_createSingle(id, mapID, { ngoaitrang = ngoaitrang or 0, cap = cap })
+		self:_createSingle(id, mapID, { ngoaitrang = ngoaitrang or 0, capHP = capHP })
 	end
 end
 
@@ -461,11 +461,11 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 			-- Fill each table with 40 random NPCs
 			local perTable = floor(total/5)
 			for i = 1, perTable do
-				tinsert(table1, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
-				tinsert(table2, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
-				tinsert(table3, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
-				tinsert(table4, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
-				tinsert(table5, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, cap = capHP }})
+				tinsert(table1, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
+				tinsert(table2, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
+				tinsert(table3, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
+				tinsert(table4, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
+				tinsert(table5, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
 			end
 
 			-- Add all tables to everything array
@@ -495,7 +495,7 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 						ngoaitrang = 1,
 						mode = "train",
 						level = level or 95,
-						cap = 1,
+						capHP = 1,
 						childrenSetup = children5,
 						walkMode =
 						"random",

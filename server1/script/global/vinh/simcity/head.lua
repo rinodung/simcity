@@ -41,6 +41,7 @@ Include("\\script\\global\\vinh\\simcity\\data\\index.lua")
 Include("\\script\\global\\vinh\\simcity\\class\\fighter_manager.class.lua")
 Include("\\script\\global\\vinh\\simcity\\class\\group_fighter.class.lua")
 
+Include("\\script\\global\\vinh\\simcity\\class\\sim_theosau.lua")
 
 -- Kick start all plugins if needed
 SimCityNgoaiTrang:init()
