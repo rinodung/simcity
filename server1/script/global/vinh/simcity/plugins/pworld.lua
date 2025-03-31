@@ -96,7 +96,7 @@ function SimCityWorld:initThanhThi()
 end
 
 function SimCityWorld:doShowBXH(mapID)
-	FighterManager:ThongBaoBXH(mapID)
+	SimCitizen:ThongBaoBXH(mapID)
 end
 
 function SimCityWorld:IsTongKimMap(nW)

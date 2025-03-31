@@ -105,8 +105,7 @@ function SimCityKeoXe:nv_tudo_xe(capHP)
 end
 
 function SimCityKeoXe:removeAll()
-	for key, id in FighterManager.fighterList do
-		local fighter = SimTheoSau:Get(id)
+	for key, fighter in SimTheoSau.fighterList do
 		local name = GetName()
 		if fighter.playerID == name then
 			SimTheoSau:Remove(fighter.id)

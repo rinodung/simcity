@@ -7,7 +7,7 @@ SimCitizen = {
     removedIds = {}
 }
 
-function SimCitizen:getTbNpc(nListId)
+function SimCitizen:Get(nListId)
     return self.fighterList[nListId]
 end
 
@@ -105,10 +105,6 @@ function SimCitizen:Show(nListId, isNew, goX, goY)
         local tX, tY
         if tbNpc.role == "child" then
             local pW, pX, pY = self:GetParentPos(nListId)
-            tX = pX
-            tY = pY
-        elseif tbNpc.role == "keoxe" then
-            local pW, pX, pY = CallPlayerFunction(self:GetPlayer(nListId), GetWorldPos)
             tX = pX
             tY = pY
         elseif tbNpc.role == "citizen" then
@@ -231,7 +227,7 @@ function SimCitizen:Respawn(nListId, code, reason)
         self:HardResetPos(nListId)
 
         -- otherwise reset
-    elseif isAllDead == 1 and (tbNpc.role == "keoxe" or tbNpc.role == "child") then
+    elseif isAllDead == 1 and tbNpc.role == "child" then
         nX = tbNpc.parentAppointPos[1]
         nY = tbNpc.parentAppointPos[2]
     elseif (isAllDead == 1 and tbNpc.resetPosWhenRevive and tbNpc.resetPosWhenRevive >= 1) then
@@ -268,18 +264,6 @@ function SimCitizen:IsNpcEnemyAround(nListId)
     local allNpcs = {}
     local nCount = 0
     local radius = tbNpc.RADIUS_FIGHT_SCAN or RADIUS_FIGHT_SCAN
-    -- Keo xe?
-    if tbNpc.role == "keoxe" then
-        allNpcs, nCount = CallPlayerFunction(self:GetPlayer(nListId), GetAroundNpcList, radius)
-        for i = 1, nCount do
-            local fighter2Kind = GetNpcKind(allNpcs[i])
-            local fighter2Camp = GetNpcCurCamp(allNpcs[i])
-            if fighter2Kind == 0 and (IsAttackableCamp(tbNpc.camp, fighter2Camp) == 1) then
-                return 1
-            end
-        end
-        return 0
-    end
 
     -- Thanh thi / tong kim / chien loan
     allNpcs, nCount = GetNpcAroundNpcList(tbNpc.finalIndex, radius)
@@ -510,7 +494,7 @@ function SimCitizen:HardResetPos(nListId)
     local nW = tbNpc.nMapId
 
     -- Dang di theo sau npc khac
-    if tbNpc.role == "child" or tbNpc.role == "keoxe" then
+    if tbNpc.role == "child" then
         local pW, pX, pY 
         if tbNpc.role == "child" then
             pW, pX, pY = self:GetParentPos(nListId)
@@ -591,15 +575,6 @@ function SimCitizen:Breath(nListId)
         if self:IsParentFighting(nListId) == 1 and tbNpc.isFighting == 0 then
             return self:JoinFight(nListId, "parent dang danh nhau")
         end
-    elseif tbNpc.role == "keoxe" then
-        tbNpc.worldInfo.allowFighting = 1
-        tbNpc.worldInfo.showFightingArea = 0
-
-        local pID = self:GetPlayer(nListId)
-        if pID > 0 then
-            pW, pX, pY = CallPlayerFunction(pID, GetWorldPos)
-            cachNguoiChoi = GetDistanceRadius(myPosX, myPosY, pX, pY)
-        end
     end
 
     -- Is fighting? Do nothing except leave fight if possible
@@ -616,10 +591,7 @@ function SimCitizen:Breath(nListId)
         end
 
         -- Case 3: qua xa nguoi choi phai chay theo ngay
-        if (tbNpc.role == "keoxe" and cachNguoiChoi > DISTANCE_FOLLOW_PLAYER) then
-            tbNpc.tick_canswitch = tbNpc.tick_breath - 1
-            self:LeaveFight(nListId, 0, "chay theo nguoi choi")
-        elseif (tbNpc.role == "child" and cachNguoiChoi > DISTANCE_FOLLOW_PLAYER) then
+        if (tbNpc.role == "child" and cachNguoiChoi > DISTANCE_FOLLOW_PLAYER) then
             --tbNpc.tick_canswitch = tbNpc.tick_breath - 1
             --self:LeaveFight(nListId, 0, "chay theo parent")
             return 1
@@ -630,12 +602,11 @@ function SimCitizen:Breath(nListId)
 
 
     -- Binh thuong
-    if ((tbNpc.role == "keoxe" and cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER) or
-            (tbNpc.role == "child" and cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER) or
-            tbNpc.role == "citizen") and tbNpc.worldInfo.allowFighting == 1 and
-        (tbNpc.isFighting == 0 and tbNpc.tick_canswitch < tbNpc.tick_breath) then
+    if (((tbNpc.role == "child" and cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER) 
+        or tbNpc.role == "citizen") and tbNpc.worldInfo.allowFighting == 1 and
+        (tbNpc.isFighting == 0 and tbNpc.tick_canswitch < tbNpc.tick_breath)) then
         local isDialogNpcAround = self:IsDialogNpcAround(nListId)
-        if (isDialogNpcAround == 0 and tbNpc.role == "citizen") or tbNpc.role == "keoxe" then
+        if (isDialogNpcAround == 0 and tbNpc.role == "citizen")then
             -- Case 1: someone around is fighting, we join
             if (tbNpc.CHANCE_ATTACK_NPC and random(0, tbNpc.CHANCE_ATTACK_NPC) <= 2) then
                 if self:TriggerFightWithNPC(nListId) == 1 then
@@ -782,31 +753,6 @@ function SimCitizen:Breath(nListId)
             tbNpc.parentAppointPos[2] = targetY
             NpcWalk(tbNpc.finalIndex, targetX, targetY)
         end
-    elseif tbNpc.role == "keoxe" then
-        -- Mode 3: follow parent player
-        -- Player has gone different map? Do respawn
-        local needRespawn = 0
-        if tbNpc.nMapId ~= pW then
-            needRespawn = 1
-        else
-            if cachNguoiChoi > DISTANCE_FOLLOW_PLAYER_TOOFAR then
-                needRespawn = 1
-            end
-        end
-
-        if needRespawn == 1 then
-            tbNpc.nMapId = pW
-            tbNpc.isFighting = 0
-            tbNpc.tick_canswitch = tbNpc.tick_breath
-            tbNpc.parentAppointPos[1] = pX
-            tbNpc.parentAppointPos[2] = pY
-            self:Respawn(nListId, 2, "qua xa nguoi choi")
-            return 1
-        end
-
-
-        -- Otherwise walk toward parent
-        NpcWalk(tbNpc.finalIndex, pX + random(-2, 2), pY + random(-2, 2))
     end
     return 1
 end
@@ -855,7 +801,7 @@ function SimCitizen:OnDeath(nListId, nNpcIndex)
         local child
 
         for i = 1, getn(tbNpc.children) do
-            local each = self:getTbNpc(tbNpc.children[i])
+            local each = self:Get(tbNpc.children[i])
             if each and each.isDead ~= 1 then
                 child = each
 
@@ -995,11 +941,11 @@ function SimCitizen:CalculateChildrenPosition(nListId, X, Y)
 
     if tbNpc.walkMode and tbNpc.walkMode == "formation" then
         local centerCharId = getCenteredCell(createFormation(size))
-        local fighter = self:getTbNpc(tbNpc.children[centerCharId])
+        local fighter = self:Get(tbNpc.children[centerCharId])
 
         if fighter and fighter.isDead == 1 then
             for i = 1, size do
-                fighter = self:getTbNpc(tbNpc.children[i])
+                fighter = self:Get(tbNpc.children[i])
                 if fighter and fighter.isDead ~= 1 then
                     break
                 end
@@ -1030,7 +976,7 @@ function SimCitizen:ChildrenArrived(nListId)
     end
 
     for i = 1, size do
-        local child = self:getTbNpc(tbNpc.children[i])
+        local child = self:Get(tbNpc.children[i])
         if child and child.isDead ~= 1 and self:HasArrived(child.id) == 0 then
             return 0
         end
@@ -1049,7 +995,7 @@ function SimCitizen:ChildrenJoinFight(nListId, code)
     end
 
     for i = 1, size do
-        local child = self:getTbNpc(tbNpc.children[i])
+        local child = self:Get(tbNpc.children[i])
         if child then
             self:JoinFight(child.id, code)
         end
@@ -1068,7 +1014,7 @@ function SimCitizen:ChildrenLeaveFight(nListId, code, reason)
     end
 
     for i = 1, size do
-        local child = self:getTbNpc(tbNpc.children[i])
+        local child = self:Get(tbNpc.children[i])
         if child then
             self:LeaveFight(child.id, code, reason)
         end
@@ -1079,7 +1025,7 @@ end
 -- For child
 function SimCitizen:GetParentPos(nListId)
     local tbNpc = self.fighterList[nListId]
-    local foundParent = self:getTbNpc(tbNpc.parentID)
+    local foundParent = self:Get(tbNpc.parentID)
     if foundParent then
         local nX32, nY32, nW32 = GetNpcPos(foundParent.finalIndex)
         local nW = SubWorldIdx2ID(nW32)
@@ -1091,7 +1037,7 @@ end
 
 function SimCitizen:GetMyPosFromParent(nListId)
     local tbNpc = self.fighterList[nListId]
-    local foundParent = self:getTbNpc(tbNpc.parentID)
+    local foundParent = self:Get(tbNpc.parentID)
     if foundParent then
         return self:GiveChildPos(tbNpc.parentID, tbNpc.childID)
     end
@@ -1101,7 +1047,7 @@ end
 
 function SimCitizen:IsParentFighting(nListId)
     local tbNpc = self.fighterList[nListId]
-    local foundParent = self:getTbNpc(tbNpc.parentID)
+    local foundParent = self:Get(tbNpc.parentID)
     if foundParent and foundParent.isFighting == 1 then
         return 1
     end
@@ -1175,11 +1121,7 @@ end
 function SimCitizen:GetRandomWalkPoint(nListId, currentPosId)
     local tbNpc = self.fighterList[nListId]
 
-    if tbNpc.role == "keoxe" or tbNpc.role == "child" then
-        return "none"
-    end
-
-    if not tbNpc.worldInfo or not tbNpc.worldInfo.walkGraph then
+    if tbNpc.role == "child" or not tbNpc.worldInfo or not tbNpc.worldInfo.walkGraph then
         return "none"
     end
 
@@ -1264,3 +1206,86 @@ function SimCitizen:GetRandomWalkPoint(nListId, currentPosId)
         end
     end
 end
+
+
+
+
+function SimCitizen:ClearMap(nW, targetListId)
+    -- Get info for npc in this world
+    for key, fighter in self.fighterList do
+        if fighter.nMapId == nW then
+            if (not targetListId) or (targetListId == fighter.id) then
+                self:Remove(fighter.id)
+            end
+        end
+    end
+end
+
+
+function SimCitizen:ThongBaoBXH(nW)
+    -- Collect all data
+    local allPlayers = {}
+    for i, fighter in self.fighterList do
+        if fighter.nMapId == nW then
+            tinsert(allPlayers, { i, fighter.fightingScore, "npc" })
+        end
+    end
+
+    if (SimCityTongKim.playerInTK and SimCityTongKim.playerInTK[nW]) then
+        for pId, data in SimCityTongKim.playerInTK[nW] do
+            tinsert(allPlayers, { pId, data.score, "player" })
+        end
+    end
+
+    if getn(allPlayers) > 1 then
+        local maxIndex = getn(allPlayers)
+        if maxIndex > 10 then
+            maxIndex = 10
+        end
+
+        sort(allPlayers, _sortByScore)
+
+        Msg2Map(nW, "<color=yellow>========= B¶NG XÕP H¹NG =========<color>")
+        Msg2Map(nW, "<color=yellow>=================================<color>")
+
+        for j = 1, maxIndex do
+            local info = allPlayers[j]
+
+            if info[3] == "npc" then
+                local fighter = self.fighterList[info[1]]
+                if fighter then
+                    local phe = ""
+
+                    if (fighter.tongkim == 1) then
+                        if (fighter.tongkim_name) then
+                            phe = fighter.tongkim_name
+                        else
+                            phe = "Kim"
+                            if fighter.camp == 1 then
+                                phe = "Tèng"
+                            end
+                        end
+                    end
+
+                    if phe == "Kim" then
+                        phe = "K"
+                    else
+                        phe = "T"
+                    end
+
+                    local msg = "<color=white>" .. j .. " <color=yellow>[" .. phe .. "] " ..
+                        SimCityTongKim.RANKS[fighter.rank] .. " <color>" ..
+                        (fighter.hardsetName or SimCityNPCInfo:getName(fighter.nNpcId)) .. "<color=white> (" ..
+                        allPlayers[j][2] .. ")<color>"
+                    Msg2Map(nW, msg)
+                end
+            else
+                local tbPlayer = SimCityTongKim.playerInTK[nW][info[1]]
+                local msg = "<color=white>" .. j .. " <color=red>[" .. (tbPlayer.phe) .. "] " .. (tbPlayer.rank) ..
+                    " <color>" .. (tbPlayer.name) .. "<color=white> (" .. (tbPlayer.score) .. ")<color>"
+                Msg2Map(nW, msg)
+            end
+        end
+        Msg2Map(nW, "<color=yellow>=================================<color>")
+    end
+end 

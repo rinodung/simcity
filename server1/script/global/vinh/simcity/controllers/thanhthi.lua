@@ -38,7 +38,7 @@ function SimCityMainThanhThi:_createSingle(id, Map, config)
 	end
 
 	-- Create parent
-	FighterManager:Add(objCopy(npcConfig))
+	SimCitizen:New(objCopy(npcConfig))
 end
 
 function SimCityMainThanhThi:_createTeamPatrol(nW, thonglinh, linh, N, path)
@@ -49,7 +49,7 @@ function SimCityMainThanhThi:_createTeamPatrol(nW, thonglinh, linh, N, path)
 	end
 
 
-	FighterManager:Add({
+	SimCitizen:New({
 		nNpcId = thonglinh,   -- required, main char ID
 		nMapId = nW,          -- required, map
 		camp = 0,             -- optional, camp
@@ -121,7 +121,7 @@ end
 
 function SimCityMainThanhThi:removeAll()
 	local nW, nX, nY = GetWorldPos()
-	FighterManager:ClearMap(nW)
+	SimCitizen:ClearMap(nW)
 end
 
 -- MAIN DIALOG FUNCTIONS
@@ -301,8 +301,7 @@ function SimCityMainThanhThi:mainMenu()
 			"TriÖu MÉn: b¶n ®å nµy ch­a ®­îc më.<enter><enter>C¸c h¹ cã thÓ ®ãng gãp <color=yellow>b¶n ®å ®­îc ®­êng ®i<color> ®Õn t¸c gi¶ trªn fb héi qu¸n kh«ng?")
 	else
 		local counter = 0
-		for k, id in FighterManager.fighterList do
-			local v = FighterManager:Get(id)
+		for k, v in SimCitizen.fighterList do
 			if v.nMapId and v.nMapId == nW then
 				counter = counter + 1
 			end
@@ -344,7 +343,7 @@ function SimCityMainThanhThi:autoThanhThi(inp)
 	if (inp == 0) then
 		for k, v in self.worldStatus do
 			self.worldStatus["w" .. v.world] = nil
-			FighterManager:ClearMap(v.world)
+			SimCitizen:ClearMap(v.world)
 		end
 	else
 		self:onPlayerEnterMap()
@@ -527,8 +526,7 @@ function processNextBatch(currentIndex, Map, config)
 	if currentIndex <= getn(batches) then
 		local batch = batches[currentIndex]
 		local counter = 0
-		for k, id in FighterManager.fighterList do
-			local v = FighterManager:Get(id)
+		for k, v in SimCitizen.fighterList do
 			if getn(batch) > 0 and v.nMapId ~= nil and v.nMapId == batch[1][2] then
 				counter = counter + 1
 			end

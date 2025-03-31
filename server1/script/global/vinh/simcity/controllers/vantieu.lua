@@ -65,7 +65,7 @@ function SimCityMainVanTieu:tao1xe()
 	end
 
 
-	local nListId = FighterManager:Add({
+	local nListId = SimCitizen:New({
 		mode = "vantieu",
 		szName = name,
 
