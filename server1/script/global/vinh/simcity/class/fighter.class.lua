@@ -36,6 +36,18 @@ function NpcFighter:New(fighter)
         return nil
     end
 
+
+    -- All good generate name for Thanh Thi
+    if tbNpc.mode == nil or tbNpc.mode == "thanhthi" or tbNpc.mode == "train" then
+        if tbNpc.worldInfo.showName == 1 then
+            if (not tbNpc.szName) or tbNpc.szName == "" then
+                tbNpc.szName = SimCityNPCInfo:getName(tbNpc.nNpcId)
+            end
+        else
+            tbNpc.szName = " "
+        end
+    end
+
     for k, v in fighter do
         tbNpc[k] = v
     end
