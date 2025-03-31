@@ -1,17 +1,17 @@
 Include("\\script\\global\\vinh\\simcity\\config.lua")
 IncludeLib("NPCINFO")
-NpcFighter = {
+SimCitizen = {
 
     fighterList = {},
     counter = 1,
     removedIds = {}
 }
 
-function NpcFighter:getTbNpc(nListId)
+function SimCitizen:getTbNpc(nListId)
     return self.fighterList[nListId]
 end
 
-function NpcFighter:New(fighter)
+function SimCitizen:New(fighter)
 
     -- Setup minimum config
     self:initCharConfig(fighter)
@@ -58,7 +58,7 @@ function NpcFighter:New(fighter)
             tbNpc.szName = " "
         end
     end
-    
+
     self.fighterList[nListId] = tbNpc
     tbNpc.nPosId = self:GetRandomWalkPoint(nListId)
 
@@ -79,7 +79,7 @@ function NpcFighter:New(fighter)
     return nListId
 end
 
-function NpcFighter:Remove(nListId)
+function SimCitizen:Remove(nListId)
     local tbNpc = self.fighterList[nListId]
     if tbNpc then
         DelNpcSafe(tbNpc.finalIndex)
@@ -94,7 +94,7 @@ function NpcFighter:Remove(nListId)
     end
 end
 
-function NpcFighter:Show(nListId, isNew, goX, goY)
+function SimCitizen:Show(nListId, isNew, goX, goY)
     local tbNpc = self.fighterList[nListId]
     
     local nMapIndex = SubWorldID2Idx(tbNpc.nMapId)
@@ -161,7 +161,7 @@ function NpcFighter:Show(nListId, isNew, goX, goY)
                 if nPosCount ~= nil then
                     SetNpcActiveRegion(nNpcIndex, 1)
                     SetNpcParam(nNpcIndex, PARAM_LIST_ID, tbNpc.id)
-                    SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\fighter.timer.lua")
+                    SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\sim_citizen.timer.lua")
                     SetNpcTimer(nNpcIndex, REFRESH_RATE)
                 end
 
@@ -203,7 +203,7 @@ function NpcFighter:Show(nListId, isNew, goX, goY)
     return 0
 end
 
-function NpcFighter:Respawn(nListId, code, reason)
+function SimCitizen:Respawn(nListId, code, reason)
     local tbNpc = self.fighterList[nListId]
     -- code: 0: con nv con song 1: da chet toan bo 2: keo xe qua map khac 3: chuyen sang chien dau 4: bi lag dung 1 cho nay gio ko di duoc
     --print(tbNpc.role .. " " .. tbNpc.szName .. ": respawn " .. code .. " " .. reason)
@@ -263,7 +263,7 @@ function NpcFighter:Respawn(nListId, code, reason)
     self:Show(nListId, 0, nX, nY)
 end
 
-function NpcFighter:IsNpcEnemyAround(nListId)
+function SimCitizen:IsNpcEnemyAround(nListId)
     local tbNpc = self.fighterList[nListId]
     local allNpcs = {}
     local nCount = 0
@@ -294,7 +294,7 @@ function NpcFighter:IsNpcEnemyAround(nListId)
     return 0
 end
 
-function NpcFighter:IsDialogNpcAround(nListId)
+function SimCitizen:IsDialogNpcAround(nListId)
     local tbNpc = self.fighterList[nListId]
     if tbNpc.mode ~= "thanhthi" then        
         return 0
@@ -340,7 +340,7 @@ function NpcFighter:IsDialogNpcAround(nListId)
     return 0
 end
 
-function NpcFighter:IsPlayerEnemyAround(nListId)
+function SimCitizen:IsPlayerEnemyAround(nListId)
     local tbNpc = self.fighterList[nListId]
     -- FIGHT other player
     if GetNpcAroundPlayerList then
@@ -356,7 +356,7 @@ function NpcFighter:IsPlayerEnemyAround(nListId)
     return 0
 end
 
-function NpcFighter:JoinFight(nListId, reason)
+function SimCitizen:JoinFight(nListId, reason)
     local tbNpc = self.fighterList[nListId]
     self:ChildrenJoinFight(nListId, reason)
     tbNpc.isFighting = 1
@@ -392,7 +392,7 @@ function NpcFighter:JoinFight(nListId, reason)
     return 1
 end
 
-function NpcFighter:LeaveFight(nListId, isAllDead, reason)
+function SimCitizen:LeaveFight(nListId, isAllDead, reason)
     local tbNpc = self.fighterList[nListId]
     self:ChildrenLeaveFight(nListId,isAllDead, reason)
 
@@ -412,7 +412,7 @@ function NpcFighter:LeaveFight(nListId, isAllDead, reason)
     end
 end
 
-function NpcFighter:CanLeaveFight(nListId)
+function SimCitizen:CanLeaveFight(nListId)
     local tbNpc = self.fighterList[nListId]
     if tbNpc.isDead == 1 then
         return 0
@@ -434,19 +434,19 @@ function NpcFighter:CanLeaveFight(nListId)
     return 0
 end
 
-function NpcFighter:SetFightState(nListId, mode)
+function SimCitizen:SetFightState(nListId, mode)
     local tbNpc = self.fighterList[nListId]
     SetNpcAI(tbNpc.finalIndex, mode)
 end
 
-function NpcFighter:TriggerFightWithNPC(nListId)
+function SimCitizen:TriggerFightWithNPC(nListId)
     if (self:IsNpcEnemyAround(nListId) == 1) then
         return self:JoinFight(nListId, "enemy around")
     end
     return 0
 end
 
-function NpcFighter:TriggerFightWithPlayer(nListId)
+function SimCitizen:TriggerFightWithPlayer(nListId)
     local tbNpc = self.fighterList[nListId]
     -- FIGHT other player
     if GetNpcAroundPlayerList then
@@ -469,7 +469,7 @@ function NpcFighter:TriggerFightWithPlayer(nListId)
     return 0
 end
 
-function NpcFighter:HasArrived(nListId)
+function SimCitizen:HasArrived(nListId)
     local tbNpc = self.fighterList[nListId]
     local nX32, nY32 = GetNpcPos(tbNpc.finalIndex)
     local oX = nX32 / 32;
@@ -505,7 +505,7 @@ function NpcFighter:HasArrived(nListId)
 end
 
 
-function NpcFighter:HardResetPos(nListId)
+function SimCitizen:HardResetPos(nListId)
     local tbNpc = self.fighterList[nListId]
     local nW = tbNpc.nMapId
 
@@ -534,7 +534,7 @@ function NpcFighter:HardResetPos(nListId)
     return 1
 end
 
-function NpcFighter:Breath(nListId)
+function SimCitizen:Breath(nListId)
     local tbNpc = self.fighterList[nListId]
     local nX32, nY32, nW32 = GetNpcPos(tbNpc.finalIndex)
     local nW = SubWorldIdx2ID(nW32)
@@ -811,7 +811,7 @@ function NpcFighter:Breath(nListId)
     return 1
 end
 
-function NpcFighter:OnTimer(nListId)
+function SimCitizen:OnTimer(nListId)
     local tbNpc = self.fighterList[nListId]
     if tbNpc == nil then
         return 0
@@ -833,7 +833,7 @@ function NpcFighter:OnTimer(nListId)
     return 1
 end
 
-function NpcFighter:OnDeath(nListId, nNpcIndex)
+function SimCitizen:OnDeath(nListId, nNpcIndex)
     local tbNpc = self.fighterList[nListId]
     if tbNpc == nil then
         return 0
@@ -917,7 +917,7 @@ function NpcFighter:OnDeath(nListId, nNpcIndex)
         -- No revive? Do removal
         if tbNpc.noRevive == 1 then
             if tbNpc.role == "citizen" then
-                FighterManager:Remove(tbNpc.id)
+                self:Remove(nListId)
             end
             return 1
         end
@@ -926,13 +926,13 @@ function NpcFighter:OnDeath(nListId, nNpcIndex)
     end
 end
 
-function NpcFighter:KillTimer(nListId)
+function SimCitizen:KillTimer(nListId)
     local tbNpc = self.fighterList[nListId]
     tbNpc.killTimer = 1
 end
 
 -- For keo xe
-function NpcFighter:GetPlayer(nListId)
+function SimCitizen:GetPlayer(nListId)
     local tbNpc = self.fighterList[nListId]
     if tbNpc.playerID == "" then
         return 0
@@ -941,7 +941,7 @@ function NpcFighter:GetPlayer(nListId)
 end
 
 -- For parent
-function NpcFighter:SetupChildren(nListId, parentConfig)
+function SimCitizen:SetupChildren(nListId, parentConfig)
     local tbNpc = self.fighterList[nListId]
     if tbNpc.childrenSetup and getn(tbNpc.childrenSetup) > 0 then
         local createdChildren = {}
@@ -972,7 +972,7 @@ function NpcFighter:SetupChildren(nListId, parentConfig)
     end
 end
 
-function NpcFighter:GiveChildPos(nListId, i)
+function SimCitizen:GiveChildPos(nListId, i)
     local tbNpc = self.fighterList[nListId]
     if tbNpc == nil then
         return 0, 0, 0
@@ -983,7 +983,7 @@ function NpcFighter:GiveChildPos(nListId, i)
     return 0, 0, 0
 end
 
-function NpcFighter:CalculateChildrenPosition(nListId, X, Y)
+function SimCitizen:CalculateChildrenPosition(nListId, X, Y)
     local tbNpc = self.fighterList[nListId]
     if not tbNpc.children then
         return 1
@@ -1019,7 +1019,7 @@ function NpcFighter:CalculateChildrenPosition(nListId, X, Y)
     end
 end
 
-function NpcFighter:ChildrenArrived(nListId)
+function SimCitizen:ChildrenArrived(nListId)
     local tbNpc = self.fighterList[nListId]
     if not tbNpc.children then
         return 1
@@ -1038,7 +1038,7 @@ function NpcFighter:ChildrenArrived(nListId)
     return 1
 end
 
-function NpcFighter:ChildrenJoinFight(nListId, code)
+function SimCitizen:ChildrenJoinFight(nListId, code)
     local tbNpc = self.fighterList[nListId]
     if not tbNpc.children then
         return 1
@@ -1057,7 +1057,7 @@ function NpcFighter:ChildrenJoinFight(nListId, code)
     return 1
 end
 
-function NpcFighter:ChildrenLeaveFight(nListId, code, reason)
+function SimCitizen:ChildrenLeaveFight(nListId, code, reason)
     local tbNpc = self.fighterList[nListId]
     if not tbNpc.children then
         return 1
@@ -1077,7 +1077,7 @@ function NpcFighter:ChildrenLeaveFight(nListId, code, reason)
 end
 
 -- For child
-function NpcFighter:GetParentPos(nListId)
+function SimCitizen:GetParentPos(nListId)
     local tbNpc = self.fighterList[nListId]
     local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent then
@@ -1089,7 +1089,7 @@ function NpcFighter:GetParentPos(nListId)
     return 0, 0, 0
 end
 
-function NpcFighter:GetMyPosFromParent(nListId)
+function SimCitizen:GetMyPosFromParent(nListId)
     local tbNpc = self.fighterList[nListId]
     local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent then
@@ -1099,7 +1099,7 @@ function NpcFighter:GetMyPosFromParent(nListId)
     return 0, 0, 0
 end
 
-function NpcFighter:IsParentFighting(nListId)
+function SimCitizen:IsParentFighting(nListId)
     local tbNpc = self.fighterList[nListId]
     local foundParent = self:getTbNpc(tbNpc.parentID)
     if foundParent and foundParent.isFighting == 1 then
@@ -1111,7 +1111,7 @@ end
    
  
 
-function NpcFighter:AddScoreToAroundNPC(nListId, nNpcIndex, currRank)
+function SimCitizen:AddScoreToAroundNPC(nListId, nNpcIndex, currRank)
     local fighter = self.fighterList[nListId]
     local allNpcs, nCount = GetNpcAroundNpcList(nNpcIndex, 15)
     local foundfighters = {}
@@ -1145,7 +1145,7 @@ function NpcFighter:AddScoreToAroundNPC(nListId, nNpcIndex, currRank)
     return 0
 end
 
-function NpcFighter:initCharConfig(config)
+function SimCitizen:initCharConfig(config)
     config.playerID = config.playerID or "" -- dang theo sau ai do
 
 
@@ -1172,7 +1172,7 @@ end
 
 
 
-function NpcFighter:GetRandomWalkPoint(nListId, currentPosId)
+function SimCitizen:GetRandomWalkPoint(nListId, currentPosId)
     local tbNpc = self.fighterList[nListId]
 
     if tbNpc.role == "keoxe" or tbNpc.role == "child" then
