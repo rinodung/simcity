@@ -109,10 +109,10 @@ function SimCityChienTranh:taoNV(id, camp, mapID, map, nt, theosau, capHP)
 		realCamp = 0
 	end
 
-	local hardsetName = (nt == 1 and SimCityPlayerName:getName()) or SimCityNPCInfo:getName(id)
+	local hardsetName = (nt == 1 and SimCityNPCInfo:generateName()) or SimCityNPCInfo:getName(id)
 	if self.tongkim == 1 then
 		realCamp = camp
-		hardsetName = (nt == 1 and SimCityPlayerName:getName()) or nil
+		hardsetName = (nt == 1 and SimCityNPCInfo:generateName()) or nil
 	end
 
 
@@ -342,7 +342,7 @@ function SimCityChienTranh:phe_tudo_xe(startNPCIndex, perPage, ngoaitrang)
 			if SimCityNPCInfo:notFightingChar(id) == 0 and (runSpeed == 0 or abs(mySpeed - runSpeed) <= 1) then
 				tinsert(children, {
 					nNpcId = id,
-					szName = (ngoaitrang == 1 and SimCityPlayerName:getName()) or SimCityNPCInfo:getName(id)
+					szName = (ngoaitrang == 1 and SimCityNPCInfo:generateName()) or SimCityNPCInfo:getName(id)
 				})
 			end
 		end
@@ -400,7 +400,7 @@ function SimCityChienTranh:nv_tudo_xe(capHP)
 			if SimCityNPCInfo:notFightingChar(id) == 0 and (runSpeed == 0 or abs(mySpeed - runSpeed) <= 2) then
 				tinsert(children, {
 					nNpcId = id,
-					szName = SimCityPlayerName:getName() or SimCityNPCInfo:getName(id)
+					szName = SimCityNPCInfo:generateName() or SimCityNPCInfo:getName(id)
 				})
 			end
 		end

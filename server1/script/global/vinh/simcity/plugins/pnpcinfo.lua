@@ -402,3 +402,7 @@ function SimCityNPCInfo:IsValidFighter(id)
 
 	return 1
 end
+
+function SimCityNPCInfo:generateName()
+	return SimCityPlayerNames[random(1, getn(SimCityPlayerNames))]
+end

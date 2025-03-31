@@ -14,7 +14,7 @@ function SimCityMainThanhThi:_createSingle(id, Map, config)
 	local kind = 4
 
 
-	local hardsetName = (config.ngoaitrang and config.ngoaitrang == 1 and SimCityPlayerName:getName()) or
+	local hardsetName = (config.ngoaitrang and config.ngoaitrang == 1 and SimCityNPCInfo:generateName()) or
 		SimCityNPCInfo:getName(id)
 
 	local npcConfig = {
@@ -484,13 +484,13 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 				for j = 1, 7 do
 					tinsert(children5, {
 						mode = "train",
-						szName = SimCityPlayerName:getName(),
+						szName = SimCityNPCInfo:generateName(),
 						nNpcId = tmpFound[random(1, N)], -- required, main char ID
 					})
 				end
 				tinsert(everything, {{id, nW,
 					{
-						szName = SimCityPlayerName:getName(),
+						szName = SimCityNPCInfo:generateName(),
 						ngoaitrang = 1,
 						mode = "train",
 						level = level or 95,
