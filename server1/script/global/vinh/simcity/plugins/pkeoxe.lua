@@ -16,6 +16,15 @@ SimCityKeoXe = {
 
 }
 
+
+function createTaskSayKeoxe()
+	local tbOpt = {}
+	local nSettingIdx = 103
+	local nActionId = 0
+	tinsert(tbOpt, 1, "<dec><link=image[0,8]:#npcspr:?NPCSID="..tostring(nSettingIdx).."?ACTION="..tostring(nActionId)..">V« Kþ ca:<link> Nh©n sinh nh­ méng, tr­êng l­u v« tËn, gÆp gì chØ lµ tho¸ng qua");
+	return tbOpt
+end
+
 function SimCityKeoXe:init()
 	if self.m_TimerId then
 		TimerList:DelTimer(self.m_TimerId)
@@ -25,11 +34,11 @@ function SimCityKeoXe:init()
 	--self.m_TimerId = TimerList:AddTimer(self, 18)
 end
 
-function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, capHP)
+function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, capHP, extraConfig)
 	local name = GetName()
 	local rank = 1
 
-	local nListId = SimTheoSau:New({
+	local tbNpc = {
 
 		szName = name or "",
 
@@ -70,7 +79,13 @@ function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, capHP)
 		capHP = capHP,
 		role = "keoxe"
 
-	});
+	};
+	if extraConfig then
+		for k, v in extraConfig do
+			tbNpc[k] = v
+		end
+	end
+	local nListId = SimTheoSau:New(tbNpc);
 
 	if not self.collections[name] then
 		self.collections[name] = {}
@@ -115,7 +130,7 @@ function SimCityKeoXe:removeAll()
 end
 
 function SimCityKeoXe:goiAnhHungThiepNgoaiTrang()
-	local tbSay = { "KÐo Xe" }
+	local tbSay = createTaskSayKeoxe()
 
 
 	tinsert(tbSay, "S¬ cÊp/#SimCityKeoXe:nv_tudo_xe(1)")
@@ -130,7 +145,7 @@ function SimCityKeoXe:goiAnhHungThiepNgoaiTrang()
 end
 
 function SimCityKeoXe:goiAnhHungThiep()
-	local tbSay = { "KÐo Xe" }
+	local tbSay = createTaskSayKeoxe()
 
 	-- Chon xe nao
 	tinsert(tbSay, "Më tÊt c¶/#SimCityKeoXe:taonhanhnhom_confirm(0)")
@@ -170,11 +185,141 @@ function SimCityKeoXe:tao1xe(data)
 	end
 end
 
-function SimCityKeoXe:mainMenu()
-	local tbSay = { "KÐo Xe" }
+function SimCityKeoXe:ketgiaoPhai(phai)
+	local tbSay = createTaskSayKeoxe()	
+	if phai == 0 then
+		
+		tinsert(tbSay, "Thiªn V­¬ng Bang/#SimCityKeoXe:ketgiaoPhai(1)")
+		tinsert(tbSay, "ThiÕu L©m/#SimCityKeoXe:ketgiaoPhai(2)")
+		tinsert(tbSay, "Vâ §ang/#SimCityKeoXe:ketgiaoPhai(3)")
+		tinsert(tbSay, "C«n L«n/#SimCityKeoXe:ketgiaoPhai(4)")
+		tinsert(tbSay, "§­êng M«n/#SimCityKeoXe:ketgiaoPhai(5)")
+		tinsert(tbSay, "Ngò §éc/#SimCityKeoXe:ketgiaoPhai(6)")
+		tinsert(tbSay, "Nga Mi/#SimCityKeoXe:ketgiaoPhai(7)")
+		tinsert(tbSay, "Thóy Yªn/#SimCityKeoXe:ketgiaoPhai(8)")
+		tinsert(tbSay, "C¸i Bang/#SimCityKeoXe:ketgiaoPhai(9)")
+		tinsert(tbSay, "Thiªn NhÉn/#SimCityKeoXe:ketgiaoPhai(10)")				
+		tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
+	else
+		self.randomName = {}
+		for i=1, 5 do
+			self.randomName[i] = SimCityNPCInfo:generateName()
+			local gen = random(1,2)
+			if phai == 2 then 
+				gen = 1
+			elseif	phai == 7 or phai == 8 then
+				gen = 2
+			end
 
-	tinsert(tbSay, "T¹o nhãm anh hïng/#SimCityKeoXe:goiAnhHungThiepNgoaiTrang()")
-	tinsert(tbSay, "T¹o nhãm qu¸i nh©n/#SimCityKeoXe:goiAnhHungThiep()")
+			local gioiTinh = "Nam"
+			if gen == 2 then
+				gioiTinh = "N÷"
+			end
+
+			
+			local ten = self.randomName[i]
+
+			tinsert(tbSay, format("%s (%s)/#SimCityKeoXe:taoBangHuu(%s, %d, %s)", ten, gioiTinh, phai, gen, i))
+		end
+		tinsert(tbSay, format("T×m thªm/#SimCityKeoXe:ketgiaoPhai(%d)", phai))
+		tinsert(tbSay, format("Quay l¹i/#SimCityKeoXe:ketgiaoPhai(%d)", 0))
+		tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
+
+	end
+	
+	CreateTaskSay(tbSay)
+	return 1
+end 
+
+function SimCityKeoXe:taoBangHuu(phai, gen, tenIndex)
+	local ten = self.randomName[tenIndex]
+	local forCamp = GetCurCamp()
+	local pW, pX, pY = GetWorldPos()
+	local tenPhai = "thienvuongbang"
+	if phai == 2 then
+		tenPhai = "thieulam"
+	elseif phai == 3 then
+		tenPhai = "vodang"
+	elseif phai == 4 then
+		tenPhai = "conlon"
+	elseif phai == 5 then
+		tenPhai = "duongmon"
+	elseif phai == 6 then
+		tenPhai = "ngudoc"
+	elseif phai == 7 then
+		tenPhai = "ngami"
+	elseif phai == 8 then
+		tenPhai = "thuyyen"
+	elseif phai == 9 then
+		tenPhai = "caibang"
+	elseif phai == 10 then
+		tenPhai = "thiennhan"				
+	end
+	-- 1193, 1786, 1481, 1765: thienvuongbang
+	-- 1194, 1787, 1766: thieulam
+	-- 1196, 1788, 1488, 1767: ngudoc
+	-- 1195, 1789, 1485, 1768: duongmon
+	-- 1197, 1790, 1483, 1769: ngami
+	-- 1198, 1791, 1482, 1770: thuyyen
+	-- 1201, 1792, 1480 (thien ngoai), 1484 (van long kich), 1771 (thien ngoai): thiennhan 
+	-- 1199, 1793, 1489, 1772: caibang
+	-- 1200, 1794, 1486, 1773: vodang
+	-- 1202, 1795, 1487, 1774: conlon
+	
+
+	local id = 1193
+	local pool = {1193}
+	local series = 0
+	if tenPhai == "thienvuongbang" then
+		pool = {1193, 1786, 1481, 1765}
+	elseif tenPhai == "thieulam" then
+		pool = {1194, 1787, 1766}
+	elseif tenPhai == "ngudoc" then
+		series = 1
+		pool = {1196, 1788, 1488, 1767}
+	elseif tenPhai == "duongmon" then
+		series = 1
+		pool = {1195, 1789, 1485, 1768}
+	elseif tenPhai == "ngami" then
+		series = 2
+		pool = {1197, 1790, 1483, 1769}
+	elseif tenPhai == "thuyyen" then
+		series = 2
+		pool = {1198, 1791, 1482, 1770}
+	elseif tenPhai == "thiennhan" then
+		series = 3
+		pool = {1201, 1792, 1480, 1484, 1771}
+	elseif tenPhai == "caibang" then
+		series = 3
+		pool = {1199, 1793, 1489, 1772}
+	elseif tenPhai == "vodang" then
+		series = 4
+		pool = {1200, 1794, 1486, 1773}
+	elseif tenPhai == "conlon" then
+		series = 4
+		pool = {1202, 1795, 1487, 1774}
+	end
+
+	id = pool[random(1, getn(pool))]
+	local realGen = -2
+	if gen == 1 then
+		realGen = -1
+	end
+
+	self:taoNV(id, forCamp, pW, 1, 1, {}, 1, {
+		szName = ten,
+		nSettingsIdx = realGen,
+		series = series
+	})
+	
+end
+
+function SimCityKeoXe:mainMenu()
+	local tbSay = createTaskSayKeoxe()
+
+	tinsert(tbSay, "KÕt giao b»ng h÷u/#SimCityKeoXe:ketgiaoPhai(0)")
+	tinsert(tbSay, "KÕt giao nhãm anh hïng/#SimCityKeoXe:goiAnhHungThiepNgoaiTrang()")
+	tinsert(tbSay, "KÕt giao nhãm qu¸i nh©n/#SimCityKeoXe:goiAnhHungThiep()")
 	--tinsert(tbSay, "ThiÕt lËp/#SimCityKeoXe:caidat()")
 	tinsert(tbSay, "T¹o b·i luyÖn c«ng/#SimCityKeoXe:luyencong()")
 	tinsert(tbSay, "Gi¶i t¸n/#SimCityKeoXe:removeAll()")
@@ -184,22 +329,20 @@ function SimCityKeoXe:mainMenu()
 	return 1
 end
 
+function SimCityKeoXe:askBaiLevel()
+	g_AskClientNumberEx(0, 110, "CÊp qu¸i", { self.askBaiLevel_confirm , {self}})
+end
+function SimCityKeoXe:askBaiLevel_confirm(inp)
+	local level = tonumber(inp)
+	level = floor(level/10) * 10
+	self:TaoBai(level)
+end
 function SimCityKeoXe:luyencong()
 	local tab_Content = {
+		
+		"Tù ®éng/#SimCityKeoXe:TaoBai(999)",
+		"Chän cÊp/#SimCityKeoXe:askBaiLevel()",
 		"Xãa qu¸i xung quanh/#SimCityKeoXe:XoaBai()",
-		"Qu¸i th­êng/#SimCityKeoXe:TaoBai(999)",
-		"Qu¸i cÊp 110/#SimCityKeoXe:TaoBai(110)",
-		"Qu¸i cÊp 100/#SimCityKeoXe:TaoBai(100)",
-		"Qu¸i cÊp 90/#SimCityKeoXe:TaoBai(90)",
-		"Qu¸i cÊp 80/#SimCityKeoXe:TaoBai(80)",
-		"Qu¸i cÊp 70/#SimCityKeoXe:TaoBai(70)",
-		"Qu¸i cÊp 60/#SimCityKeoXe:TaoBai(60)",
-
-		"Qu¸i cÊp 50/#SimCityKeoXe:TaoBai(50)",
-		"Qu¸i cÊp 40/#SimCityKeoXe:TaoBai(40)",
-		"Qu¸i cÊp 30/#SimCityKeoXe:TaoBai(30)",
-		"Qu¸i cÊp 20/#SimCityKeoXe:TaoBai(20)",
-		"Qu¸i cÊp 10/#SimCityKeoXe:TaoBai(10)",
 		"Tho¸t/no",
 	}
 	Say("Chän nhãm qu¸i", getn(tab_Content), tab_Content);
