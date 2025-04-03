@@ -113,12 +113,14 @@ function SimCityMainThanhThi:createAnhHung(capHP, perPage, ngoaitrang)
 	end
 end
 
-function SimCityMainThanhThi:createNpcSet(startNPCIndex, perPage, ngoaitrang)
+function SimCityMainThanhThi:createNpcSet(cap, total, ngoaitrang)
 	local mapID, nX, nY = GetWorldPos()
-
-	for i = 0, perPage do
-		local id = startNPCIndex + i
-		self:_createSingle(id, mapID, { ngoaitrang = ngoaitrang or 0 })
+	local pool = SimCityNPCInfo:getQuaiByCap(cap)
+	for i = 0, total do
+		local id = pool[random(1, getn(pool))]
+		if (SimCityNPCInfo:IsValidFighter(id) == 1) then
+			self:_createSingle(id, mapID, { ngoaitrang = ngoaitrang or 0 })
+		end
 	end
 end
 
@@ -276,10 +278,10 @@ function SimCityMainThanhThi:goiAnhHungThiep()
 
 
 	local tbSay = { worldInfo.name .. " Vâ L©m §¹i Héi" }
-	tinsert(tbSay, "Cao cÊp 1/#SimCityMainThanhThi:createNpcSet(1000,500)")
-	tinsert(tbSay, "Cao cÊp 2/#SimCityMainThanhThi:createNpcSet(1500,500)")
-	tinsert(tbSay, "Cao cÊp 3/#SimCityMainThanhThi:createNpcSet(2000,500)")
-	tinsert(tbSay, "Trung cÊp/#SimCityMainThanhThi:createNpcSet(500,500)")
+	tinsert(tbSay, "Cao cÊp 1/#SimCityMainThanhThi:createNpcSet(4,100)")
+	tinsert(tbSay, "Cao cÊp 2/#SimCityMainThanhThi:createNpcSet(3,100)")
+	tinsert(tbSay, "Cao cÊp 3/#SimCityMainThanhThi:createNpcSet(2,100)")
+	tinsert(tbSay, "Trung cÊp/#SimCityMainThanhThi:createNpcSet(1,100)")
 	--tinsert(tbSay, "Tù chän/#SimCityMainThanhThi:createNpcCustomAsk()")
 	tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
 	CreateTaskSay(tbSay)
@@ -296,11 +298,11 @@ function SimCityMainThanhThi:thanhthiMenu()
 	else
 		local tbSay = { "ThiÕt lËp " .. worldInfo.name }
 
-		if worldInfo.allowFighting == 1 then
-			tinsert(tbSay, "Cho phÐp ®¸nh nhau [cã]/#SimCityMainThanhThi:allowFighting(0)")
-		else
-			tinsert(tbSay, "Cho phÐp ®¸nh nhau [kh«ng]/#SimCityMainThanhThi:allowFighting(1)")
-		end
+		--if worldInfo.allowFighting == 1 then
+		--	tinsert(tbSay, "Cho phÐp ®¸nh nhau [cã]/#SimCityMainThanhThi:allowFighting(0)")
+		--else
+		--	tinsert(tbSay, "Cho phÐp ®¸nh nhau [kh«ng]/#SimCityMainThanhThi:allowFighting(1)")
+		--end
 
 		tinsert(tbSay, "Thªm anh hïng/#SimCityMainThanhThi:goiAnhHungThiepNgoaiTrang()")
 		tinsert(tbSay, "Thªm qu¸i nh©n/#SimCityMainThanhThi:goiAnhHungThiep()")
@@ -458,8 +460,10 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 			end
 		end
 
+		local isThanhThi = SimCityWorld:IsThanhThiMap(nW) == 1
+
 		-- Them 9x vao Thanh Thi
-		if SimCityWorld:IsThanhThiMap(nW) == 1 or getn(tmpFound) == 0 then
+		if isThanhThi or getn(tmpFound) == 0 then
 			tmpFound = arrJoin({ tmpFound, SimCityNPCInfo:getPoolByCap(1) })
 			for j = 511, 523 do
 				tinsert(tmpFound, j)
@@ -470,7 +474,7 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 		end
 
 
-		if SimCityWorld:IsThanhThiMap(nW) == 1 then
+		if isThanhThi then
 			total = self.thanhThiSize
 			map9x = 0
 		end
@@ -478,6 +482,12 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 		local N = getn(tmpFound)
 
 		if map9x == 0 then
+			if isThanhThi then
+				worldInfo.allowFighting = 0
+			else
+				worldInfo.allowFighting = 1
+			end
+			
 			-- Split into 4 tables of 50 NPCs each
 			local table1 = {}
 			local table2 = {}
@@ -488,11 +498,24 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 			-- Fill each table with 40 random NPCs
 			local perTable = floor(total/5)
 			for i = 1, perTable do
-				tinsert(table1, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
-				tinsert(table2, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
-				tinsert(table3, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
-				tinsert(table4, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
-				tinsert(table5, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
+
+				if isThanhThi and random(1,3) == 1 then
+					local capQuai = random(1,4)
+					local pool = SimCityNPCInfo:getQuaiByCap(capQuai)
+					local poolN = getn(pool)
+					tinsert(table1, {pool[random(1, poolN)], nW, { ngoaitrang = 0, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+					tinsert(table2, {pool[random(1, poolN)], nW, { ngoaitrang = 0, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+					tinsert(table3, {pool[random(1, poolN)], nW, { ngoaitrang = 0, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+					tinsert(table4, {pool[random(1, poolN)], nW, { ngoaitrang = 0, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+					tinsert(table5, {pool[random(1, poolN)], nW, { ngoaitrang = 0, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+				else
+					tinsert(table1, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+					tinsert(table2, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+					tinsert(table3, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+					tinsert(table4, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+					tinsert(table5, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 4) == 1 and "preset" or "random"}})
+				end
+				
 			end
 
 			-- Add all tables to everything array
@@ -504,6 +527,7 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 				table5
 			})			
 		else
+			worldInfo.allowFighting = 1
 			total = 20 -- 20 PT tat ca
 			local everything = {}
 			for i = 1, total do
