@@ -109,7 +109,7 @@ toavandong_2 = {
 map_toavandong = {
 	worldId = 6, 
 	name = "Táa V©n §éng", 
-	walkAreas = {
+	walkPaths = {
 		toavandong_1,
 		toavandong_2
 	}, 

@@ -109,7 +109,7 @@ hoason_bac = {
 map_hoason = {
 	worldId = 987, 
 	name = "Hoa S¬n", 
-	walkAreas = {
+	walkPaths = {
 		hoason_nam,
 		hoason_bac
 	}, 

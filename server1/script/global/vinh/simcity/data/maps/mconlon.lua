@@ -94,7 +94,7 @@ conlon_nambac = {
 map_conlon = {
 	worldId = 131, 
 	name = "C«n L«n", 
-	walkAreas = {
+	walkPaths = {
 		conlon_trungtam,
 		conlon_nambac
 	}, 

@@ -9,7 +9,7 @@ RADIUS_FIGHT_NPC = 8         -- tam quet NPC chung quanh va tan cong
 RADIUS_FIGHT_SCAN = 8        -- tam quet dam danh nhau chung quanh de tham gia
 
 
-CHANCE_CHAT = 5                -- 5/1000 co hoi noi chuyen moi giay
+CHANCE_CHAT = 10               -- 10/1000 co hoi noi chuyen moi giay
 CHANCE_DROP_MONEY = 1 		   -- 1/10000 co hoi lam rot tien khi duy chuyen
 
 

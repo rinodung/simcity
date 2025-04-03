@@ -52,7 +52,7 @@ hacsadong ={
 map_hacsadong = {
 	worldId = 875, 
 	name = "H¾c Sa §éng", 
-	walkAreas = {
+	walkPaths = {
 		hacsadong
 	}, 
 	decoration = {},

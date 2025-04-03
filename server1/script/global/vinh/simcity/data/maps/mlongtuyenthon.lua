@@ -205,7 +205,7 @@ longtuyenthon_dong = {
 map_longtuyenthon = {
 	worldId = 174, 
 	name = "Long TuyÒn Th«n", 
-	walkAreas = {
+	walkPaths = {
 		longtuyenthon_dong,
 		longtuyenthon_nam,
 		longtuyenthon_tay

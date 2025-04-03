@@ -68,7 +68,7 @@ samactang2 ={
 map_samactang2 = {
 	worldId = 226, 
 	name = "Sa M¹c TÇng 2", 
-	walkAreas = {
+	walkPaths = {
 		samactang2
 	}, 
 	decoration = {},

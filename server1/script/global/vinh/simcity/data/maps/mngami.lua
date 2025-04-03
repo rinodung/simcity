@@ -112,7 +112,7 @@ ngami_bac = {
 map_ngami = {
 	worldId = 13, 
 	name = "Nga Mi", 
-	walkAreas = {
+	walkPaths = {
 		ngami_bac,
 		ngami_nam
 	}, 

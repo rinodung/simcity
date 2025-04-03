@@ -39,7 +39,7 @@ thientamdong ={
 map_thientamdong = {
 	worldId = 42, 
 	name = "Thiªn T©m §éng", 
-	walkAreas = {
+	walkPaths = {
 		thientamdong
 	}, 
 	decoration = {},

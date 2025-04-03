@@ -77,7 +77,7 @@ mecungkequandong_2 = {
 map_mecungkequandong = {
 	worldId = 91, 
 	name = "Mª Cung Kª Qu¸n §éng", 
-	walkAreas = {
+	walkPaths = {
 		mecungkequandong_1,
 		mecungkequandong_2
 	}, 

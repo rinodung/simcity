@@ -158,7 +158,7 @@ vulangson_3 = {
 map_vulangson = {
 	worldId = 70, 
 	name = "Vò L¨ng S¬n", 
-	walkAreas = {
+	walkPaths = {
 		vulangson_1,
 		vulangson_2,
 		vulangson_3

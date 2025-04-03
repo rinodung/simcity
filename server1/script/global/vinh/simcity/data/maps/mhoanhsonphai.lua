@@ -68,7 +68,7 @@ hoanhsonphai ={
 map_hoanhsonphai = {
 	worldId = 56, 
 	name = "Hoµnh S¬n Ph¸i", 
-	walkAreas = {
+	walkPaths = {
 		hoanhsonphai
 	}, 
 	decoration = {},

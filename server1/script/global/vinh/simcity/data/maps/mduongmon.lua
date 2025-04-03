@@ -179,7 +179,7 @@ duongmon_nam = {
 map_duongmon = {
 	worldId = 25, 
 	name = "§­êng M«n", 
-	walkAreas = {
+	walkPaths = {
 		duongmon_bac1,
 		duongmon_bac2,
 		duongmon_nam

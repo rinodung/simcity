@@ -107,7 +107,7 @@ chutientran_bac = {
 map_chutientran = {
 	worldId = 100, 
 	name = "Chu Tiªn TrÊn", 
-	walkAreas = {
+	walkPaths = {
 		chutientran_tay,
 		chutientran_bac
 	}, 

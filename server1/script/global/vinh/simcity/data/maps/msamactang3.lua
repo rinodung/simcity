@@ -135,7 +135,7 @@ samactang3_2 = {
 map_samactang3 = {
 	worldId = 227, 
 	name = "Sa M¹c TÇng 3", 
-	walkAreas = {
+	walkPaths = {
 		samactang3_1,
 		samactang3_2
 	}, 

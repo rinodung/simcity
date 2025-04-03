@@ -82,7 +82,7 @@ bachvandong_2 = {
 map_bachvandong = {
 	worldId = 22, 
 	name = "B¹ch V©n §éng", 
-	walkAreas = {
+	walkPaths = {
 		bachvandong_1,
 		bachvandong_2
 	}, 

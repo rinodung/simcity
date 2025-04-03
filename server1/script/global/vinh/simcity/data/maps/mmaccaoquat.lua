@@ -270,7 +270,7 @@ maccaoquat_4 ={
 map_maccaoquat = {
 	worldId = 340, 
 	name = "M¹c Cao QuËt", 
-	walkAreas = {
+	walkPaths = {
 		maccaoquat_1,
 		maccaoquat_2,
 		maccaoquat_3,

@@ -50,7 +50,7 @@ linhcocdong ={
 map_linhcocdong = {
 	worldId = 94, 
 	name = "Linh Cèc §éng", 
-	walkAreas = {
+	walkPaths = {
 		linhcocdong
 	}, 
 	decoration = {},

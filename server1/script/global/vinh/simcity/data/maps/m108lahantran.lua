@@ -68,7 +68,7 @@ lahantran ={
 map_108lahantran = {
 	worldId = 114, 
 	name = "108 La H¸n TrËn", 
-	walkAreas = {
+	walkPaths = {
 		lahantran
 	}, 
 	decoration = {},

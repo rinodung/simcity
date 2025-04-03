@@ -170,7 +170,7 @@ lamAn_cungPhu4 = {
 map_laman = {
 	worldId = 176, 
 	name = "L©m An", 
-	walkAreas = {
+	walkPaths = {
 		lamAn_cungChinh, 
 		lamAn_cungPhu1, 
 		lamAn_cungPhu2,

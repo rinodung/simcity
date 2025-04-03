@@ -58,7 +58,7 @@ sonbaodong ={
 map_sonbaodong = {
 	worldId = 76, 
 	name = "S¬n B¶o §éng", 
-	walkAreas = {
+	walkPaths = {
 		sonbaodong
 	}, 
 	decoration = {},

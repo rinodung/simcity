@@ -59,7 +59,7 @@ bachthuydong ={
 map_bachthuydong = {
 	worldId = 71, 
 	name = "B¹ch Thñy §éng", 
-	walkAreas = {
+	walkPaths = {
 		bachthuydong
 	}, 
 	decoration = {},

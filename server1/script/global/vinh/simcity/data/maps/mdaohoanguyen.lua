@@ -135,7 +135,7 @@ daohoanguyen_2 = {
 map_daohoanguyen = {
 	worldId = 55, 
 	name = "§µo Hoa Nguyªn", 
-	walkAreas = {
+	walkPaths = {
 		daohoanguyen_1,
 		daohoanguyen_2
 	}, 

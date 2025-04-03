@@ -182,7 +182,7 @@ thienvuongbang_tay = {
 map_thienvuongbang = {
 	worldId = 59, 
 	name = "Thiªn V­¬ng Bang", 
-	walkAreas = {
+	walkPaths = {
 		thienvuongbang_trungtam,
 		thienvuongbang_nam,
 		thienvuongbang_tay

@@ -56,7 +56,7 @@ tanlang ={
 map_tanlang = {
 	worldId = 7, 
 	name = "TÇn L¨ng", 
-	walkAreas = {
+	walkPaths = {
 		tanlang
 	}, 
 	decoration = {},

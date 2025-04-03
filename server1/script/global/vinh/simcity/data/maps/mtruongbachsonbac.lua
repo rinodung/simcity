@@ -269,7 +269,7 @@ truongbachsonbac_4 ={
 map_truongbachsonbac = {
 	worldId = 322, 
 	name = "Tr­êng B¹ch S¬n B¾c", 
-	walkAreas = {
+	walkPaths = {
 		truongbachsonbac_1,
 		truongbachsonbac_2,
 		truongbachsonbac_3,

@@ -61,7 +61,7 @@ tieudao ={
 map_tieudao = {
 	worldId = 1046, 
 	name = "Tiªu Dao", 
-	walkAreas = {
+	walkPaths = {
 		tieudao
 	}, 
 	decoration = {},

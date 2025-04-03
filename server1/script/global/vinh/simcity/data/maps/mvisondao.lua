@@ -202,7 +202,7 @@ visondao_3 ={
 map_visondao = {
 	worldId = 342, 
 	name = "Vi Son §¶o", 
-	walkAreas = {
+	walkPaths = {
 		visondao_1,
 		visondao_2,
 		visondao_3

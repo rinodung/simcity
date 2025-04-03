@@ -37,7 +37,7 @@ manhhodong ={
 map_manhhodong = {
 	worldId = 14, 
 	name = "M·nh Hæ §éng", 
-	walkAreas = {
+	walkPaths = {
 		manhhodong
 	}, 
 	decoration = {},

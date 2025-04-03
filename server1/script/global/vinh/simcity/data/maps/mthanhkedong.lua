@@ -62,7 +62,7 @@ thanhkedong ={
 map_thanhkedong = {
 	worldId = 198, 
 	name = "Thanh Kª §éng", 
-	walkAreas = {
+	walkPaths = {
 		thanhkedong
 	}, 
 	decoration = {},

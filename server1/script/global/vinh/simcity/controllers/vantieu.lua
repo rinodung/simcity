@@ -11,7 +11,7 @@ function SimCityMainVanTieu:InitWorld()
 			SimCityWorld:New({
 				worldId = nW,
 				name = "VËn tiªu",
-				walkAreas = routeMap,
+				walkPaths = routeMap,
 				allowChat = 0,
 				showFightingArea = 1,
 				allowFighting = 1

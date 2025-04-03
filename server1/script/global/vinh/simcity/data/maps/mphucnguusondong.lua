@@ -68,7 +68,7 @@ phucnguusondong ={
 map_phucnguusondong = {
 	worldId = 90, 
 	name = "Phôc Ng­u S¬n §«ng", 
-	walkAreas = {
+	walkPaths = {
 		phucnguusondong
 	}, 
 	decoration = {},

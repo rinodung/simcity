@@ -122,7 +122,7 @@ mieulinh_2 = {
 map_mieulinh = {
 	worldId = 74, 
 	name = "Miªu LÜnh", 
-	walkAreas = {
+	walkPaths = {
 		mieulinh_1,
 		mieulinh_2
 	}, 

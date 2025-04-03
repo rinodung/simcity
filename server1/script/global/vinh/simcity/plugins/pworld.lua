@@ -3,15 +3,15 @@ Include("\\script\\lib\\timerlist.lua")
 
 
 function ComputeWalkGraph(worldMap)
-	local walkAreas = worldMap.walkAreas
+	local walkPaths = worldMap.walkPaths
 	-- Store all exact points (priority points) first
 	local exactPoints = {}
 	local normalPoints = {}
 	
 	-- Separate exact points and normal points
 	local i, j
-	for i = 1, getn(walkAreas) do
-		local path = walkAreas[i]
+	for i = 1, getn(walkPaths) do
+		local path = walkPaths[i]
 		for j = 1, getn(path) do
 			local point = path[j]
 			if point[3] and point[3] == 1 then
@@ -81,8 +81,8 @@ function ComputeWalkGraph(worldMap)
 	end
 	
 	-- Build connections between points based on original paths
-	for i = 1, getn(walkAreas) do
-		local path = walkAreas[i]
+	for i = 1, getn(walkPaths) do
+		local path = walkPaths[i]
 		for j = 1, getn(path)-1 do
 			local p1 = path[j]
 			local p2 = path[j+1]
@@ -140,13 +140,13 @@ function SimCityWorld:New(data)
 	end
 	if self.data["w" .. data.worldId] == nil then
 		data.showingId = 0
-		data.allowFighting = 1
+		data.allowFighting = 0
 		data.allowChat = 1
 		data.showFightingArea = 1
 		data.showName = 1
 		data.showDecoration = 0
 		data.name = data.name or ""
-		data.walkAreas = data.walkAreas or {}
+		data.walkPaths = data.walkPaths or {}
 		data.decoration = data.decoration or {}
 		data.chientranh = data.chientranh or {}
 

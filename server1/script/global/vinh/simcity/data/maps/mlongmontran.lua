@@ -178,7 +178,7 @@ longmontran_nam = {
 map_longmontran = {
 	worldId = 121, 
 	name = "Long M«n TrÊn", 
-	walkAreas = {
+	walkPaths = {
 		longmontran_trungtam,
 		longmontran_bac,
 		longmontran_nam

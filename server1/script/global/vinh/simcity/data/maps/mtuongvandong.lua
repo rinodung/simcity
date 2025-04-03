@@ -56,7 +56,7 @@ tuongvandong ={
 map_tuongvandong = {
 	worldId = 116, 
 	name = "T­êng V©n §éng", 
-	walkAreas = {
+	walkPaths = {
 		tuongvandong
 	}, 
 	decoration = {},

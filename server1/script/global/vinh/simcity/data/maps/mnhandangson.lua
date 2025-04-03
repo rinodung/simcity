@@ -127,7 +127,7 @@ nhandangson_nam2 = {
 map_nhandangson = {
 	worldId = 195, 
 	name = "Nh¹n §¶ng S¬n", 
-	walkAreas = {
+	walkPaths = {
 		nhandangson_bac,
 		nhandangson_nam1,
 		nhandangson_nam2

@@ -41,7 +41,7 @@ thientamthaptang2 ={
 map_thientamthaptang2 = {
 	worldId = 165, 
 	name = "Thiªn TÇm Th¸p TÇng 2", 
-	walkAreas = {
+	walkPaths = {
 		thientamthaptang2
 	}, 
 	decoration = {},

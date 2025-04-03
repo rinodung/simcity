@@ -58,7 +58,7 @@ diemthuongdongtang2 ={
 map_diemthuongdongtang2 = {
 	worldId = 172, 
 	name = "§iÓm Th­¬ng §éng TÇng 2", 
-	walkAreas = {
+	walkPaths = {
 		diemthuongdongtang2
 	}, 
 	decoration = {},
