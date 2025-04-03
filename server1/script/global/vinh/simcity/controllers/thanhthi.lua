@@ -633,8 +633,8 @@ function processBatches()
 		SimCityMainThanhThi.masterTimerId = AddTimer(3 * 18, "processBatches", SimCityMainThanhThi)
 	end
 	
-	-- Return 1 to keep the timer running
-	return 1
+	-- Return 0 to keep the timer running
+	return 0
 end
 
 function SimCityMainThanhThi:_createBatch(batches)
