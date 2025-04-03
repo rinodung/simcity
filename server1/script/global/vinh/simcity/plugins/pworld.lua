@@ -140,7 +140,7 @@ function SimCityWorld:New(data)
 	end
 	if self.data["w" .. data.worldId] == nil then
 		data.showingId = 0
-		data.allowFighting = 0
+		data.allowFighting = 1
 		data.allowChat = 1
 		data.showFightingArea = 1
 		data.showName = 1

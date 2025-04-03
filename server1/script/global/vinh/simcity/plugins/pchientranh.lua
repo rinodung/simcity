@@ -546,7 +546,7 @@ function SimCityChienTranh:mainMenu()
 		return 1
 	end
 
-
+	worldInfo.allowFighting = 1
 	worldInfo.showFightingArea = 0
 
 	self.path1 = worldInfo.chientranh.path1

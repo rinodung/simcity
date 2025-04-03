@@ -244,7 +244,9 @@ SimCityNPCInfo = {
 			{ 1869, 1875 },
 			{ 1750, 1754 }, -- 99tr
 		}
-	}
+	},
+
+	quai = { socap = {}, trungcap = {}, caocap = {}, sieunhan = {}}
 }
 
 
@@ -321,6 +323,34 @@ function SimCityNPCInfo:init()
 			self.ALLNPCs_INFO_COUNT = nCount
 		end
 	end
+
+
+	for i=500, 1000 do
+		if self:IsValidFighter(i) == 1 then
+			tinsert(self.quai.socap, i)
+		end
+	end
+
+	for i=1000, 1500 do
+		if self:IsValidFighter(i) == 1 then
+			tinsert(self.quai.trungcap, i)
+		end
+	end
+
+	for i=1500, 2000 do
+		if self:IsValidFighter(i) == 1 then
+			tinsert(self.quai.caocap, i)
+		end
+	end
+
+	for i=2000, 2500 do
+		if self:IsValidFighter(i) == 1 then
+			tinsert(self.quai.sieunhan, i)
+		end
+	end
+	
+	
+	
 end
 
 function SimCityNPCInfo:isBlacklisted(id)
@@ -390,6 +420,25 @@ function SimCityNPCInfo:getPoolByCap(capHP)
 	end
 	if capHP == 4 then
 		pool = self.nvSieuNhan
+	end
+	return pool
+end
+
+function SimCityNPCInfo:getQuaiByCap(capHP)
+	local pool = self.quai.socap
+
+	if not capHP then
+		return pool
+	end
+
+	if capHP == 2 then
+		pool = self.quai.trungcap
+	end
+	if capHP == 3 then
+		pool = self.quai.caocap
+	end
+	if capHP == 4 then
+		pool = self.quai.sieunhan
 	end
 	return pool
 end
