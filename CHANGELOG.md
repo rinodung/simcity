@@ -1,3 +1,12 @@
+## 03-04-2025
+
+5.4.6
+
+-   Sửa lỗi tạo quái liên tục dù đã tắt
+-   Tăng tỉ lệ nói chuyện/chat chit
+-   Thêm các NPC ngẫu nhiên trong thành thị
+-   Cấm chiến đấu trong thành thị
+
 ## 29-03-2025
 
 5.4.5
