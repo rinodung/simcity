@@ -175,7 +175,7 @@ thanhthanhson_3 = {
 map_thanhthanhson = {
 	worldId = 21, 
 	name = "Thanh Thµnh S¬n", 
-	walkAreas = {
+	walkPaths = {
 		thanhthanhson_1,
 		thanhthanhson_2,
 		thanhthanhson_3

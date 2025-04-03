@@ -46,7 +46,7 @@ thanhdongtang1 ={
 map_thanhdongtang1 = {
 	worldId = 51, 
 	name = "Th¸nh §éng TÇng 1", 
-	walkAreas = {
+	walkPaths = {
 		thanhdongtang1
 	}, 
 	decoration = {},

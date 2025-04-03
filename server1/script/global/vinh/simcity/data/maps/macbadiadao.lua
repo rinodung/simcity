@@ -31,7 +31,7 @@ acbadiadao ={
 map_acbadiadao = {
 	worldId = 163, 
 	name = "¸c B¸ §Þa §¹o", 
-	walkAreas = {
+	walkPaths = {
 		acbadiadao
 	}, 
 	decoration = {},

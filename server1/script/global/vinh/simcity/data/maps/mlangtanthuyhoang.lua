@@ -68,7 +68,7 @@ langtanthuyhoang ={
 map_langtanthuyhoang = {
 	worldId = 8, 
 	name = "L¨ng TÇn Thñy Hoµng", 
-	walkAreas = {
+	walkPaths = {
 		langtanthuyhoang
 	}, 
 	decoration = {},

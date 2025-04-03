@@ -51,7 +51,7 @@ thatsatdong ={
 map_thatsatdong = {
 	worldId = 50, 
 	name = "ThÊt S¸t §éng", 
-	walkAreas = {
+	walkPaths = {
 		thatsatdong
 	}, 
 	decoration = {},

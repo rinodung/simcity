@@ -109,7 +109,7 @@ phungnhandong_2 = {
 map_phungnhandong = {
 	worldId = 168, 
 	name = "Phông Nh·n §éng", 
-	walkAreas = {
+	walkPaths = {
 		phungnhandong_1,
 		phungnhandong_2
 	}, 

@@ -50,7 +50,7 @@ banghuyetdong ={
 map_banghuyetdong = {
 	worldId = 132, 
 	name = "B¨ng HuyÖt §éng", 
-	walkAreas = {
+	walkPaths = {
 		banghuyetdong
 	}, 
 	decoration = {},

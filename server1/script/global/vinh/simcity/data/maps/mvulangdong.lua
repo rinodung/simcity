@@ -122,7 +122,7 @@ vulangdong_2 = {
 map_vulangdong = {
 	worldId = 199, 
 	name = "Vò L¨ng §éng", 
-	walkAreas = {
+	walkPaths = {
 		vulangdong_1,
 		vulangdong_2
 	}, 

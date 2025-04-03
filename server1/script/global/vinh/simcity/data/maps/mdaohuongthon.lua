@@ -136,7 +136,7 @@ daohuongthon_nam = {
 map_daohuongthon = {
 	worldId = 101, 
 	name = "§¹o H­¬ng Th«n", 
-	walkAreas = {
+	walkPaths = {
 		daohuongthon_bac,
 		daohuongthon_nam
 	}, 

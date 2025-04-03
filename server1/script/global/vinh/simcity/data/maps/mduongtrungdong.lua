@@ -68,7 +68,7 @@ duongtrungdong ={
 map_duongtrungdong = {
 	worldId = 205, 
 	name = "D­¬ng Trung §éng", 
-	walkAreas = {
+	walkPaths = {
 		duongtrungdong
 	}, 
 	decoration = {},

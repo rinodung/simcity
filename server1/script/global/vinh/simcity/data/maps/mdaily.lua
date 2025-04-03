@@ -267,7 +267,7 @@ daily_nam ={
 map_daily = {
 	worldId = 162, 
 	name = "§¹i Lý", 
-	walkAreas = {
+	walkPaths = {
 		daily_trungtam, 
 		daily_bac, 
 		daily_nam,

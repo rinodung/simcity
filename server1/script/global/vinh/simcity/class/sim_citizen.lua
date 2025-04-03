@@ -46,7 +46,20 @@ function SimCitizen:New(fighter)
         return nil
     end
 
+    -- Initialize foundDialogNpcOnPaths in worldInfo if it doesn't exist
+    if tbNpc.worldInfo.walkPaths and not tbNpc.worldInfo.foundDialogNpcOnPaths then
+        tbNpc.worldInfo.foundDialogNpcOnPaths = {}
+    end
 
+    -- Set up preset path if using preset mode (only done once at creation)
+    if tbNpc.role == "citizen" and tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths then
+        local pathCount = getn(tbNpc.worldInfo.walkPaths)
+        if pathCount > 0 then
+            tbNpc.currentPathIndex = random(1, pathCount)
+            tbNpc.currentPointIndex = random(1, getn(tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]))
+            tbNpc.pathDirection = 1
+        end
+    end
 
     -- All good generate name for Thanh Thi
     if tbNpc.mode == nil or tbNpc.mode == "thanhthi" or tbNpc.mode == "train" then
@@ -108,8 +121,16 @@ function SimCitizen:Show(nListId, isNew, goX, goY)
             tX = pX
             tY = pY
         elseif tbNpc.role == "citizen" then
-            tX = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]
-            tY = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]
+            if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+                local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
+                if path and tbNpc.currentPointIndex and tbNpc.currentPointIndex <= getn(path) then
+                    tX = path[tbNpc.currentPointIndex][1]
+                    tY = path[tbNpc.currentPointIndex][2]
+                end
+            else
+                tX = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]
+                tY = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]
+            end
         end
 
         if goX and goY and goX > 0 and goY > 0 then
@@ -231,10 +252,20 @@ function SimCitizen:Respawn(nListId, code, reason)
         nX = tbNpc.parentAppointPos[1]
         nY = tbNpc.parentAppointPos[2]
     elseif (isAllDead == 1 and tbNpc.resetPosWhenRevive and tbNpc.resetPosWhenRevive >= 1) then
-        local newPosId = self:GetRandomWalkPoint(nListId)
-        nX = tbNpc.worldInfo.walkGraph.nodes[newPosId][1]
-        nY = tbNpc.worldInfo.walkGraph.nodes[newPosId][2]
-        tbNpc.nPosId = newPosId
+        if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+            -- For preset path, select a random point on the path
+            local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
+            if path and getn(path) > 0 then
+                tbNpc.currentPointIndex = random(1, getn(path))
+                nX = path[tbNpc.currentPointIndex][1]
+                nY = path[tbNpc.currentPointIndex][2]
+            end
+        else
+            local newPosId = self:GetRandomWalkPoint(nListId)
+            nX = tbNpc.worldInfo.walkGraph.nodes[newPosId][1]
+            nY = tbNpc.worldInfo.walkGraph.nodes[newPosId][2]
+            tbNpc.nPosId = newPosId
+        end
     elseif (isAllDead == 1 and tbNpc.lastPos ~= nil) then
         nX = tbNpc.lastPos.nX32 / 32
         nY = tbNpc.lastPos.nY32 / 32
@@ -284,30 +315,63 @@ function SimCitizen:IsDialogNpcAround(nListId)
         return 0
     end
 
-    local foundDialogNpc = tbNpc.worldInfo.walkGraph.foundDialogNpc
-    if foundDialogNpc[tbNpc.nPosId] ~= nil then
-
-        -- chance to drop 5 hoa
-        if foundDialogNpc[tbNpc.nPosId] == 203 then
-            if random(1, 10000) <= CHANCE_DROP_MONEY then
-                for i=1, 10 do 
-                    DropItem(SubWorldID2Idx(tbNpc.nMapId), tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]*32, tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]*32, -1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    -- Check cache for preset path
+    if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+        local pathKey = tbNpc.currentPathIndex .. "_" .. tbNpc.currentPointIndex
+        local cachedNpcId = tbNpc.worldInfo.foundDialogNpcOnPaths[pathKey]
+        
+        if cachedNpcId then
+            -- Handle special cases for cached dialog NPCs
+            if cachedNpcId == 203 then
+                if random(1, 10000) <= CHANCE_DROP_MONEY then
+                    local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
+                    local position = path[tbNpc.currentPointIndex]
+                    for i=1, 10 do 
+                        DropItem(SubWorldID2Idx(tbNpc.nMapId), position[1]*32, position[2]*32, -1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                    end
                 end
             end
-        end
 
-        -- chance to drop tdp
-        if foundDialogNpc[tbNpc.nPosId] == 384 then
-            if random(1, 10000) <= CHANCE_DROP_MONEY then
-                for i=1, 3 do 
-                    DropItem(SubWorldID2Idx(tbNpc.nMapId), tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]*32, tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]*32, -1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            -- Handle TDP drops
+            if cachedNpcId == 384 then
+                if random(1, 10000) <= CHANCE_DROP_MONEY then
+                    local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
+                    local position = path[tbNpc.currentPointIndex]
+                    for i=1, 3 do 
+                        DropItem(SubWorldID2Idx(tbNpc.nMapId), position[1]*32, position[2]*32, -1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                    end
                 end
             end
+            
+            return 1
         end
+    else
+        -- Original walkGraph cache check
+        local foundDialogNpc = tbNpc.worldInfo.walkGraph.foundDialogNpc
+        if foundDialogNpc[tbNpc.nPosId] ~= nil then
+            -- chance to drop 5 hoa
+            if foundDialogNpc[tbNpc.nPosId] == 203 then
+                if random(1, 10000) <= CHANCE_DROP_MONEY then
+                    for i=1, 10 do 
+                        DropItem(SubWorldID2Idx(tbNpc.nMapId), tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]*32, tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]*32, -1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                    end
+                end
+            end
 
-        return 1
+            -- chance to drop tdp
+            if foundDialogNpc[tbNpc.nPosId] == 384 then
+                if random(1, 10000) <= CHANCE_DROP_MONEY then
+                    for i=1, 3 do 
+                        DropItem(SubWorldID2Idx(tbNpc.nMapId), tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][1]*32, tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId][2]*32, -1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                    end
+                end
+            end
+
+            return 1
+        end
     end
 
+    -- If not in cache, search for dialog NPCs nearby
     local allNpcs = {}
     local nCount = 0
     local radius = 8    
@@ -317,7 +381,13 @@ function SimCitizen:IsDialogNpcAround(nListId)
         local fighter2Name = GetNpcName(allNpcs[i])
         local nNpcId = GetNpcSettingIdx(allNpcs[i])
         if fighter2Kind == 3 and (nNpcId == 108 or nNpcId == 198 or nNpcId == 203 or nNpcId == 384) then
-            foundDialogNpc[tbNpc.nPosId] = nNpcId
+            -- Cache the found NPC ID
+            if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+                local pathKey = tbNpc.currentPathIndex .. "_" .. tbNpc.currentPointIndex
+                tbNpc.worldInfo.foundDialogNpcOnPaths[pathKey] = nNpcId
+            else
+                tbNpc.worldInfo.walkGraph.foundDialogNpc[tbNpc.nPosId] = nNpcId
+            end
             return 1
         end
     end
@@ -438,7 +508,17 @@ function SimCitizen:TriggerFightWithPlayer(nListId)
             if tbNpc.role == "citizen" then                
                 if tbNpc.worldInfo.showFightingArea == 1 then
                     local name = GetNpcName(tbNpc.finalIndex)
-                    local lastPos = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId]
+                    local lastPos
+                    
+                    if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+                        local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
+                        if path and tbNpc.currentPointIndex and tbNpc.currentPointIndex <= getn(path) then
+                            lastPos = path[tbNpc.currentPointIndex]
+                        end
+                    else
+                        lastPos = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId]
+                    end
+                    
                     if lastPos ~= nil then
                         Msg2Map(tbNpc.nMapId,
                             "<color=white>" .. name .. "<color> ®¸nh ng­êi t¹i " .. tbNpc.worldInfo.name .. " " ..
@@ -471,12 +551,23 @@ function SimCitizen:HasArrived(nListId)
             return 0
         end
     else
-        local posIndex = tbNpc.nPosId
-        if posIndex ~= nil then
-            nX = tbNpc.worldInfo.walkGraph.nodes[posIndex][1]
-            nY = tbNpc.worldInfo.walkGraph.nodes[posIndex][2]
+        -- Handle preset path mode
+        if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+            local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
+            if path and tbNpc.currentPointIndex and tbNpc.currentPointIndex <= getn(path) then
+                nX = path[tbNpc.currentPointIndex][1]
+                nY = path[tbNpc.currentPointIndex][2]
+            else
+                return 0
+            end
         else
-            return 0
+            local posIndex = tbNpc.nPosId
+            if posIndex ~= nil then
+                nX = tbNpc.worldInfo.walkGraph.nodes[posIndex][1]
+                nY = tbNpc.worldInfo.walkGraph.nodes[posIndex][2]
+            else
+                return 0
+            end
         end
     end
 
@@ -505,6 +596,20 @@ function SimCitizen:HardResetPos(nListId)
         tbNpc.parentAppointPos[1] = targetPos[1]
         tbNpc.parentAppointPos[2] = targetPos[2]
         return 1
+    end
+
+    -- Preset path mode - choose a random position on the already chosen path
+    if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths then
+        if tbNpc.currentPathIndex then
+            local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
+            if path and getn(path) > 0 then
+                -- Select a random position along the path
+                tbNpc.currentPointIndex = random(1, getn(path))
+                tbNpc.pathDirection = random(0, 1) == 0 and -1 or 1 -- random direction
+                tbNpc.nPosId = 1 -- Just set a value for compatibility
+                return 1
+            end
+        end
     end
 
     -- Startup position
@@ -699,7 +804,20 @@ function SimCitizen:Breath(nListId)
             end
         end
 
-        local targetPos = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId]
+        local targetPos
+        
+        -- Handle preset path walking
+        if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths then
+            if tbNpc.currentPathIndex and tbNpc.currentPointIndex then
+                local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
+                if path and tbNpc.currentPointIndex <= getn(path) then
+                    targetPos = path[tbNpc.currentPointIndex]
+                end
+            end
+        else
+            -- Default graph-based walking
+            targetPos = tbNpc.worldInfo.walkGraph.nodes[tbNpc.nPosId]
+        end
 
         if targetPos == nil then
             return 0
@@ -711,7 +829,7 @@ function SimCitizen:Breath(nListId)
         if targetPos[3] == 1 then
             NpcWalk(tbNpc.finalIndex, nX, nY)
         else
-            NpcWalk(tbNpc.finalIndex, nX+ random(-2, 2), nY+ random(-2, 2))            
+            NpcWalk(tbNpc.finalIndex, nX + random(-2, 2), nY + random(-2, 2))            
         end
         self:CalculateChildrenPosition(nListId, nX, nY)
     elseif tbNpc.role == "child" then
@@ -1109,6 +1227,12 @@ function SimCitizen:initCharConfig(config)
     config.role = config.role or "citizen"
     config.level = config.level or 95
     config.isAttackable = config.isAttackable or 0
+    
+    -- For preset path walking mode
+    config.currentPathIndex = nil
+    config.currentPointIndex = nil
+    config.pathDirection = 1  -- 1 for forward, -1 for backward
+    
     if config.capHP and config.capHP ~= "auto" then
         config.maxHP = SimCityNPCInfo:getHPByCap(config.capHP)
     end
@@ -1123,6 +1247,36 @@ function SimCitizen:GetRandomWalkPoint(nListId, currentPosId)
 
     if tbNpc.role == "child" or not tbNpc.worldInfo or not tbNpc.worldInfo.walkGraph then
         return "none"
+    end
+    
+    -- Handle preset walking mode
+    if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths then
+        if tbNpc.currentPathIndex and tbNpc.currentPointIndex then
+            local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
+            if path then
+                local pathLength = getn(path)
+                if pathLength > 0 then
+                    -- Move to next point based on direction
+                    local nextIndex = tbNpc.currentPointIndex + tbNpc.pathDirection
+                    
+                    -- If reached the end of path, reverse direction
+                    if nextIndex > pathLength then
+                        tbNpc.pathDirection = -1
+                        nextIndex = pathLength - 1
+                    -- If reached the start of path when going backward, reverse direction
+                    elseif nextIndex < 1 then
+                        tbNpc.pathDirection = 1
+                        nextIndex = 2
+                    end
+                    
+                    tbNpc.currentPointIndex = nextIndex
+                    return tbNpc.currentPointIndex
+                end
+            end
+        end
+        
+        -- Fallback if path data is not properly initialized
+        return 1
     end
 
     -- If current position ID is provided, get next node from edges

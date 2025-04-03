@@ -66,7 +66,7 @@ nhanthachdong ={
 map_nhanthachdong = {
 	worldId = 10, 
 	name = "L©m An", 
-	walkAreas = {
+	walkPaths = {
 		nhanthachdong
 	}, 
 	decoration = {},

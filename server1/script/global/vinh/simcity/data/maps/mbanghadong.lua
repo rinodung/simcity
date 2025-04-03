@@ -127,7 +127,7 @@ banghadong_2 = {
 map_banghadong = {
 	worldId = 201, 
 	name = "B¨ng Hµ §éng", 
-	walkAreas = {
+	walkPaths = {
 		banghadong_1,
 		banghadong_2
 	}, 

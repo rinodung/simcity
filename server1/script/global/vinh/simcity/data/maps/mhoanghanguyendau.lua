@@ -49,7 +49,7 @@ hoanghanguyendau ={
 map_hoanghanguyendau = {
 	worldId = 122, 
 	name = "Hoµng Hµ Nguyen §Çu", 
-	walkAreas = {
+	walkPaths = {
 		hoanghanguyendau
 	}, 
 	decoration = {},

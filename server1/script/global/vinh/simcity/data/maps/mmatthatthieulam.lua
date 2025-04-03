@@ -58,7 +58,7 @@ matthatthieulam ={
 map_matthatthieulam = {
 	worldId = 113, 
 	name = "MÀt Th t Thi’u L©m", 
-	walkAreas = {
+	walkPaths = {
 		matthatthieulam
 	}, 
 	decoration = {},

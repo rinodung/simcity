@@ -202,7 +202,7 @@ manbacthaonguyen_3 ={
 map_manbacthaonguyen = {
 	worldId = 341, 
 	name = "M¹n B¾c Th¶o Nguyªn", 
-	walkAreas = {
+	walkPaths = {
 		manbacthaonguyen_1,
 		manbacthaonguyen_2,
 		manbacthaonguyen_3

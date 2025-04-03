@@ -194,7 +194,7 @@ balanghuyen_bac = {
 map_balanghuyen = {
 	worldId = 53, 
 	name = "Ba L®ng Huy÷n", 
-	walkAreas = {
+	walkPaths = {
 		balanghuyen_bac,
 		balanghuyen_nam,
 		balanghuyen_tay

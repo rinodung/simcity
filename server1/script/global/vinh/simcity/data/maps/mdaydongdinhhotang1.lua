@@ -59,7 +59,7 @@ daydongdinhhotang1 ={
 map_daydongdinhhotang1 = {
 	worldId = 66, 
 	name = "§¸y §éng §×nh Hå TÇng 1", 
-	walkAreas = {
+	walkPaths = {
 		daydongdinhhotang1
 	}, 
 	decoration = {},

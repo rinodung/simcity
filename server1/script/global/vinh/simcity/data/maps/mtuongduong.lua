@@ -623,7 +623,7 @@ tuongduong_tong2 = {
 map_tuongduong = {
 	worldId = 78, 
 	name = "T­¬ng D­¬ng", 
-	walkAreas = {
+	walkPaths = {
 		tuongduong_full, 
 		tuongduong_trongthanh, 
 		tuongduong_DHT, 

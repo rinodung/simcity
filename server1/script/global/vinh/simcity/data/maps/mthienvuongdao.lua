@@ -64,7 +64,7 @@ thienvuongdao ={
 map_thienvuongdao = {
 	worldId = 65, 
 	name = "Thiªn V­¬ng §¶o", 
-	walkAreas = {
+	walkPaths = {
 		thienvuongdao
 	}, 
 	decoration = {},

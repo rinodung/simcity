@@ -244,7 +244,7 @@ ngudoc_nam = {
 map_ngudoc = {
 	worldId = 183, 
 	name = "ngudoc", 
-	walkAreas = {
+	walkPaths = {
 		ngudoc_trungtam,
 		ngudoc_tay1,
 		ngudoc_tay2,

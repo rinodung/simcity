@@ -123,7 +123,7 @@ latieuson2 = {
 map_latieuson = {
 	worldId = 179, 
 	name = "La Tiªu S¬n", 
-	walkAreas = {
+	walkPaths = {
 		latieuson1,
 		latieuson2
 	}, 

@@ -177,7 +177,7 @@ thieulam_nam = {
 map_thieulam = {
 	worldId = 103, 
 	name = "Thi’u L©m", 
-	walkAreas = {
+	walkPaths = {
 		thieulam_trungtam,
 		thieulam_bac,
 		thieulam_nam

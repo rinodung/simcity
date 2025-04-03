@@ -17,7 +17,7 @@ balanghuyen_bac = {
 map_balanghuyen = {
 	worldId = 53, 
 	name = "L©m An", 
-	walkAreas = {
+	walkPaths = {
 		lamAn_cungChinh, 
 		lamAn_cungPhu1, 
 		lamAn_cungPhu2,

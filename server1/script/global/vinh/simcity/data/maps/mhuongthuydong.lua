@@ -202,7 +202,7 @@ huongthuydong_3 = {
 map_huongthuydong = {
 	worldId = 24, 
 	name = "H­íng Thñy §éng", 
-	walkAreas = {
+	walkPaths = {
 		huongthuydong_1,
 		huongthuydong_2,
 		huongthuydong_3

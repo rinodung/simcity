@@ -59,7 +59,7 @@ kienthinhphong ={
 map_kienthinhphong = {
 	worldId = 135, 
 	name = "Ki’n Th›nh Phong", 
-	walkAreas = {
+	walkPaths = {
 		kienthinhphong
 	}, 
 	decoration = {},

@@ -96,7 +96,7 @@ vodanhdong_2 = {
 map_vodanhdong = {
 	worldId = 203, 
 	name = "V« Danh §éng", 
-	walkAreas = {
+	walkPaths = {
 		vodanhdong_1,
 		vodanhdong_2
 	}, 

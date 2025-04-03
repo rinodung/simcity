@@ -25,13 +25,13 @@ function GroupFighter:Add(tbNpc)
 	local nW = tbNpc.nMapId
 	local worldInfo = {}
 
-	local walkAreas = {}
+	local walkPaths = {}
 
 	local id = tbNpc.nNpcId
 	tbNpc.playerID = tbNpc.playerID or ""
 
 	if (tbNpc.originalWalkPath) then
-		walkAreas = arrCopy(tbNpc.originalWalkPath)
+		walkPaths = arrCopy(tbNpc.originalWalkPath)
 	else
 		if SearchPlayer(tbNpc.playerID) > 0 then
 			local pW, pX, pY = CallPlayerFunction(SearchPlayer(tbNpc.playerID), GetWorldPos)
@@ -40,23 +40,23 @@ function GroupFighter:Add(tbNpc)
 				{ pX, pY }
 			}
 			tbNpc.nPosId = 1
-			walkAreas = {
+			walkPaths = {
 				{ pX, pY }
 			}
 		else
 			worldInfo = SimCityWorld:Get(nW)
-			local worldPaths = worldInfo.walkAreas
+			local worldPaths = worldInfo.walkPaths
 			local walkIndex = random(1, getn(worldPaths))
-			walkAreas = worldPaths[walkIndex]
+			walkPaths = worldPaths[walkIndex]
 		end
 	end
 
-	if walkAreas == nil then
+	if walkPaths == nil then
 		return nil
 	end
 
 	-- No path to walk?
-	if getn(walkAreas) < 1 then
+	if getn(walkPaths) < 1 then
 		return nil
 	end
 
@@ -102,7 +102,7 @@ function GroupFighter:Add(tbNpc)
 
 	-- Setup walk paths
 	if SearchPlayer(tbNpc.playerID) == 0 then
-		tbNpc.tbPos = tbNpc.tbPos or arrCopy(walkAreas)
+		tbNpc.tbPos = tbNpc.tbPos or arrCopy(walkPaths)
 
 		if tbNpc.thanhthi ~= nil and tbNpc.thanhthi == 1 and random(1, 2) < 2 then
 			tbNpc.tbPos = arrFlip(tbNpc.tbPos)
@@ -698,12 +698,12 @@ function GroupFighter:HardResetPos(tbNpc)
 	local nW = tbNpc.nMapId
 	local worldInfo = {}
 
-	local walkAreas = {}
+	local walkPaths = {}
 
 	local id = tbNpc.nNpcId
 
 	if (tbNpc.originalWalkPath) then
-		walkAreas = arrCopy(tbNpc.originalWalkPath)
+		walkPaths = arrCopy(tbNpc.originalWalkPath)
 	else
 		if SearchPlayer(tbNpc.playerID) > 0 then
 			local pW, pX, pY = CallPlayerFunction(SearchPlayer(tbNpc.playerID), GetWorldPos)
@@ -712,28 +712,28 @@ function GroupFighter:HardResetPos(tbNpc)
 				{ pX, pY }
 			}
 			tbNpc.nPosId = 1
-			walkAreas = {
+			walkPaths = {
 				{ pX, pY }
 			}
 		else
 			worldInfo = SimCityWorld:Get(nW)
-			local worldPaths = worldInfo.walkAreas
+			local worldPaths = worldInfo.walkPaths
 			local walkIndex = random(1, getn(worldPaths))
-			walkAreas = worldPaths[walkIndex]
+			walkPaths = worldPaths[walkIndex]
 		end
 	end
 
-	if walkAreas == nil then
+	if walkPaths == nil then
 		return nil
 	end
 
 
-	if walkAreas == nil then
+	if walkPaths == nil then
 		return 0
 	end
 
 	-- No path to walk?
-	if getn(walkAreas) < 1 then
+	if getn(walkPaths) < 1 then
 		return 0
 	end
 
@@ -750,7 +750,7 @@ function GroupFighter:HardResetPos(tbNpc)
 
 	-- Setup walk paths
 	if SearchPlayer(tbNpc.playerID) == 0 then
-		tbNpc.tbPos = tbNpc.tbPos or arrCopy(walkAreas)
+		tbNpc.tbPos = tbNpc.tbPos or arrCopy(walkPaths)
 		if tbNpc.walkMode ~= "random" and tbNpc.walkMode ~= "keoxe" and tbNpc.children then
 			tbNpc.tbPos = createDiagonalFormPath(tbNpc.tbPos)
 		end

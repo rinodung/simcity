@@ -138,7 +138,7 @@ phuongtuong2={
 map_phuongtuong = {
 	worldId = 1, 
 	name = "Ph­îng T­êng", 
-	walkAreas = {
+	walkPaths = {
 		phuongtuong1, 
 		phuongtuong2, 
 	}, 

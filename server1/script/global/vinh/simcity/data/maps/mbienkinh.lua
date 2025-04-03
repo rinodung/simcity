@@ -854,7 +854,7 @@ bienkinh_kim3={
 map_bienkinh = {
 	worldId = 37, 
 	name = "BiÖn Kinh", 
-	walkAreas = {
+	walkPaths = {
 		bienkinh1, 
 		bienkinh2, 
 		bienkinh3, 

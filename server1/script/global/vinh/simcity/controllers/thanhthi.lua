@@ -3,7 +3,10 @@ Include("\\script\\global\\vinh\\simcity\\controllers\\tongkim.lua")
 SimCityMainThanhThi = {
 	worldStatus = {},
 	autoAddThanhThi = STARTUP_AUTOADD_THANHTHI,
-	thanhThiSize = THANHTHI_SIZE
+	thanhThiSize = THANHTHI_SIZE,
+	batchesByMap = {}, -- Store batches by map ID
+	timerIdsByMap = {}, -- Store current batch index for each map
+	masterTimerId = nil -- Global timer for all batch processing
 }
 
 SimCityWorld:initThanhThi()
@@ -75,7 +78,7 @@ function SimCityMainThanhThi:CreatePatrol(nW)
 
 	local worldInfo = SimCityWorld:Get(nW)
 
-	local allMap = worldInfo.walkAreas
+	local allMap = worldInfo.walkPaths
 
 	local linh = 682
 
@@ -121,7 +124,32 @@ end
 
 function SimCityMainThanhThi:removeAll()
 	local nW, nX, nY = GetWorldPos()
+	
+	-- Mark this map's batches as canceled
+	if self.timerIdsByMap[nW] then
+		self.timerIdsByMap[nW].canceled = true
+		self.timerIdsByMap[nW] = nil
+	end
+	
+	-- Clear batches for this map
+	self.batchesByMap[nW] = nil
+	
+	-- Remove all NPCs from the map
 	SimCitizen:ClearMap(nW)
+	
+	-- Check if we can stop the master timer
+	local anyActiveMaps = false
+	for mapId, mapData in self.timerIdsByMap do
+		if not mapData.canceled then
+			anyActiveMaps = true
+			break
+		end
+	end
+	
+	if not anyActiveMaps and self.masterTimerId then
+		DelTimer(self.masterTimerId)
+		self.masterTimerId = nil
+	end
 end
 
 -- MAIN DIALOG FUNCTIONS
@@ -460,11 +488,11 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 			-- Fill each table with 40 random NPCs
 			local perTable = floor(total/5)
 			for i = 1, perTable do
-				tinsert(table1, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
-				tinsert(table2, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
-				tinsert(table3, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
-				tinsert(table4, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
-				tinsert(table5, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP }})
+				tinsert(table1, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
+				tinsert(table2, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
+				tinsert(table3, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
+				tinsert(table4, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
+				tinsert(table5, {tmpFound[random(1, N)], nW, { ngoaitrang = 1, level = level or 95, capHP = capHP , walkMode = random(1, 2) == 1 and "preset" or "random"}})
 			end
 
 			-- Add all tables to everything array
@@ -520,29 +548,100 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 	end
 end
 
+-- Global batch processing function that handles all maps
+function processBatches()
+	local activeMapsCount = 0
+	
+	-- Process one batch for each active map
+	for mapId, mapData in SimCityMainThanhThi.timerIdsByMap do
+		if not mapData.canceled then
+			activeMapsCount = activeMapsCount + 1
+			
+			local currentIndex = mapData.currentIndex or 1
+			local batches = SimCityMainThanhThi.batchesByMap[mapId]
+			
+			if batches and currentIndex <= getn(batches) then
+				local batch = batches[currentIndex]
+				local counter = 0
+				local threshold = SimCityMainThanhThi.thanhThiSize or 12
+				
+				-- Count NPCs on this map
+				for k, v in SimCitizen.fighterList do
+					if v.nMapId ~= nil and v.nMapId == mapId then
+						counter = counter + 1
+					end
+				end
 
-function processNextBatch(currentIndex, Map, config)
-	local batches = SimCityMainThanhThi.currentBatch
-	if currentIndex <= getn(batches) then
-		local batch = batches[currentIndex]
-		local counter = 0
-		for k, v in SimCitizen.fighterList do
-			if getn(batch) > 0 and v.nMapId ~= nil and v.nMapId == batch[1][2] then
-				counter = counter + 1
+				if counter < threshold then
+					-- Process this batch of NPCs
+					if type(batch) == "table" and getn(batch) > 0 then
+						for i = 1, getn(batch) do
+							if type(batch[i]) == "table" and getn(batch[i]) >= 2 then
+								SimCityMainThanhThi:_createSingle(batch[i][1], batch[i][2], batch[i][3])
+							end
+						end
+					end
+					
+					-- Move to next batch
+					SimCityMainThanhThi.timerIdsByMap[mapId].currentIndex = currentIndex + 1
+				else
+					-- No more NPCs needed on this map
+					SimCityMainThanhThi.batchesByMap[mapId] = nil
+					SimCityMainThanhThi.timerIdsByMap[mapId] = nil
+					activeMapsCount = activeMapsCount - 1
+				end
+			else
+				-- All batches processed for this map
+				SimCityMainThanhThi.batchesByMap[mapId] = nil
+				SimCityMainThanhThi.timerIdsByMap[mapId] = nil
+				activeMapsCount = activeMapsCount - 1
 			end
-		end
-
-		if counter < SimCityMainThanhThi.thanhThiSize then
-			for i = 1, getn(batch) do
-				SimCityMainThanhThi:_createSingle(batch[i][1], batch[i][2], batch[i][3])
-			end
-			-- Schedule next batch after 3 seconds
-			AddTimer(3 * 18, "processNextBatch", currentIndex + 1)
 		end
 	end
+	
+	-- If no active maps, stop the timer
+	if activeMapsCount <= 0 then
+		if SimCityMainThanhThi.masterTimerId then
+			DelTimer(SimCityMainThanhThi.masterTimerId)
+			SimCityMainThanhThi.masterTimerId = nil
+		end
+	else
+		SimCityMainThanhThi.masterTimerId = AddTimer(3 * 18, "processBatches", SimCityMainThanhThi)
+	end
+	
+	-- Return 1 to keep the timer running
+	return 1
 end
 
 function SimCityMainThanhThi:_createBatch(batches)
-	SimCityMainThanhThi.currentBatch = batches
-    processNextBatch(1)	
+	if not batches or getn(batches) == 0 then
+		return
+	end
+	
+	-- Get current map ID if not provided in the batch
+	local mapId = nil
+	if getn(batches) > 0 and type(batches[1]) == "table" then
+		-- Check if this is an array of arrays with NPC data
+		if getn(batches[1]) > 0 and type(batches[1][1]) == "table" and getn(batches[1][1]) >= 2 then
+			-- Extract mapId from the first batch item [npcId, mapId, config]
+			mapId = batches[1][1][2]
+		end
+	end
+	
+	if not mapId then
+		-- Try to get current map ID as fallback
+		local nW, _, _ = GetWorldPos()
+		mapId = nW
+	end
+	
+	-- Initialize data structure for this map
+	self.batchesByMap[mapId] = batches
+	self.timerIdsByMap[mapId] = self.timerIdsByMap[mapId] or {}
+	self.timerIdsByMap[mapId].canceled = false
+	self.timerIdsByMap[mapId].currentIndex = 1
+	
+	-- Start the master timer if not already running
+	if not self.masterTimerId then
+		self.masterTimerId = AddTimer(3 * 18, "processBatches", self)
+	end
 end

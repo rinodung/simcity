@@ -151,7 +151,7 @@ vodang_tay = {
 map_vodang = {
 	worldId = 81, 
 	name = "Vâ §ang", 
-	walkAreas = {
+	walkPaths = {
 		vodang_bac,
 		vodang_nam,
 		vodang_tay

@@ -76,7 +76,7 @@ kiemcactaybac_nam = {
 map_kiemcactaybac = {
 	worldId = 3, 
 	name = "Ki’m C∏c T©y Bæc", 
-	walkAreas = {
+	walkPaths = {
 		kiemcactaybac_bac,
 		kiemcactaybac_nam
 	}, 
