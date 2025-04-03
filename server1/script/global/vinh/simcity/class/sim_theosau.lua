@@ -38,7 +38,7 @@ function SimTheoSau:New(fighter)
     end
 
     -- Bugfix series
-    tbNpc.series = random(0,4)
+    tbNpc.series = tbNpc.series or random(0,4)
 
     -- Create the character on screen
     self:Show(nListId, 1, tbNpc.goX, tbNpc.goY)
