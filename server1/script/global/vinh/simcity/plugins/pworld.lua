@@ -1,4 +1,134 @@
 Include("\\script\\lib\\timerlist.lua")
+
+
+
+function ComputeWalkGraph(worldMap)
+	local walkPaths = worldMap.walkPaths
+	-- Store all exact points (priority points) first
+	local exactPoints = {}
+	local normalPoints = {}
+	
+	-- Separate exact points and normal points
+	local i, j
+	for i = 1, getn(walkPaths) do
+		local path = walkPaths[i]
+		for j = 1, getn(path) do
+			local point = path[j]
+			if point[3] and point[3] == 1 then
+				tinsert(exactPoints, {point[1], point[2], 1})
+			else
+				tinsert(normalPoints, {point[1], point[2]})
+			end
+		end
+	end
+
+	-- Process normal points and snap to exact points if within radius
+	local SNAP_RADIUS = 5 -- Adjust this value as needed
+	local processedPoints = {}
+	local graph = {
+		nodes = {},  -- Store node coordinates
+		edges = {},   -- Store connections
+
+		foundDialogNpc = {}
+	}
+	
+	-- First add all exact points to processed
+	for i = 1, getn(exactPoints) do
+		local ep = exactPoints[i]
+		tinsert(processedPoints, ep)
+		local nodeKey = ep[1] .. "_" .. ep[2]
+		graph.nodes[nodeKey] = ep
+		graph.edges[nodeKey] = {}
+	end
+	
+	-- Process normal points
+	for i = 1, getn(normalPoints) do
+		local np = normalPoints[i]
+		local snapped = nil
+		
+		-- Check if point should snap to any exact point
+		for j = 1, getn(exactPoints) do
+			local ep = exactPoints[j]
+			if GetDistanceRadius(np[1], np[2], ep[1], ep[2]) <= SNAP_RADIUS then
+				snapped = ep
+				break
+			end
+		end
+		
+		-- If no exact point to snap to, check other normal points
+		if not snapped then
+			for j = 1, getn(processedPoints) do
+				local pp = processedPoints[j]
+				if GetDistanceRadius(np[1], np[2], pp[1], pp[2]) <= SNAP_RADIUS then
+					snapped = pp
+					break
+				end
+			end
+		end
+		
+		-- If no snap point found, use original point
+		if not snapped then
+			snapped = {np[1], np[2]}
+			tinsert(processedPoints, snapped)
+		end
+		
+		-- Initialize graph node if not exists
+		local nodeKey = snapped[1] .. "_" .. snapped[2]
+		if not graph.nodes[nodeKey] then
+			graph.nodes[nodeKey] = snapped
+			graph.edges[nodeKey] = {}
+		end
+	end
+	
+	-- Build connections between points based on original paths
+	for i = 1, getn(walkPaths) do
+		local path = walkPaths[i]
+		for j = 1, getn(path)-1 do
+			local p1 = path[j]
+			local p2 = path[j+1]
+			
+			-- Find corresponding processed points
+			local pp1, pp2 = nil, nil
+			
+			for k = 1, getn(processedPoints) do
+				local pp = processedPoints[k]
+				if GetDistanceRadius(p1[1], p1[2], pp[1], pp[2]) <= SNAP_RADIUS then
+					pp1 = pp
+				end
+				if GetDistanceRadius(p2[1], p2[2], pp[1], pp[2]) <= SNAP_RADIUS then
+					pp2 = pp
+				end
+				if pp1 and pp2 then break end
+			end
+			
+			-- Add bidirectional connection
+			if pp1 and pp2 then
+				local key1 = pp1[1] .. "_" .. pp1[2]
+				local key2 = pp2[1] .. "_" .. pp2[2]
+				
+				-- Check if connection already exists
+				local found = nil
+				for k = 1, getn(graph.edges[key1]) do
+					if graph.edges[key1][k] == key2 then
+						found = 1
+						break
+					end
+				end
+				
+				if not found then
+					tinsert(graph.edges[key1], key2)
+					tinsert(graph.edges[key2], key1)
+				end
+			end
+		end
+	end
+	worldMap.walkGraph = graph
+	return worldMap.walkGraph
+end
+
+
+
+
 SimCityWorld = {
 	data = {},
 	trangtri = {}
@@ -10,13 +140,13 @@ function SimCityWorld:New(data)
 	end
 	if self.data["w" .. data.worldId] == nil then
 		data.showingId = 0
-		data.allowFighting = 1
+		data.allowFighting = 0
 		data.allowChat = 1
 		data.showFightingArea = 1
 		data.showName = 1
 		data.showDecoration = 0
 		data.name = data.name or ""
-		data.walkAreas = data.walkAreas or {}
+		data.walkPaths = data.walkPaths or {}
 		data.decoration = data.decoration or {}
 		data.chientranh = data.chientranh or {}
 
@@ -87,7 +217,7 @@ end
 function SimCityWorld:initThanhThi()
 	for i=1, getn(allSimcityMap) do
 		local targetMap = self:New(allSimcityMap[i])		
-		self:ComputeWalkGraph(targetMap)
+		ComputeWalkGraph(targetMap)
 	end
 	if self.m_TimerId then
 		TimerList:DelTimer(self.m_TimerId)
@@ -96,7 +226,7 @@ function SimCityWorld:initThanhThi()
 end
 
 function SimCityWorld:doShowBXH(mapID)
-	FighterManager:ThongBaoBXH(mapID)
+	SimCitizen:ThongBaoBXH(mapID)
 end
 
 function SimCityWorld:IsTongKimMap(nW)
@@ -122,128 +252,3 @@ function SimCityWorld:OnTime()
 	end
 	self.m_TimerId = TimerList:AddTimer(self, 60 * 18)
 end
-
-function SimCityWorld:ComputeWalkGraph(worldMap)
-	local walkAreas = worldMap.walkAreas
-	-- Store all exact points (priority points) first
-	local exactPoints = {}
-	local normalPoints = {}
-	
-	-- Separate exact points and normal points
-	local i, j
-	for i = 1, getn(walkAreas) do
-		local path = walkAreas[i]
-		for j = 1, getn(path) do
-			local point = path[j]
-			if point[3] and point[3] == 1 then
-				tinsert(exactPoints, {point[1], point[2], 1})
-			else
-				tinsert(normalPoints, {point[1], point[2]})
-			end
-		end
-	end
-
-	-- Process normal points and snap to exact points if within radius
-	local SNAP_RADIUS = 5 -- Adjust this value as needed
-	local processedPoints = {}
-	local graph = {
-		nodes = {},  -- Store node coordinates
-		edges = {},   -- Store connections
-
-		foundDialogNpc = {}
-	}
-	
-	-- First add all exact points to processed
-	for i = 1, getn(exactPoints) do
-		local ep = exactPoints[i]
-		tinsert(processedPoints, ep)
-		local nodeKey = ep[1] .. "_" .. ep[2]
-		graph.nodes[nodeKey] = ep
-		graph.edges[nodeKey] = {}
-	end
-	
-	-- Process normal points
-	for i = 1, getn(normalPoints) do
-		local np = normalPoints[i]
-		local snapped = nil
-		
-		-- Check if point should snap to any exact point
-		for j = 1, getn(exactPoints) do
-			local ep = exactPoints[j]
-			if GetDistanceRadius(np[1], np[2], ep[1], ep[2]) <= SNAP_RADIUS then
-				snapped = ep
-				break
-			end
-		end
-		
-		-- If no exact point to snap to, check other normal points
-		if not snapped then
-			for j = 1, getn(processedPoints) do
-				local pp = processedPoints[j]
-				if GetDistanceRadius(np[1], np[2], pp[1], pp[2]) <= SNAP_RADIUS then
-					snapped = pp
-					break
-				end
-			end
-		end
-		
-		-- If no snap point found, use original point
-		if not snapped then
-			snapped = {np[1], np[2]}
-			tinsert(processedPoints, snapped)
-		end
-		
-		-- Initialize graph node if not exists
-		local nodeKey = snapped[1] .. "_" .. snapped[2]
-		if not graph.nodes[nodeKey] then
-			graph.nodes[nodeKey] = snapped
-			graph.edges[nodeKey] = {}
-		end
-	end
-	
-	-- Build connections between points based on original paths
-	for i = 1, getn(walkAreas) do
-		local path = walkAreas[i]
-		for j = 1, getn(path)-1 do
-			local p1 = path[j]
-			local p2 = path[j+1]
-			
-			-- Find corresponding processed points
-			local pp1, pp2 = nil, nil
-			
-			for k = 1, getn(processedPoints) do
-				local pp = processedPoints[k]
-				if GetDistanceRadius(p1[1], p1[2], pp[1], pp[2]) <= SNAP_RADIUS then
-					pp1 = pp
-				end
-				if GetDistanceRadius(p2[1], p2[2], pp[1], pp[2]) <= SNAP_RADIUS then
-					pp2 = pp
-				end
-				if pp1 and pp2 then break end
-			end
-			
-			-- Add bidirectional connection
-			if pp1 and pp2 then
-				local key1 = pp1[1] .. "_" .. pp1[2]
-				local key2 = pp2[1] .. "_" .. pp2[2]
-				
-				-- Check if connection already exists
-				local found = nil
-				for k = 1, getn(graph.edges[key1]) do
-					if graph.edges[key1][k] == key2 then
-						found = 1
-						break
-					end
-				end
-				
-				if not found then
-					tinsert(graph.edges[key1], key2)
-					tinsert(graph.edges[key2], key1)
-				end
-			end
-		end
-	end
-	worldMap.walkGraph = graph
-	return worldMap.walkGraph
-end
-

@@ -38,7 +38,7 @@ function SimCityMainTongKim:mainMenu()
 		SimCityWorld:New({
 			worldId = nW,
 			name = "Tèng Kim",
-			walkAreas = { map_tongkim_nguyensoai.huong1phai, map_tongkim_nguyensoai.huong1trai, map_tongkim_nguyensoai.huong1giua, map_tongkim_nguyensoai.huong2tt },
+			walkPaths = { map_tongkim_nguyensoai.huong1phai, map_tongkim_nguyensoai.huong1trai, map_tongkim_nguyensoai.huong1giua, map_tongkim_nguyensoai.huong2tt },
 			decoration = {},
 			chientranh = {}
 		})
@@ -163,7 +163,7 @@ function SimCityMainTongKim:addTongKimNpc()
 			SimCityWorld:New({
 				worldId = nW,
 				name = "Tèng Kim",
-				walkAreas = { map_tongkim_nguyensoai.huong1phai, map_tongkim_nguyensoai.huong1trai, map_tongkim_nguyensoai.huong1giua, map_tongkim_nguyensoai.huong2tt },
+				walkPaths = { map_tongkim_nguyensoai.huong1phai, map_tongkim_nguyensoai.huong1trai, map_tongkim_nguyensoai.huong1giua, map_tongkim_nguyensoai.huong2tt },
 				decoration = {},
 				chientranh = {}
 			})

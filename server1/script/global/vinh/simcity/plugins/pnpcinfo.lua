@@ -364,31 +364,31 @@ function SimCityNPCInfo:getSpeed(id)
 	return 0
 end
 
-function SimCityNPCInfo:getHPByCap(cap)
-	if cap == 1 then
+function SimCityNPCInfo:getHPByCap(capHP)
+	if capHP == 1 then
 		return random(50000, 200000)
 	end
-	if cap == 2 then
+	if capHP == 2 then
 		return random(200000, 500000)
 	end
 
 	return random(500000, 1000000)
 end
 
-function SimCityNPCInfo:getPoolByCap(cap)
+function SimCityNPCInfo:getPoolByCap(capHP)
 	local pool = self.nvSoCap
 
-	if not cap then
+	if not capHP then
 		return pool
 	end
 
-	if cap == 2 then
+	if capHP == 2 then
 		pool = self.nvTrungCap
 	end
-	if cap == 3 then
+	if capHP == 3 then
 		pool = self.nvCaoCap
 	end
-	if cap == 4 then
+	if capHP == 4 then
 		pool = self.nvSieuNhan
 	end
 	return pool
@@ -401,4 +401,8 @@ function SimCityNPCInfo:IsValidFighter(id)
 	end
 
 	return 1
+end
+
+function SimCityNPCInfo:generateName()
+	return SimCityPlayerNames[random(1, getn(SimCityPlayerNames))]
 end

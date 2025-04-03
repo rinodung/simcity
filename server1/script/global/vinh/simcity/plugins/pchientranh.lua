@@ -100,7 +100,7 @@ function SimCityChienTranh:genWalkPath(forCamp)
 	return myPath
 end
 
-function SimCityChienTranh:taoNV(id, camp, mapID, map, nt, theosau, cap)
+function SimCityChienTranh:taoNV(id, camp, mapID, map, nt, theosau, capHP)
 	local name = "Kim"
 	local rank = 1
 	local realCamp = 5
@@ -109,10 +109,10 @@ function SimCityChienTranh:taoNV(id, camp, mapID, map, nt, theosau, cap)
 		realCamp = 0
 	end
 
-	local hardsetName = (nt == 1 and SimCityPlayerName:getName()) or SimCityNPCInfo:getName(id)
+	local hardsetName = (nt == 1 and SimCityNPCInfo:generateName()) or SimCityNPCInfo:getName(id)
 	if self.tongkim == 1 then
 		realCamp = camp
-		hardsetName = (nt == 1 and SimCityPlayerName:getName()) or nil
+		hardsetName = (nt == 1 and SimCityNPCInfo:generateName()) or nil
 	end
 
 
@@ -158,7 +158,7 @@ function SimCityChienTranh:taoNV(id, camp, mapID, map, nt, theosau, cap)
 		ngoaitrang = nt or 0,
 		hardsetName = hardsetName,
 
-		cap = cap,
+		capHP = capHP,
 
 		childrenSetup = theosau or nil,
 		childrenCheckDistance = (theosau and 8) or nil -- force distance check for child
@@ -342,7 +342,7 @@ function SimCityChienTranh:phe_tudo_xe(startNPCIndex, perPage, ngoaitrang)
 			if SimCityNPCInfo:notFightingChar(id) == 0 and (runSpeed == 0 or abs(mySpeed - runSpeed) <= 1) then
 				tinsert(children, {
 					nNpcId = id,
-					szName = (ngoaitrang == 1 and SimCityPlayerName:getName()) or SimCityNPCInfo:getName(id)
+					szName = (ngoaitrang == 1 and SimCityNPCInfo:generateName()) or SimCityNPCInfo:getName(id)
 				})
 			end
 		end
@@ -356,17 +356,17 @@ function SimCityChienTranh:phe_tudo_xe(startNPCIndex, perPage, ngoaitrang)
 	end
 end
 
-function SimCityChienTranh:nv_tudo(cap)
+function SimCityChienTranh:nv_tudo(capHP)
 	local forCamp = 1
 
-	local pool = SimCityNPCInfo:getPoolByCap(cap)
+	local pool = SimCityNPCInfo:getPoolByCap(capHP)
 
 	local total = 0
 	while total < 100 do
 		local id = pool[random(1, getn(pool))]
 		local myPath = self:genWalkPath(forCamp)
 
-		local fighter = self:taoNV(id, forCamp, self.nW, myPath, 1, nil, cap)
+		local fighter = self:taoNV(id, forCamp, self.nW, myPath, 1, nil, capHP)
 		if fighter then
 			if forCamp == 1 then
 				forCamp = 2
@@ -378,9 +378,9 @@ function SimCityChienTranh:nv_tudo(cap)
 	end
 end
 
-function SimCityChienTranh:nv_tudo_xe(cap)
+function SimCityChienTranh:nv_tudo_xe(capHP)
 	local forCamp = 1
-	local pool = SimCityNPCInfo:getPoolByCap(cap)
+	local pool = SimCityNPCInfo:getPoolByCap(capHP)
 
 	for i = 1, 10 do
 		local pid = pool[random(1, getn(pool))]
@@ -400,13 +400,13 @@ function SimCityChienTranh:nv_tudo_xe(cap)
 			if SimCityNPCInfo:notFightingChar(id) == 0 and (runSpeed == 0 or abs(mySpeed - runSpeed) <= 2) then
 				tinsert(children, {
 					nNpcId = id,
-					szName = SimCityPlayerName:getName() or SimCityNPCInfo:getName(id)
+					szName = SimCityNPCInfo:generateName() or SimCityNPCInfo:getName(id)
 				})
 			end
 		end
 
 
-		self:taoNV(pid, forCamp, self.nW, myPath, 1, children, cap)
+		self:taoNV(pid, forCamp, self.nW, myPath, 1, children, capHP)
 
 		if i > 5 then
 			forCamp = 2

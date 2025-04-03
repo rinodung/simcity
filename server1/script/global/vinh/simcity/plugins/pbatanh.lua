@@ -47,7 +47,7 @@ function SimCityBaTanh:CreateChar(config)
 	end
 
 
-	return FighterManager:Add(finalChar)
+	return SimCitizen:New(finalChar)
 end
 
 function SimCityBaTanh:NewJob()
@@ -132,7 +132,7 @@ end
 function SimCityBaTanh:Remove()
 	local tieuxa = self:Get()
 	for i = 1, getn(tieuxa.children) do
-		FighterManager:Remove(tieuxa.children[i])
+		SimCitizen:Remove(tieuxa.children[i])
 	end
 	self.player2TieuXa[GetName()] = nil
 end
@@ -154,7 +154,7 @@ function SimCityBaTanh:WalkAllTieu()
 			for i = 1, getn(children) do
 				local id = children[i]
 				if id then
-					local v = FighterManager:Get(id)
+					local v = SimCitizen:Get(id)
 					if v then
 						tinsert(newList, v.id)
 					end
@@ -167,10 +167,10 @@ function SimCityBaTanh:WalkAllTieu()
 				-- Find the centerChar
 				local size = getn(children)
 				local centerCharId = getCenteredCell(createFormation(size))
-				local fighter = FighterManager:Get(children[centerCharId])
+				local fighter = SimCitizen:Get(children[centerCharId])
 				if not fighter or fighter.isDead == 1 or fighter.nMapId ~= pW then
 					for i = 1, getn(children) do
-						local child = FighterManager:Get(children[i])
+						local child = SimCitizen:Get(children[i])
 						if child and child.isDead ~= 1 and child.nMapId == pW then
 							fighter = child
 							break
@@ -190,7 +190,7 @@ function SimCityBaTanh:WalkAllTieu()
 					if pW == nW and cachNguoiChoi <= DISTANCE_FOLLOW_PLAYER_TOOFAR then
 						local newIds = {}
 						for i = 1, size do
-							local child = FighterManager:Get(children[i])
+							local child = SimCitizen:Get(children[i])
 							if child and child.nMapId == pW then
 								child.parentAppointPos = newPath[i]
 								tinsert(newIds, child.id)

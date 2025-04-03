@@ -25,11 +25,11 @@ function SimCityKeoXe:init()
 	--self.m_TimerId = TimerList:AddTimer(self, 18)
 end
 
-function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, cap)
+function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, capHP)
 	local name = GetName()
 	local rank = 1
 
-	local nListId = FighterManager:Add({
+	local nListId = SimTheoSau:New({
 
 		szName = name or "",
 
@@ -67,8 +67,7 @@ function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, cap)
 		childrenCheckDistance = (theosau and 8) or nil, -- force distance check for child
 
 		playerID = name,
-		cap = cap,
-
+		capHP = capHP,
 		role = "keoxe"
 
 	});
@@ -84,10 +83,10 @@ function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, cap)
 	return nListId
 end
 
-function SimCityKeoXe:nv_tudo_xe(cap)
+function SimCityKeoXe:nv_tudo_xe(capHP)
 	local forCamp = GetCurCamp()
 	local pW, pX, pY = GetWorldPos()
-	local pool = SimCityNPCInfo:getPoolByCap(cap)
+	local pool = SimCityNPCInfo:getPoolByCap(capHP)
 
 	-- 10 con theo sau
 	for i = 1, 10 do
@@ -99,18 +98,17 @@ function SimCityKeoXe:nv_tudo_xe(cap)
 		end
 
 		local children = {}
-		self:taoNV(pid, forCamp, pW, {}, 1, children, cap)
+		self:taoNV(pid, forCamp, pW, {}, 1, children, capHP)
 	end
 
 	self:init()
 end
 
 function SimCityKeoXe:removeAll()
-	for key, id in FighterManager.fighterList do
-		local fighter = FighterManager:Get(id)
+	for key, fighter in SimTheoSau.fighterList do
 		local name = GetName()
 		if fighter.playerID == name then
-			FighterManager:Remove(fighter.id)
+			SimTheoSau:Remove(fighter.id)
 			self.collections[name] = nil
 		end
 	end
@@ -282,11 +280,11 @@ function SimCityKeoXe:OnTime()
 				self.collections_knownPoint[name] = newLoc
 				local size = getn(children)
 				local centerCharId = getCenteredCell(createFormation(size))
-				local fighter = FighterManager:Get(children[centerCharId])
+				local fighter = SimTheoSau:Get(children[centerCharId])
 				local nX, nY, nMapIndex = GetNpcPos(fighter.finalIndex)
 				local newPath = genCoords_squareshape({ nX / 32, nY / 32 }, { pX, pY }, size)
 				for i = 1, size do
-					FighterManager:Get(children[i]).parentAppointPos = newPath[i]
+					SimTheoSau:Get(children[i]).parentAppointPos = newPath[i]
 				end
 			end
 		end
