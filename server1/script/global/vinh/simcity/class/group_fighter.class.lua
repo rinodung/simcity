@@ -229,6 +229,7 @@ function GroupFighter:Show(tbNpc, isNew, goX, goY)
 				end
 				if nPosCount >= 1 or tbNpc.nSkillId then
 					SetNpcParam(nNpcIndex, self.PARAM_LIST_ID, id)
+					tbNpc.nListId = id
 					SetNpcParam(nNpcIndex, self.PARAM_PLAYER_ID, SearchPlayer(tbNpc.playerID))
 					SetNpcParam(nNpcIndex, self.PARAM_NPC_TYPE, 1)
 					SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\group_fighter.timer.lua")
@@ -378,6 +379,46 @@ function GroupFighter:Respawn(nListId, isAllDead, reason)
 	self:Show(tbNpc, 0, nX, nY)
 end
 
+function GroupFighter:_getNpcAroundNpcList(nNpcIndex, radius)
+	local allNpcs = {}
+	local nCount = 0
+
+	-- 8.0: has GetNpcAroundNpcList function 
+	if GetNpcAroundNpcList then 
+		return GetNpcAroundNpcList(nNpcIndex, radius)
+		
+	-- 6.0: do the long route  
+
+    else
+		local myListId = GetNpcParam(nNpcIndex, self.PARAM_LIST_ID)
+    	local nX32, nY32, nW32 = GetNpcPos(nNpcIndex)
+		local areaX = nX32/32
+		local areaY = nY32/32
+		local nW = SubWorldIdx2ID(nW32)
+
+		-- Get info for npc in this world
+
+		for key, tbNpc in self.fighterList do
+			if tbNpc.nMapId == nW then
+				if tbNpc.nListId ~= myListId then 
+					if (tbNpc.isDead == 0) then
+						local oX32, oY32 = GetNpcPos(tbNpc.finalIndex)
+						local oX = oX32/32
+						local oY = oY32/32
+						if GetDistanceRadius(oX,oY,areaX,areaY) < radius then
+							tinsert(allNpcs, tbNpc.finalIndex)
+							nCount = nCount + 1
+						end
+					end
+				end
+			end
+		end
+	end
+	
+	return allNpcs, nCount
+end
+
+
 function GroupFighter:IsNpcEnemyAround(tbNpc, nNpcIndex, radius)
 	local allNpcs = {}
 	local nCount = 0
@@ -395,7 +436,7 @@ function GroupFighter:IsNpcEnemyAround(tbNpc, nNpcIndex, radius)
 	end
 
 	-- Thanh thi / tong kim / chien loan
-	allNpcs, nCount = GetNpcAroundNpcList(nNpcIndex, radius)
+	allNpcs, nCount = self:_getNpcAroundNpcList(nNpcIndex, radius)
 	for i = 1, nCount do
 		local fighter2Kind = GetNpcKind(allNpcs[i])
 		local fighter2Camp = GetNpcCurCamp(allNpcs[i])
@@ -1463,6 +1504,7 @@ function GroupFighter:ChildrenAdd(nListId, childID)
 
 				-- Set param to link to parent
 				SetNpcParam(nNpcIndex, self.PARAM_LIST_ID, nListId)
+				tbNpc.nListId = nListId
 				SetNpcParam(nNpcIndex, self.PARAM_CHILD_ID, childID)
 				SetNpcParam(nNpcIndex, self.PARAM_PLAYER_ID, SearchPlayer(tbNpc.playerID))
 				SetNpcParam(nNpcIndex, self.PARAM_NPC_TYPE, 2)
@@ -1721,7 +1763,7 @@ function _sortByScore(tb1, tb2)
 end
 
 function GroupFighter:_calculateFightingScore(tbNpc, nNpcIndex, currRank)
-	local allNpcs, nCount = GetNpcAroundNpcList(nNpcIndex, 15)
+	local allNpcs, nCount = self:_getNpcAroundNpcList(nNpcIndex, 15)
 	local foundTbNpcs = {}
 
 	if nCount > 0 then

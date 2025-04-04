@@ -1,4 +1,9 @@
 IncludeLib("NPCINFO")
+if not GetNpcAroundNpcList then
+    function GetNpcAroundNpcList(nNpcIndex, nRadius)
+        return {}, 0
+    end
+end
 
 -- Helpers
 function GetTabFileData(path, tab_name, start_row, max_col) -- Doc file txt
