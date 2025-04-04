@@ -265,13 +265,12 @@ function SimCityKeoXe:taoBangHuu(phai, gen, tenIndex)
 	-- 1199, 1793, 1489, 1772: caibang
 	-- 1200, 1794, 1486, 1773: vodang
 	-- 1202, 1795, 1487, 1774: conlon
-	
 
 	local id = 1193
 	local pool = {1193}
 	local series = 0
 	if tenPhai == "thienvuongbang" then
-		pool = {1193, 1786, 1481, 1765}
+		pool = {1193, 1481, 1484, 1765, 1786}
 	elseif tenPhai == "thieulam" then
 		pool = {1194, 1787, 1766}
 	elseif tenPhai == "ngudoc" then
@@ -288,13 +287,13 @@ function SimCityKeoXe:taoBangHuu(phai, gen, tenIndex)
 		pool = {1198, 1791, 1482, 1770}
 	elseif tenPhai == "thiennhan" then
 		series = 3
-		pool = {1201, 1792, 1480, 1484, 1771}
+		pool = {1200, 1792, 1480, 1771}
 	elseif tenPhai == "caibang" then
 		series = 3
 		pool = {1199, 1793, 1489, 1772}
 	elseif tenPhai == "vodang" then
 		series = 4
-		pool = {1200, 1794, 1486, 1773}
+		pool = {1201, 1794, 1486, 1773}
 	elseif tenPhai == "conlon" then
 		series = 4
 		pool = {1202, 1795, 1487, 1774}
@@ -305,7 +304,7 @@ function SimCityKeoXe:taoBangHuu(phai, gen, tenIndex)
 	if gen == 1 then
 		realGen = -1
 	end
-
+	
 	self:taoNV(id, forCamp, pW, 1, 1, {}, 1, {
 		szName = ten,
 		nSettingsIdx = realGen,
