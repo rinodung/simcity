@@ -6,7 +6,9 @@ SimCityMainThanhThi = {
 	thanhThiSize = THANHTHI_SIZE,
 	batchesByMap = {}, -- Store batches by map ID
 	timerIdsByMap = {}, -- Store current batch index for each map
-	masterTimerId = nil -- Global timer for all batch processing
+	masterTimerId = nil, -- Global timer for all batch processing
+	patrolMap = nil,
+	patrolTimerId = nil
 }
 
 SimCityWorld:initThanhThi()
@@ -70,11 +72,8 @@ function SimCityMainThanhThi:_createTeamPatrol(nW, thonglinh, linh, N, path)
 	})
 end
 
-function SimCityMainThanhThi:CreatePatrol(nW)
-	local nA, nX, nY = GetWorldPos()
-
-	nW = nW or nA
-
+function SimCityMainThanhThi:CreatePatrol()
+	local nW = self.patrolMap
 
 	local worldInfo = SimCityWorld:Get(nW)
 
@@ -151,6 +150,11 @@ function SimCityMainThanhThi:removeAll()
 	if not anyActiveMaps and self.masterTimerId then
 		DelTimer(self.masterTimerId)
 		self.masterTimerId = nil
+	end
+
+	if self.patrolTimerId then
+		DelTimer(self.patrolTimerId)
+		self.patrolTimerId = nil
 	end
 end
 
@@ -303,7 +307,7 @@ function SimCityMainThanhThi:thanhthiMenu()
 		--else
 		--	tinsert(tbSay, "Cho phÐp ®¸nh nhau [kh«ng]/#SimCityMainThanhThi:allowFighting(1)")
 		--end
-
+		self.patrolMap = nW
 		tinsert(tbSay, "Thªm anh hïng/#SimCityMainThanhThi:goiAnhHungThiepNgoaiTrang()")
 		tinsert(tbSay, "Thªm qu¸i nh©n/#SimCityMainThanhThi:goiAnhHungThiep()")
 		tinsert(tbSay, "Thªm quan binh/#SimCityMainThanhThi:CreatePatrol()")
@@ -526,6 +530,10 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 				table4,
 				table5
 			})			
+			if isThanhThi then
+				self.patrolMap = nW
+				self.patrolTimerId = AddTimer(20 * 18, "SimCityMainThanhThi:CreatePatrol", self)
+			end 
 		else
 			worldInfo.allowFighting = 1
 			total = 20 -- 20 PT tat ca
@@ -567,6 +575,7 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 						TIME_RESTING_maxTs = 3,
 					}}});
 			end
+			
 			self:_createBatch(everything)
 		end
 	end

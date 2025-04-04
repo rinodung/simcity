@@ -1,3 +1,13 @@
+## 04-04-2025
+
+5.5
+
+-   Thêm vào quan binh ở các thành
+-   Thêm tính năng tìm hảo hữu
+-   Thêm 1 số tính năng phụ
+-   Thêm chức năng chia sẻ kn bang và khi đánh bị rớt đồ
+
+
 ## 03-04-2025
 
 5.4.6

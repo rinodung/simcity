@@ -213,12 +213,16 @@ function SimTheoSau:IsNpcEnemyAround(nListId)
     local nCount = 0
     local radius = tbNpc.RADIUS_FIGHT_SCAN or RADIUS_FIGHT_SCAN
     -- Keo xe?
-    allNpcs, nCount = CallPlayerFunction(self:GetPlayer(nListId), GetAroundNpcList, radius)
-    for i = 1, nCount do
-        local fighter2Kind = GetNpcKind(allNpcs[i])
-        local fighter2Camp = GetNpcCurCamp(allNpcs[i])
-        if fighter2Kind == 0 and (IsAttackableCamp(tbNpc.camp, fighter2Camp) == 1) then
-            return 1
+    local pID = self:GetPlayer(nListId)
+    if pID > 0 then
+        allNpcs, nCount = CallPlayerFunction(pID, GetAroundNpcList, radius)
+    
+        for i = 1, nCount do
+            local fighter2Kind = GetNpcKind(allNpcs[i])
+            local fighter2Camp = GetNpcCurCamp(allNpcs[i])
+            if fighter2Kind == 0 and (IsAttackableCamp(tbNpc.camp, fighter2Camp) == 1) then
+                return 1
+            end
         end
     end
     return 0
@@ -366,8 +370,29 @@ function SimTheoSau:Breath(nListId)
 
     local pID = self:GetPlayer(nListId)
     if pID > 0 then
+        tbNpc.notFoundPlayerTick = nil
         pW, pX, pY = CallPlayerFunction(pID, GetWorldPos)
         cachNguoiChoi = GetDistanceRadius(myPosX, myPosY, pX, pY)
+    else
+        if not tbNpc.notFoundPlayerTick then
+            tbNpc.notFoundPlayerTick = tbNpc.tick_breath
+        end
+
+        -- Tu dong xoa sau 10 giay khi khong tim thay nguoi choi
+        if tbNpc.tick_breath > tbNpc.notFoundPlayerTick + 10 then
+            return self:Remove(nListId)
+        end
+    end
+
+    -- Otherwise just Random chat    
+    if tbNpc.isFighting == 1 then
+        if random(1, 1000) <= CHANCE_CHAT then
+            NpcChat(tbNpc.finalIndex, allSimcityChat.fighting[random(1, getn(allSimcityChat.fighting))])
+        end
+    else
+        if random(1, 1000) <= CHANCE_CHAT then
+            NpcChat(tbNpc.finalIndex, allSimcityChat.general[random(1, getn(allSimcityChat.general))])
+        end
     end
 
     -- Is fighting? Do nothing except leave fight if possible
@@ -379,7 +404,7 @@ function SimTheoSau:Breath(nListId)
 
         -- Case 2: tu dong thoat danh khi khong con ai
         if self:CanLeaveFight(nListId) == 1 then
-            -- self:LeaveFight(nListId, 0, "khong tim thay quai")
+            self:LeaveFight(nListId, 0, "khong tim thay quai")
             return 1
         end
 
@@ -438,7 +463,15 @@ function SimTheoSau:Breath(nListId)
 
 
     -- Otherwise walk toward parent
-    NpcWalk(tbNpc.finalIndex, pX + random(-2, 2), pY + random(-2, 2)) 
+    if tbNpc.isFighting == 0 then
+        if cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER then
+            if random(1,100) < 10 then 
+                NpcWalk(tbNpc.finalIndex, pX + random(-2, 2), pY + random(-2, 2)) 
+            end
+        else
+            NpcWalk(tbNpc.finalIndex, pX + random(-2, 2), pY + random(-2, 2)) 
+        end
+    end
     return 1
 end
 
