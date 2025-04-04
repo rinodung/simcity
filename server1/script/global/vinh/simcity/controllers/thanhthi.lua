@@ -503,7 +503,7 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 			local perTable = floor(total/5)
 			for i = 1, perTable do
 
-				if isThanhThi and random(1,3) == 1 then
+				if isThanhThi and THANHTHI_QUAI == 1 and random(1,3) == 1 then
 					local capQuai = random(1,4)
 					local pool = SimCityNPCInfo:getQuaiByCap(capQuai)
 					local poolN = getn(pool)

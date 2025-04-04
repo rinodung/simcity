@@ -4,6 +4,8 @@ CHANCE_ATTACK_PLAYER = 2000  -- 1/3000 co hoi danh nguoi neu den gan nguoi choi 
 
 STARTUP_AUTOADD_THANHTHI = 1 -- tu dong moi nhan si tren tat ca ban do
 THANHTHI_SIZE = 200    		 -- so luong nhan si trong thanh thi
+THANHTHI_QUAI = 0			 -- co cho phep quai nhan tu dong xuat hien trong thanh thi hay khong
+
 RADIUS_FIGHT_PLAYER = 8      -- tam quet nguoi choi chung quanh va tan cong
 RADIUS_FIGHT_NPC = 8         -- tam quet NPC chung quanh va tan cong
 RADIUS_FIGHT_SCAN = 8        -- tam quet dam danh nhau chung quanh de tham gia
