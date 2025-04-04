@@ -159,7 +159,7 @@ function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 					local nPlayerLevel = CallPlayerFunction(nPlayerIndex, GetLevel)
 					local rate = 1 + (nPlayerLevel - (10 * floor(nPlayerLevel / 10))) / 10
 
-					if (npcType > 1)
+					if not npcType and (npcType > 1) then
 						rate = rate * random(4,10)
 					end
 					local AddExpAmount = vGetNpcExp(min(npcLevel, nPlayerLevel))
@@ -181,7 +181,7 @@ function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 		if (not found[nPlayerIndex]) then
 			local nPlayerLevel = CallPlayerFunction(nPlayerIndex, GetLevel)
 			local rate = 1 + (nPlayerLevel - (10 * floor(nPlayerLevel / 10))) / 10
-			if (npcType > 1)
+			if not npcType and (npcType > 1) then
 				rate = rate * random(4,10)
 			end
 			local AddExpAmount = vGetNpcExp(min(npcLevel, nPlayerLevel))
