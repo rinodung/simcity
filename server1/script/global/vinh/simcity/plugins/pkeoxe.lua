@@ -40,7 +40,7 @@ function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, capHP, extraConfi
 
 	local tbNpc = {
 
-		szName = name or "",
+		szName = SimCityNPCInfo:generateName(),
 
 		nNpcId = id,   -- required, main char ID
 		nMapId = mapID, -- required, map
