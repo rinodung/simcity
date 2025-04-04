@@ -192,7 +192,7 @@ function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 	end
 
 	-- Them tien cho bat ky (keo xe)
-	if (nAttackerIndex == 0) then
+	if (not nAttackerIndex) or (nAttackerIndex == 0) then
 		local _, _, nMapIndex = GetNpcPos(nNpcIndex)
 		local mapDropFile = GetMapDropRateFile(nMapIndex)
 
