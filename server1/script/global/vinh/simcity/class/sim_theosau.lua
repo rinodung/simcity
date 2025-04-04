@@ -370,6 +370,17 @@ function SimTheoSau:Breath(nListId)
         cachNguoiChoi = GetDistanceRadius(myPosX, myPosY, pX, pY)
     end
 
+    -- Otherwise just Random chat    
+    if tbNpc.isFighting == 1 then
+        if random(1, 100) <= CHANCE_CHAT then
+            NpcChat(tbNpc.finalIndex, allSimcityChat.fighting[random(1, getn(allSimcityChat.fighting))])
+        end
+    else
+        if random(1, 100) <= CHANCE_CHAT then
+            NpcChat(tbNpc.finalIndex, allSimcityChat.general[random(1, getn(allSimcityChat.general))])
+        end
+    end
+
     -- Is fighting? Do nothing except leave fight if possible
     if tbNpc.isFighting == 1 then
         -- Case 1: toi gio chuyen doi

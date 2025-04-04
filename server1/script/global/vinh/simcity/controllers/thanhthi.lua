@@ -526,6 +526,9 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 				table4,
 				table5
 			})			
+			if isThanhThi then
+				AddTimer(10 * 18, "SimCityMainThanhThi:CreatePatrol", self)
+			end 
 		else
 			worldInfo.allowFighting = 1
 			total = 20 -- 20 PT tat ca
@@ -567,6 +570,7 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 						TIME_RESTING_maxTs = 3,
 					}}});
 			end
+			
 			self:_createBatch(everything)
 		end
 	end
