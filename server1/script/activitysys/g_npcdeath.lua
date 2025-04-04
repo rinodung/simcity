@@ -141,6 +141,7 @@ end;
 
 function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 	local found = {}
+	local npcType = GetNpcPowerType(nNpcIndex)
 
 
 	-- Them diem cho Thanh Vien Bang dung gan
@@ -157,6 +158,10 @@ function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 				if nPlayerTong == myTong then
 					local nPlayerLevel = CallPlayerFunction(nPlayerIndex, GetLevel)
 					local rate = 1 + (nPlayerLevel - (10 * floor(nPlayerLevel / 10))) / 10
+
+					if (npcType > 1)
+						rate = rate * random(4,10)
+					end
 					local AddExpAmount = vGetNpcExp(min(npcLevel, nPlayerLevel))
 
 					lib:DoFunByPlayer(nPlayerIndex, tbKillMonster.KillMonster, tbKillMonster, nNpcIndex)
@@ -176,6 +181,9 @@ function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 		if (not found[nPlayerIndex]) then
 			local nPlayerLevel = CallPlayerFunction(nPlayerIndex, GetLevel)
 			local rate = 1 + (nPlayerLevel - (10 * floor(nPlayerLevel / 10))) / 10
+			if (npcType > 1)
+				rate = rate * random(4,10)
+			end
 			local AddExpAmount = vGetNpcExp(min(npcLevel, nPlayerLevel))
 			lib:DoFunByPlayer(nPlayerIndex, tbKillMonster.KillMonster, tbKillMonster, nNpcIndex)
 			CallPlayerFunction(nPlayerIndex, AddOwnExp, floor(AddExpAmount * rate))
@@ -205,7 +213,6 @@ function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 		end
 
 		local rate = random(1,10)
-		local npcType = GetNpcPowerType(nNpcIndex)
 		if (npcType > 1) then
 			rate = random((npcType+0)*100, (npcType+1)*100)
 		end
