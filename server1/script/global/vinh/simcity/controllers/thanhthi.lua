@@ -345,9 +345,9 @@ function SimCityMainThanhThi:mainMenu()
 		tinsert(tbSay, "Thµnh thÞ/#SimCityMainThanhThi:thanhthiMenu()")
 		tinsert(tbSay, "ChiÕn lo¹n/#SimCityChienTranh:mainMenu()")
 		if self.autoAddThanhThi == 1 then
-			tinsert(tbSay, "§¹i héi vâ l©m (më)/#SimCityMainThanhThi:autoThanhThi(0)")
+			tinsert(tbSay, "T? ??ng thêm (më)/#SimCityMainThanhThi:autoThanhThi(0)")
 		else
-			tinsert(tbSay, "§¹i héi vâ l©m (®ãng)/#SimCityMainThanhThi:autoThanhThi(1)")
+			tinsert(tbSay, "T? ??ng thêm (t?t)/#SimCityMainThanhThi:autoThanhThi(1)")
 		end
 
 		tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
