@@ -159,7 +159,7 @@ end
 function SimTheoSau:Respawn(nListId, code, reason)
     local tbNpc = self.fighterList[nListId]
     -- code: 0: con nv con song 1: da chet toan bo 2: keo xe qua map khac 3: chuyen sang chien dau 4: bi lag dung 1 cho nay gio ko di duoc
-    --print(tbNpc.role .. " " .. tbNpc.szName .. ": respawn " .. code .. " " .. reason)
+    --print("Respawn " .. nListId .. " " .. code .. " " .. reason)
 
 
     local isAllDead = code == 1 and 1 or 0
@@ -245,6 +245,7 @@ function SimTheoSau:IsPlayerEnemyAround(nListId)
 end
 
 function SimTheoSau:JoinFight(nListId, reason)
+    --print("JoinFight " .. nListId .. " " .. reason)
     local tbNpc = self.fighterList[nListId]
     tbNpc.isFighting = 1
     tbNpc.tick_canswitch = tbNpc.tick_breath +
@@ -253,16 +254,23 @@ function SimTheoSau:JoinFight(nListId, reason)
 
     reason = reason or "no reason"
 
+    local playerID = self:GetPlayer(nListId)
+    if playerID <= 0 then
+        return 0
+    end
+
+    local pW, pX, pY = CallPlayerFunction(playerID, GetWorldPos)
+    
     local currX, currY, currW = GetNpcPos(tbNpc.finalIndex)
     currX = floor(currX / 32)
     currY = floor(currY / 32)
 
-    -- If already having last fight pos, we may simply chance AI to 1
+    -- If already having last fight pos, we may simply change AI to 1
     if tbNpc.lastFightPos then
         local lastPos = tbNpc.lastFightPos
         if lastPos.W == currW then
             if (GetDistanceRadius(lastPos.X, lastPos.Y, currX, currY) < DISTANCE_VISION) then
-                self:SetFightState(nListId, 9)
+                self:SetFightState(nListId, 9, pX*32, pY*32)
                 return 1
             end
         end
@@ -280,6 +288,7 @@ function SimTheoSau:JoinFight(nListId, reason)
 end
 
 function SimTheoSau:LeaveFight(nListId, isAllDead, reason)
+    --print("LeaveFight " .. nListId .. " " .. isAllDead .. " " .. reason)
     local tbNpc = self.fighterList[nListId]
 
     isAllDead = isAllDead or 0
@@ -320,9 +329,13 @@ function SimTheoSau:CanLeaveFight(nListId)
     return 0
 end
 
-function SimTheoSau:SetFightState(nListId, mode)
+function SimTheoSau:SetFightState(nListId, mode, currX, currY)
     local tbNpc = self.fighterList[nListId]
-    SetNpcAI(tbNpc.finalIndex, mode)
+    if mode == 9 then
+        SetNpcAI(tbNpc.finalIndex, mode, 20, -1, -1, -1, -1, -1, 0, currX, currY)
+    else
+        SetNpcAI(tbNpc.finalIndex, mode)
+    end
 end
 
 function SimTheoSau:TriggerFightWithNPC(nListId)
