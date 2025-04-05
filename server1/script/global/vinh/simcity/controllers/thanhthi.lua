@@ -375,10 +375,7 @@ end
 function SimCityMainThanhThi:autoThanhThi(inp)
 	self.autoAddThanhThi = inp
 	if (inp == 0) then
-		for k, v in self.worldStatus do
-			self.worldStatus["w" .. v.world] = nil
-			SimCitizen:ClearMap(v.world)
-		end
+		self:removeAll()
 	else
 		self:onPlayerEnterMap()
 	end
@@ -465,14 +462,11 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 		end
 
 		local isThanhThi = SimCityWorld:IsThanhThiMap(nW) == 1
+		local nv9x = SimCityNPCInfo:getPoolByCap(1)
 
 		-- Them 9x vao Thanh Thi
 		if isThanhThi or getn(tmpFound) == 0 then
-			tmpFound = arrJoin({ tmpFound, SimCityNPCInfo:getPoolByCap(1) })
-			for j = 511, 523 do
-				tinsert(tmpFound, j)
-			end
-
+			tmpFound = arrJoin({ tmpFound, nv9x})
 			level = 95
 			capHP = 1
 		end
@@ -535,8 +529,10 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 				self.patrolTimerId = AddTimer(20 * 18, "SimCityMainThanhThi:CreatePatrol", self)
 			end 
 		else
+			tmpFound = nv9x
+			N = getn(tmpFound)
 			worldInfo.allowFighting = 1
-			total = 20 -- 20 PT tat ca
+			total = floor(THANHTHI_SIZE/10) -- 20 PT tat ca
 			local everything = {}
 			for i = 1, total do
 				local id = tmpFound[random(1, N)]
