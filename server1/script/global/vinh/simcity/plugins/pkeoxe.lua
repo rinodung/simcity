@@ -20,8 +20,8 @@ SimCityKeoXe = {
 function createTaskSayKeoxe()
 	local tbOpt = {}
 	local nSettingIdx = 103
-	local nActionId = 0
-	tinsert(tbOpt, 1, "<dec><link=image[0,8]:#npcspr:?NPCSID="..tostring(nSettingIdx).."?ACTION="..tostring(nActionId)..">V« Kþ ca:<link> Nh©n sinh nh­ méng, tr­êng l­u v« tËn, gÆp gì chØ lµ tho¸ng qua");
+	local nActionId = 1
+	tinsert(tbOpt, 1, "<dec><link=image[0,14]:#npcspr:?NPCSID="..tostring(nSettingIdx).."?ACTION="..tostring(nActionId)..">V« Kþ ca:<link> Nh©n sinh nh­ méng, tr­êng l­u v« tËn, gÆp gì chØ lµ tho¸ng qua");
 	return tbOpt
 end
 
