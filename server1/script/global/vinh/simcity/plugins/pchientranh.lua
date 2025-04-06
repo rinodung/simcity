@@ -9,6 +9,16 @@ SimCityChienTranh = {
 	tongkim_camp2TopRight = 0
 }
 
+function createTaskSayChienTranh(extra)
+	local tbOpt = {}
+	local nSettingIdx = 1617
+	local nActionId = 0
+	if not extra then
+		extra = ""
+	end
+	tinsert(tbOpt, 1, "<dec><link=image[8,15]:#npcspr:?NPCSID="..tostring(nSettingIdx).."?ACTION="..tostring(nActionId)..">TriÖu MÉn:<link> ThiÕp vèn kh«ng ph¶i ng­êi tèt, nh­ng thiÕp ®èi víi chµng... ch­a tõng gian dèi." .. extra);
+	return tbOpt
+end
 
 function SimCityChienTranh:modeTongKim(enable, camp2TopRight)
 	self.tongkim = enable
@@ -448,7 +458,7 @@ function SimCityChienTranh:getWorldName()
 end
 
 function SimCityChienTranh:goiAnhHungThiepNgoaiTrang()
-	local tbSay = self:getWorldName()
+	local tbSay = createTaskSayChienTranh()
 
 
 	tinsert(tbSay, "S¬ cÊp/#SimCityChienTranh:nv_tudo(1)")
@@ -472,7 +482,7 @@ function SimCityChienTranh:goiAnhHungThiepNgoaiTrang()
 end
 
 function SimCityChienTranh:goiAnhHungThiep()
-	local tbSay = self:getWorldName()
+	local tbSay = createTaskSayChienTranh()
 
 
 
@@ -514,7 +524,7 @@ end
 function SimCityChienTranh:caidat()
 	local worldInfo = SimCityWorld:Get(self.nW)
 
-	local tbSay = self:getWorldName()
+	local tbSay = createTaskSayChienTranh()
 
 
 
@@ -541,8 +551,10 @@ function SimCityChienTranh:mainMenu()
 	local worldInfo = SimCityWorld:Get(self.nW)
 
 	if (not worldInfo.chientranh) or (not worldInfo.chientranh.path1) or (not worldInfo.chientranh.path2) then
-		Say(
-			"TriÖu MÉn: chiÕn lo¹n t¹i thµnh thÞ nµy ch­a ®­îc më.<enter><enter>C¸c h¹ cã thÓ ®ãng gãp <color=yellow>b¶n ®å ®­êng ®i chiÕn tranh<color> ®Õn t¸c gi¶ trªn fb héi qu¸n kh«ng?")
+
+		local tbSay = createTaskSayThanhThi("<enter><enter>ChiÕn lo¹n t¹i b¶n ®å nµy ch­a ®­îc më. Chµng cã thÓ gëi <color=yellow>®Þa ®å chÝ<color> ®Õn t¸c gi¶ trªn fb héi qu¸n.")
+		tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
+		CreateTaskSay(tbSay)
 		return 1
 	end
 
@@ -553,7 +565,7 @@ function SimCityChienTranh:mainMenu()
 	self.path2 = worldInfo.chientranh.path2
 
 
-	local tbSay = self:getWorldName()
+	local tbSay = createTaskSayChienTranh()
 
 	tinsert(tbSay, "Mêi anh hïng thiªn h¹/#SimCityChienTranh:goiAnhHungThiepNgoaiTrang()")
 	tinsert(tbSay, "Thªm qu¸i nh©n/#SimCityChienTranh:goiAnhHungThiep()")
