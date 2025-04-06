@@ -12,7 +12,7 @@ function mainLoop()
     SimCitizen:ATick()
 	SimTheoSau:ATick()
 	GroupFighter:ATick()
-    AddTimer(18, "mainLoop", SimCitizen)
+    AddTimer(REFRESH_RATE, "mainLoop", SimCitizen)
 end 
 
-AddTimer(18, "mainLoop", SimCitizen)
+AddTimer(REFRESH_RATE, "mainLoop", SimCitizen)

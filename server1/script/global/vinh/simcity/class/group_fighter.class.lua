@@ -1350,10 +1350,10 @@ end
 --- For children
 function GroupFighter:ChildrenTick(key)
 	local tbNpc = self.fighterList[key]
-	if not tbNpc then
+	if not tbNpc or not tbNpc.children then
 		return 1
 	end	
-	for childID, child in tbNpc.children do
+	for childID=1, getn(tbNpc.children) do
 		local child = tbNpc.children[childID]
 		if (child and child.isDead ~= 1) then
 			child.tick = child.tick + self.ATICK_TIME / 18

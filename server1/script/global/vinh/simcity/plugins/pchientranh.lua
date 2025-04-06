@@ -566,6 +566,9 @@ function SimCityChienTranh:mainMenu()
 
 
 	local tbSay = createTaskSayChienTranh()
+	if SimCityMainThanhThi then
+		SimCityMainThanhThi:removeAll()
+	end
 
 	tinsert(tbSay, "Ph∏t anh hÔng thi’p/#SimCityChienTranh:goiAnhHungThiepNgoaiTrang()")
 	tinsert(tbSay, "Ph∏t qu∏i nh©n thi’p/#SimCityChienTranh:goiAnhHungThiep()")
