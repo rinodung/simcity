@@ -179,7 +179,7 @@ end
 function SimCityMainThanhThi:allowFighting(show)
 	local nW, nX, nY = GetWorldPos()
 	SimCityWorld:Update(nW, "allowFighting", show)
-	self:thanhthiMenu()
+	self:caidat()
 end
 
 function SimCityMainThanhThi:allowChat(show)
@@ -212,6 +212,11 @@ function SimCityMainThanhThi:caidat()
 
 	local tbSay = createTaskSayThanhThi()
 
+	if worldInfo.allowFighting == 1 then
+		tinsert(tbSay, "Cho phÐp ®¸nh nhau [cã]/#SimCityMainThanhThi:allowFighting(0)")
+	else
+		tinsert(tbSay, "Cho phÐp ®¸nh nhau [kh«ng]/#SimCityMainThanhThi:allowFighting(1)")
+	end
 
 	if getn(worldInfo.decoration) >= 1 then
 		if worldInfo.showDecoration == 0 then
@@ -277,10 +282,10 @@ function SimCityMainThanhThi:goiAnhHungThiepNgoaiTrang()
 
 
 	local tbSay = createTaskSayThanhThi()
-	tinsert(tbSay, "S¬ cÊp/#SimCityMainThanhThi:createAnhHung(1,200,1)")
-	tinsert(tbSay, "Trung cÊp/#SimCityMainThanhThi:createAnhHung(2,200,1)")
-	tinsert(tbSay, "Cao cÊp/#SimCityMainThanhThi:createAnhHung(3,200,1)")
-	tinsert(tbSay, "Siªu cÊp/#SimCityMainThanhThi:createAnhHung(4,200,1)")
+	tinsert(tbSay, "§Ö tö tinh anh/#SimCityMainThanhThi:createAnhHung(1,200,1)")
+	tinsert(tbSay, "Cao thñ nhÊt l­u/#SimCityMainThanhThi:createAnhHung(2,200,1)")
+	tinsert(tbSay, "TuyÖt ®Ønh cao thñ/#SimCityMainThanhThi:createAnhHung(3,200,1)")
+	tinsert(tbSay, "Vâ l©m chÝ t«n/#SimCityMainThanhThi:createAnhHung(4,200,1)")
 
 	tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
 	CreateTaskSay(tbSay)
@@ -313,17 +318,11 @@ function SimCityMainThanhThi:thanhthiMenu()
 		CreateTaskSay(tbSay)
 	else
 		local tbSay = createTaskSayThanhThi()
-
-		--if worldInfo.allowFighting == 1 then
-		--	tinsert(tbSay, "Cho phÐp ®¸nh nhau [cã]/#SimCityMainThanhThi:allowFighting(0)")
-		--else
-		--	tinsert(tbSay, "Cho phÐp ®¸nh nhau [kh«ng]/#SimCityMainThanhThi:allowFighting(1)")
-		--end
 		self.patrolMap = nW
-		tinsert(tbSay, "Thªm anh hïng/#SimCityMainThanhThi:goiAnhHungThiepNgoaiTrang()")
-		tinsert(tbSay, "Thªm qu¸i nh©n/#SimCityMainThanhThi:goiAnhHungThiep()")
-		tinsert(tbSay, "Thªm quan binh/#SimCityMainThanhThi:CreatePatrol()")
-		tinsert(tbSay, "ThiÕt lËp kh¸c/#SimCityMainThanhThi:caidat()")
+		tinsert(tbSay, "Ph¸t anh hïng thiÕp/#SimCityMainThanhThi:goiAnhHungThiepNgoaiTrang()")
+		tinsert(tbSay, "Ph¸t qu¸i nh©n thiÕp/#SimCityMainThanhThi:goiAnhHungThiep()")
+		tinsert(tbSay, "§iÒu ®éng qu©n binh/#SimCityMainThanhThi:CreatePatrol()")
+		tinsert(tbSay, "Ban lÖnh/#SimCityMainThanhThi:caidat()")
 		tinsert(tbSay, "Gi¶i t¸n/#SimCityMainThanhThi:removeAll()")
 		tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
 		CreateTaskSay(tbSay)
@@ -355,8 +354,13 @@ function SimCityMainThanhThi:mainMenu()
 		end
 		local tbSay = createTaskSayThanhThi("<enter><enter><color=yellow>Nh©n sè hiÖn t¹i: " .. counter .. "<color>")
 
-		tinsert(tbSay, "Thµnh thÞ/#SimCityMainThanhThi:thanhthiMenu()")
-		tinsert(tbSay, "ChiÕn lo¹n/#SimCityChienTranh:mainMenu()")
+		tinsert(tbSay, "Thµnh ThÞ - Bè c¸o thiªn h¹/#SimCityMainThanhThi:thanhthiMenu()")
+
+		if (not worldInfo.chientranh) or (not worldInfo.chientranh.path1) or (not worldInfo.chientranh.path2) then
+		else 
+			tinsert(tbSay, "Ph¸t ®éng chiÕn tranh/#SimCityChienTranh:mainMenu()")
+		end
+
 		if self.autoAddThanhThi == 1 then
 			tinsert(tbSay, "Tù ®éng thªm (më)/#SimCityMainThanhThi:autoThanhThi(0)")
 		else
@@ -494,9 +498,9 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 
 		if map9x == 0 then
 			if isThanhThi then
-				worldInfo.allowFighting = 0
-			else
-				worldInfo.allowFighting = 1
+			--	worldInfo.allowFighting = 0
+			--else
+			--	worldInfo.allowFighting = 1
 			end
 			
 			-- Split into 4 tables of 50 NPCs each

@@ -461,18 +461,18 @@ function SimCityChienTranh:goiAnhHungThiepNgoaiTrang()
 	local tbSay = createTaskSayChienTranh()
 
 
-	tinsert(tbSay, "S¬ cÊp/#SimCityChienTranh:nv_tudo(1)")
-	tinsert(tbSay, "S¬ cÊp (5 xe)/#SimCityChienTranh:nv_tudo_xe(1)")
+	tinsert(tbSay, "§Ö tö tinh anh/#SimCityChienTranh:nv_tudo(1)")
+	tinsert(tbSay, "§Ö tö tinh anh (5 xe)/#SimCityChienTranh:nv_tudo_xe(1)")
 
-	tinsert(tbSay, "Trung cÊp/#SimCityChienTranh:nv_tudo(2)")
-	tinsert(tbSay, "Trung cÊp (5 xe)/#SimCityChienTranh:nv_tudo_xe(2)")
+	tinsert(tbSay, "Cao thñ nhÊt l­u/#SimCityChienTranh:nv_tudo(2)")
+	tinsert(tbSay, "Cao thñ nhÊt l­u (5 xe)/#SimCityChienTranh:nv_tudo_xe(2)")
 
 
-	tinsert(tbSay, "Cao cÊp/#SimCityChienTranh:nv_tudo(3)")
-	tinsert(tbSay, "Cao cÊp (5 xe)/#SimCityChienTranh:nv_tudo_xe(3)")
+	tinsert(tbSay, "TuyÖn ®Ønh cao thñ/#SimCityChienTranh:nv_tudo(3)")
+	tinsert(tbSay, "TuyÖn ®Ønh cao thñ (5 xe)/#SimCityChienTranh:nv_tudo_xe(3)")
 
-	tinsert(tbSay, "Siªu cÊp/#SimCityChienTranh:nv_tudo(4)")
-	tinsert(tbSay, "Siªu cÊp (5 xe)/#SimCityChienTranh:nv_tudo_xe(4)")
+	tinsert(tbSay, "Vâ l©m chÝ t«n/#SimCityChienTranh:nv_tudo(4)")
+	tinsert(tbSay, "Vâ l©m chÝ t«n (5 xe)/#SimCityChienTranh:nv_tudo_xe(4)")
 
 
 	tinsert(tbSay, "Quay l¹i./#SimCityChienTranh:mainMenu()")
@@ -567,11 +567,11 @@ function SimCityChienTranh:mainMenu()
 
 	local tbSay = createTaskSayChienTranh()
 
-	tinsert(tbSay, "Mêi anh hïng thiªn h¹/#SimCityChienTranh:goiAnhHungThiepNgoaiTrang()")
-	tinsert(tbSay, "Thªm qu¸i nh©n/#SimCityChienTranh:goiAnhHungThiep()")
-	tinsert(tbSay, "Thªm quan binh/#SimCityChienTranh:phe_quanbinh()")
+	tinsert(tbSay, "Ph¸t anh hïng thiÕp/#SimCityChienTranh:goiAnhHungThiepNgoaiTrang()")
+	tinsert(tbSay, "Ph¸t qu¸i nh©n thiÕp/#SimCityChienTranh:goiAnhHungThiep()")
+	tinsert(tbSay, "§iÒu ®éng qu©n binh/#SimCityChienTranh:phe_quanbinh()")
 	tinsert(tbSay, "Xem b¶ng xÕp h¹ng/#GroupFighter:ThongBaoBXH(" .. (self.nW) .. ")")
-	tinsert(tbSay, "ThiÕt lËp/#SimCityChienTranh:caidat()")
+	tinsert(tbSay, "Ban lÖnh/#SimCityChienTranh:caidat()")
 	tinsert(tbSay, "Gi¶i t¸n/#SimCityChienTranh:removeAll()")
 	tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
 	CreateTaskSay(tbSay)
