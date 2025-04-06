@@ -4,6 +4,8 @@
 
 -   Sửa lỗi quái kéo xe quá mạnh ở map 9x
 -   Sửa lỗi tắt quái
+-   Kéo xe: kết giao ngẫu nhiên
+-   Mở lại cho phép đánh nhau ở thành thị
 
 
 ## 04-04-2025
