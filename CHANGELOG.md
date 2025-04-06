@@ -1,3 +1,10 @@
+## 07-04-2025
+
+5.5.2
+
+-   Giảm lỗi sử dụng quá nhiều ổ cứng do log file
+-   Đổi sang hệ thống ECS
+
 ## 06-04-2025
 
 5.5.1
