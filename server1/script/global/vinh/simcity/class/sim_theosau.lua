@@ -40,6 +40,8 @@ function SimTheoSau:New(fighter)
     -- Bugfix series
     tbNpc.series = tbNpc.series or random(0,4)
 
+    tbNpc.isPlayerFighting = CallPlayerFunction(tbNpc.playerID, GetFightState)
+
     -- Create the character on screen
     self:Show(nListId, 1, tbNpc.goX, tbNpc.goY)
 
@@ -336,9 +338,20 @@ function SimTheoSau:SetFightState(nListId, mode, currX, currY)
     else
         SetNpcAI(tbNpc.finalIndex, mode)
     end
+    if tbNpc.isPlayerFighting == 0 then
+        SetNpcCurCamp(tbNpc.finalIndex, 0)
+        SetNpcKind(tbNpc.finalIndex, 0)
+    else
+        SetNpcCurCamp(tbNpc.finalIndex, tbNpc.camp)
+        SetNpcKind(tbNpc.finalIndex, tbNpc.kind or 4)
+    end
 end
 
 function SimTheoSau:TriggerFightWithNPC(nListId)
+    local tbNpc = self.fighterList[nListId]
+    if tbNpc.isPlayerFighting == 0 then
+        return 0
+    end
     if (self:IsNpcEnemyAround(nListId) == 1) then
         return self:JoinFight(nListId, "enemy around")
     end
@@ -347,6 +360,9 @@ end
 
 function SimTheoSau:TriggerFightWithPlayer(nListId)
     local tbNpc = self.fighterList[nListId]
+    if tbNpc.isPlayerFighting == 0 then
+        return 0
+    end
     -- FIGHT other player
     if GetNpcAroundPlayerList then
         if self:IsPlayerEnemyAround(nListId) == 1 then
@@ -385,6 +401,20 @@ function SimTheoSau:Breath(nListId)
     if pID > 0 then
         tbNpc.notFoundPlayerTick = nil
         pW, pX, pY = CallPlayerFunction(pID, GetWorldPos)
+        local isPlayerFighting = CallPlayerFunction(pID, GetFightState)
+
+        if isPlayerFighting ~= tbNpc.isPlayerFighting then
+            tbNpc.isPlayerFighting = isPlayerFighting
+            if isPlayerFighting == 1 then
+                SetNpcCurCamp(tbNpc.finalIndex, tbNpc.camp)
+                SetNpcKind(tbNpc.finalIndex, tbNpc.kind or 4)
+            else
+                SetNpcCurCamp(tbNpc.finalIndex, 0)
+                SetNpcKind(tbNpc.finalIndex, 0)
+            end
+        end
+
+
         cachNguoiChoi = GetDistanceRadius(myPosX, myPosY, pX, pY)
     else
         if not tbNpc.notFoundPlayerTick then
@@ -589,7 +619,7 @@ end
 
 function SimTheoSau:initCharConfig(config)
     config.playerID = config.playerID or "" -- dang theo sau ai do
-
+    config.isPlayerFighting = 1
 
     -- Init stats
     config.isFighting = 0
