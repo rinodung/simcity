@@ -133,10 +133,10 @@ function SimCityKeoXe:goiAnhHungThiepNgoaiTrang()
 	local tbSay = createTaskSayKeoxe()
 
 
-	tinsert(tbSay, "S¬ cÊp/#SimCityKeoXe:nv_tudo_xe(1)")
-	tinsert(tbSay, "Trung cÊp/#SimCityKeoXe:nv_tudo_xe(2)")
-	tinsert(tbSay, "Cao cÊp/#SimCityKeoXe:nv_tudo_xe(3)")
-	tinsert(tbSay, "Siªu cÊp/#SimCityKeoXe:nv_tudo_xe(4)")
+	tinsert(tbSay, "§Ö tö tinh anh/#SimCityKeoXe:nv_tudo_xe(1)")
+	tinsert(tbSay, "Cao thñ nhÊt l­u/#SimCityKeoXe:nv_tudo_xe(2)")
+	tinsert(tbSay, "TuyÖn ®Ønh cao thñ/#SimCityKeoXe:nv_tudo_xe(3)")
+	tinsert(tbSay, "Vâ l©m chÝ t«n/#SimCityKeoXe:nv_tudo_xe(4)")
 
 	tinsert(tbSay, "Quay l¹i./#SimCityKeoXe:mainMenu()")
 	tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
@@ -185,10 +185,25 @@ function SimCityKeoXe:tao1xe(data)
 	end
 end
 
+function SimCityKeoXe:ketgiaoNgauNhien()
+	local tbSay = createTaskSayKeoxe()
+	local phai = random(1, 10)
+	local ten = SimCityNPCInfo:generateName()
+	local gen = random(1,2)
+	if phai == 2 then 
+		gen = 1
+	elseif	phai == 7 or phai == 8 then
+		gen = 2
+	end 
+	self.randomName = {ten}
+	SimCityKeoXe:taoBangHuu(phai, gen, 1)
+	return 1
+end
+
 function SimCityKeoXe:ketgiaoPhai(phai)
 	local tbSay = createTaskSayKeoxe()	
 	if phai == 0 then
-		
+		tinsert(tbSay, "Giang hå l·ng tö/#SimCityKeoXe:ketgiaoNgauNhien()")
 		tinsert(tbSay, "Thiªn V­¬ng Bang/#SimCityKeoXe:ketgiaoPhai(1)")
 		tinsert(tbSay, "ThiÕu L©m/#SimCityKeoXe:ketgiaoPhai(2)")
 		tinsert(tbSay, "Vâ §ang/#SimCityKeoXe:ketgiaoPhai(3)")
