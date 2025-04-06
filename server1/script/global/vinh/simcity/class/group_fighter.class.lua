@@ -233,7 +233,6 @@ function GroupFighter:Show(tbNpc, isNew, goX, goY)
 					SetNpcParam(nNpcIndex, self.PARAM_PLAYER_ID, SearchPlayer(tbNpc.playerID))
 					SetNpcParam(nNpcIndex, self.PARAM_NPC_TYPE, 1)
 					SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\group_fighter.timer.lua")
-					SetNpcTimer(nNpcIndex, self.ATICK_TIME)
 				end
 
 				-- Ngoai trang?
@@ -1031,38 +1030,21 @@ function GroupFighter:OnDeath(nListId)
 	end
 end
 
-function GroupFighter:ATick(nNpcIndex)
-	local npcType = GetNpcParam(nNpcIndex, self.PARAM_NPC_TYPE)
-	-- Parent
-	if (npcType == 1) then
-		return self:ParentTick(nNpcIndex)
-	else
-		return self:ChildrenTick(nNpcIndex)
-	end
-end
-
-function GroupFighter:ParentTick(nNpcIndex)
-	if nNpcIndex > 0 then
-		local nListId = GetNpcParam(nNpcIndex, self.PARAM_LIST_ID)
-		local tbNpc = self.fighterList["n" .. nListId]
-		if not tbNpc then
-			return 1
-		end
-		tbNpc.tick = tbNpc.tick + self.ATICK_TIME / 18
-		tbNpc.finalIndex = nNpcIndex
-
-		if tbNpc.isFighting == 1 then
-			tbNpc.fightingScore = tbNpc.fightingScore + 10
-		end
-		self.fighterList["n" .. nListId] = tbNpc
-		self:Breath(nListId)
-
-		if tbNpc.isDead == 1 then
-			return 0
-		end
+function GroupFighter:ParentTick(key)	
+	local tbNpc = self.fighterList[key]
+	if not tbNpc or tbNpc.isDead == 1 then
 		return 1
 	end
+	tbNpc.tick = tbNpc.tick + self.ATICK_TIME / 18
+	if tbNpc.isFighting == 1 then
+		tbNpc.fightingScore = tbNpc.fightingScore + 10
+	end
+	self:Breath(tbNpc.id)
+	if tbNpc.isDead == 1 then
+		return 0
+	end
 	return 1
+	
 end
 
 function GroupFighter:Breath(nListId)
@@ -1366,28 +1348,19 @@ function GroupFighter:Breath(nListId)
 end
 
 --- For children
-
-function GroupFighter:ChildrenTick(childrenIndex)
-	if childrenIndex > 0 then
-		local nListId = GetNpcParam(childrenIndex, self.PARAM_LIST_ID)
-		local childID = GetNpcParam(childrenIndex, self.PARAM_CHILD_ID)
-		local tbNpc = self.fighterList["n" .. nListId]
-
-		if not tbNpc then
-			return 1
-		end
+function GroupFighter:ChildrenTick(key)
+	local tbNpc = self.fighterList[key]
+	if not tbNpc then
+		return 1
+	end	
+	for childID, child in tbNpc.children do
 		local child = tbNpc.children[childID]
-
-
-
-		if (tbNpc and child) then
+		if (child and child.isDead ~= 1) then
 			child.tick = child.tick + self.ATICK_TIME / 18
 			tbNpc.children[childID] = child
 			if tbNpc.tick + 2 < child.tick then
 				tbNpc.tick = child.tick
 			end
-			self.fighterList["n" .. nListId] = tbNpc
-
 
 			-- Check distance to parent
 			if SearchPlayer(tbNpc.playerID) == 0 then
@@ -1416,9 +1389,8 @@ function GroupFighter:ChildrenTick(childrenIndex)
 			end
 			return 1
 		end
-		return 1
 	end
-	return 0
+	return 1  
 end
 
 function GroupFighter:ChildrenShow(nListId)
@@ -1509,7 +1481,6 @@ function GroupFighter:ChildrenAdd(nListId, childID)
 				SetNpcParam(nNpcIndex, self.PARAM_PLAYER_ID, SearchPlayer(tbNpc.playerID))
 				SetNpcParam(nNpcIndex, self.PARAM_NPC_TYPE, 2)
 				SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\group_fighter.timer.lua")
-				SetNpcTimer(nNpcIndex, self.ATICK_TIME)
 
 				-- Ngoai trang?
 				if (tbNpc.ngoaitrang and tbNpc.ngoaitrang == 1) then
@@ -1878,5 +1849,14 @@ function GroupFighter:ThongBaoBXH(nW)
 			end
 		end
 		Msg2Map(nW, "<color=yellow>=================================<color>")
+	end
+end
+
+
+
+function GroupFighter:ATick()
+	for key, tbNpc in self.fighterList do
+		self:ParentTick(key)
+		self:ChildrenTick(key)
 	end
 end

@@ -118,7 +118,6 @@ function SimTheoSau:Show(nListId, isNew, goX, goY)
                 SetNpcActiveRegion(nNpcIndex, 1)
                 SetNpcParam(nNpcIndex, PARAM_LIST_ID, tbNpc.id)
                 SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\sim_theosau.timer.lua")
-                SetNpcTimer(nNpcIndex, REFRESH_RATE)
 
                 -- Ngoai trang?
                 if (tbNpc.ngoaitrang and tbNpc.ngoaitrang == 1) then
@@ -520,16 +519,12 @@ end
 
 function SimTheoSau:OnTimer(nListId)
     local tbNpc = self.fighterList[nListId]
-    if tbNpc == nil then
+    if tbNpc == nil or tbNpc.isDead == 1 then
         return 0
     end
-    tbNpc.tick_breath = tbNpc.tick_breath + REFRESH_RATE / 18
+    tbNpc.tick_breath = tbNpc.tick_breath + 1
     if tbNpc.isFighting == 1 then
         tbNpc.fightingScore = tbNpc.fightingScore + 10
-    end
-
-    if tbNpc.isDead == 1 then
-        return 0
     end
 
     self:Breath(nListId)
@@ -638,3 +633,9 @@ function SimTheoSau:initCharConfig(config)
     end
     config.parentAppointPos = {0, 0}
 end
+
+function SimTheoSau:ATick()    
+    for key, fighter in self.fighterList do
+        self:OnTimer(key)
+    end
+end 

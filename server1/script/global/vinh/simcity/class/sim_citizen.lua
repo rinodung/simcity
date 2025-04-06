@@ -179,7 +179,6 @@ function SimCitizen:Show(nListId, isNew, goX, goY)
                     SetNpcActiveRegion(nNpcIndex, 1)
                     SetNpcParam(nNpcIndex, PARAM_LIST_ID, tbNpc.id)
                     SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\sim_citizen.timer.lua")
-                    SetNpcTimer(nNpcIndex, REFRESH_RATE)
                 end
 
                 -- Ngoai trang?
@@ -877,13 +876,11 @@ end
 
 function SimCitizen:OnTimer(nListId)
     local tbNpc = self.fighterList[nListId]
-    if tbNpc == nil then
+    if tbNpc == nil or tbNpc.isDead == 1 then
         return 0
     end
-    if tbNpc.killTimer == 1 then
-        return 0
-    end
-    tbNpc.tick_breath = tbNpc.tick_breath + REFRESH_RATE / 18
+
+    tbNpc.tick_breath = tbNpc.tick_breath + 1
     if tbNpc.isFighting == 1 then
         tbNpc.fightingScore = tbNpc.fightingScore + 10
     end
@@ -988,11 +985,6 @@ function SimCitizen:OnDeath(nListId, nNpcIndex)
         -- Do revive? Reset and leave fight
         self:LeaveFight(nListId, 1, "die toan bo")
     end
-end
-
-function SimCitizen:KillTimer(nListId)
-    local tbNpc = self.fighterList[nListId]
-    tbNpc.killTimer = 1
 end
 
 -- For keo xe
@@ -1441,5 +1433,12 @@ function SimCitizen:ThongBaoBXH(nW)
             end
         end
         Msg2Map(nW, "<color=yellow>=================================<color>")
+    end
+end 
+
+
+function SimCitizen:ATick()    
+    for key, fighter in self.fighterList do
+        self:OnTimer(key)
     end
 end 
