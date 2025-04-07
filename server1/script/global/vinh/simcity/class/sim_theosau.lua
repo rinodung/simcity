@@ -117,6 +117,7 @@ function SimTheoSau:Show(nListId, isNew, goX, goY)
                 SetNpcCurCamp(nNpcIndex, tbNpc.camp)                
                 SetNpcActiveRegion(nNpcIndex, 1)
                 SetNpcParam(nNpcIndex, PARAM_LIST_ID, tbNpc.id)
+                SetNpcParam(nNpcIndex, 4, 1)
                 SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\sim_theosau.timer.lua")
 
                 -- Ngoai trang?

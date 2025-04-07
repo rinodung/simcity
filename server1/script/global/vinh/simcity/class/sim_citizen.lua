@@ -178,6 +178,7 @@ function SimCitizen:Show(nListId, isNew, goX, goY)
                 if nPosCount ~= nil then
                     SetNpcActiveRegion(nNpcIndex, 1)
                     SetNpcParam(nNpcIndex, PARAM_LIST_ID, tbNpc.id)
+                    SetNpcParam(nNpcIndex, 4, 1)
                     SetNpcScript(nNpcIndex, "\\script\\global\\vinh\\simcity\\class\\sim_citizen.timer.lua")
                 end
 
@@ -945,7 +946,8 @@ function SimCitizen:OnDeath(nListId, nNpcIndex)
 
                 SetNpcParam(tbNpc.finalIndex, PARAM_LIST_ID, tbNpc.id)
                 SetNpcParam(child.finalIndex, PARAM_LIST_ID, child.id)
-
+                SetNpcParam(tbNpc.finalIndex, 4, 1)
+                SetNpcParam(child.finalIndex, 4, 2)
                 child.isDead = 1
 
                 --print("Doi chu PT sang nv " .. tbNpc.szName)

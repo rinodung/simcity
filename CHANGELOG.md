@@ -4,6 +4,7 @@
 
 -   Giảm lỗi sử dụng quá nhiều ổ cứng do log file
 -   Đổi sang hệ thống ECS
+-   Sửa lỗi rớt đồ của các sim chiến đấu
 
 ## 06-04-2025
 

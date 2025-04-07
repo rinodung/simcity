@@ -143,6 +143,11 @@ function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 	local found = {}
 	local npcType = GetNpcPowerType(nNpcIndex)
 
+	-- Neu la SimCity bi chet thi dung rot gi ca
+	local param4 = GetNpcParam(nNpcIndex, 4)
+	if param4 and (param4 == 1 or param4 == 2) then
+		return 1
+	end
 
 	-- Them diem cho Thanh Vien Bang dung gan
 	if PlayerIndex and PlayerIndex > 0 then		
