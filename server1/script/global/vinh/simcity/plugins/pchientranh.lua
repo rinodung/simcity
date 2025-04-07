@@ -461,18 +461,18 @@ function SimCityChienTranh:goiAnhHungThiepNgoaiTrang()
 	local tbSay = createTaskSayChienTranh()
 
 
-	tinsert(tbSay, "§Ö tö tinh anh/#SimCityChienTranh:nv_tudo(1)")
-	tinsert(tbSay, "§Ö tö tinh anh (5 xe)/#SimCityChienTranh:nv_tudo_xe(1)")
+	tinsert(tbSay, "§Ö tö tinh anh (100 thiÕp)/#SimCityChienTranh:nv_tudo(1)")
+	tinsert(tbSay, "§Ö tö tinh anh (5 nhãm)/#SimCityChienTranh:nv_tudo_xe(1)")
 
-	tinsert(tbSay, "Cao thñ nhÊt l­u/#SimCityChienTranh:nv_tudo(2)")
-	tinsert(tbSay, "Cao thñ nhÊt l­u (5 xe)/#SimCityChienTranh:nv_tudo_xe(2)")
+	tinsert(tbSay, "Cao thñ nhÊt l­u (100 thiÕp)/#SimCityChienTranh:nv_tudo(2)")
+	tinsert(tbSay, "Cao thñ nhÊt l­u (5 nhãm)/#SimCityChienTranh:nv_tudo_xe(2)")
 
 
-	tinsert(tbSay, "TuyÖn ®Ønh cao thñ/#SimCityChienTranh:nv_tudo(3)")
-	tinsert(tbSay, "TuyÖn ®Ønh cao thñ (5 xe)/#SimCityChienTranh:nv_tudo_xe(3)")
+	tinsert(tbSay, "TuyÖn ®Ønh cao thñ (100 thiÕp)/#SimCityChienTranh:nv_tudo(3)")
+	tinsert(tbSay, "TuyÖn ®Ønh cao thñ (5 nhãm)/#SimCityChienTranh:nv_tudo_xe(3)")
 
-	tinsert(tbSay, "Vâ l©m chİ t«n/#SimCityChienTranh:nv_tudo(4)")
-	tinsert(tbSay, "Vâ l©m chİ t«n (5 xe)/#SimCityChienTranh:nv_tudo_xe(4)")
+	tinsert(tbSay, "Vâ l©m chİ t«n (100 thiÕp)/#SimCityChienTranh:nv_tudo(4)")
+	tinsert(tbSay, "Vâ l©m chİ t«n (5 nhãm)/#SimCityChienTranh:nv_tudo_xe(4)")
 
 
 	tinsert(tbSay, "Quay l¹i./#SimCityChienTranh:mainMenu()")
@@ -486,18 +486,18 @@ function SimCityChienTranh:goiAnhHungThiep()
 
 
 
-	tinsert(tbSay, "Cao cÊp 1/#SimCityChienTranh:phe_tudo(1000,500,0)")
+	tinsert(tbSay, "Cao cÊp 1 (500 thiÕp)/#SimCityChienTranh:phe_tudo(1000,500,0)")
 	--tinsert(tbSay, "Cao cÊp 1 (5 xe)/#SimCityChienTranh:phe_tudo_xe(1000,500,0)")
 
-	tinsert(tbSay, "Cao cÊp 2/#SimCityChienTranh:phe_tudo(1500,500,0)")
+	tinsert(tbSay, "Cao cÊp 2 (500 thiÕp)/#SimCityChienTranh:phe_tudo(1500,500,0)")
 	--tinsert(tbSay, "Cao cÊp 2 (5 xe)/#SimCityChienTranh:phe_tudo_xe(1500,500,0)")
 
-	tinsert(tbSay, "Cao cÊp 3/#SimCityChienTranh:phe_tudo(2000,500,0)")
+	tinsert(tbSay, "Cao cÊp 3 (500 thiÕp)/#SimCityChienTranh:phe_tudo(2000,500,0)")
 	--tinsert(tbSay, "Cao cÊp 3 (5 xe)/#SimCityChienTranh:phe_tudo_xe(2000,500,0)")
 
 
 
-	tinsert(tbSay, "Trung cÊp/#SimCityChienTranh:phe_tudo(500,500,1)")
+	tinsert(tbSay, "Trung cÊp (500 thiÕp)/#SimCityChienTranh:phe_tudo(500,500,1)")
 	--tinsert(tbSay, "Trung cÊp (5 xe)/#SimCityChienTranh:phe_tudo_xe(500,500,0)")
 
 	tinsert(tbSay, "Quay l¹i./#SimCityChienTranh:mainMenu()")
