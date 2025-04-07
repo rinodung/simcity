@@ -1353,6 +1353,7 @@ function GroupFighter:ChildrenTick(key)
 	if not tbNpc or not tbNpc.children then
 		return 1
 	end	
+	local nListId = tbNpc.id
 	for childID=1, getn(tbNpc.children) do
 		local child = tbNpc.children[childID]
 		if (child and child.isDead ~= 1) then
