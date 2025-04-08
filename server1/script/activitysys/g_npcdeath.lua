@@ -176,9 +176,10 @@ function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 				end
 			end
 		end
+		return found
 	end
 
-	-- Them diem cho bat ky (keo xe)
+	-- Keoxe: them EXP
 	local npcLevel = NPCINFO_GetLevel(nNpcIndex)
 	local tbRoundPlayer, nCount = GetNpcAroundPlayerList(nNpcIndex, 10);
 	for i = 1, nCount do
@@ -196,40 +197,32 @@ function vinh_OnGlobalNpcDeath(nNpcIndex, nAttackerIndex)
 		end
 	end
 
-	-- Them tien cho bat ky (keo xe)
-	if (not nAttackerIndex) or (nAttackerIndex == 0) then
-		local _, _, nMapIndex = GetNpcPos(nNpcIndex)
-		local mapDropFile = GetMapDropRateFile(nMapIndex)
+	-- Keoxe: them tien + vat pham
+	local _, _, nMapIndex = GetNpcPos(nNpcIndex)
+	local mapDropFile = GetMapDropRateFile(nMapIndex)
+	local npcLevel = 10*floor(NPCINFO_GetLevel(nNpcIndex) / 10)
+	local levelDropFile = format("\\settings\\droprate\\npcdroprate%d.ini", npcLevel)
+	local npcDropFile = GetNpcDropRateFile(nNpcIndex)
+	local finalDropFile
 
-		local npcLevel = 10*floor(NPCINFO_GetLevel(nNpcIndex) / 10)
-		local levelDropFile = format("\\settings\\droprate\\npcdroprate%d.ini", npcLevel)
-
-		local npcDropFile = GetNpcDropRateFile(nNpcIndex)
-
-		local finalDropFile
-
-		-- Map as priority
-		if mapDropFile then
-			finalDropFile = mapDropFile
-		elseif levelDropFile then
-			finalDropFile = levelDropFile
-		else
-			finalDropFile = npcDropFile
-		end
-
-		local rate = random(1,10)
-		if (npcType > 1) then
-			rate = random((npcType+0)*100, (npcType+1)*100)
-		end
-
-		if finalDropFile then
-			ITEM_DropRateItem(nNpcIndex, rate, finalDropFile, 1, 100, GetNpcSeries(nNpcIndex));
-		end
-		
+	-- Map as priority
+	if mapDropFile then
+		finalDropFile = mapDropFile
+	elseif levelDropFile then
+		finalDropFile = levelDropFile
+	else
+		finalDropFile = npcDropFile
 	end
 
+	local rate = random(1,10)
+	if (npcType > 1) then
+		rate = random((npcType+0)*100, (npcType+1)*100)
+	end
 
+	if finalDropFile then
+		ITEM_DropRateItem(nNpcIndex, rate, finalDropFile, 1, 100, GetNpcSeries(nNpcIndex));
+	end
 
-	-- Return processed player
+	
 	return found
 end
