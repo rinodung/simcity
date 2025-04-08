@@ -52,7 +52,7 @@ function SimCitizen:New(fighter)
     end
 
     -- Set up preset path if using preset mode (only done once at creation)
-    if tbNpc.role == "citizen" and tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths then
+    if tbNpc.role == "citizen" and (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths then
         local pathCount = getn(tbNpc.worldInfo.walkPaths)
         if pathCount > 0 then
             tbNpc.currentPathIndex = random(1, pathCount)
@@ -121,7 +121,7 @@ function SimCitizen:Show(nListId, isNew, goX, goY)
             tX = pX
             tY = pY
         elseif tbNpc.role == "citizen" then
-            if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+            if (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
                 local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
                 if path and tbNpc.currentPointIndex and tbNpc.currentPointIndex <= getn(path) then
                     tX = path[tbNpc.currentPointIndex][1]
@@ -252,7 +252,7 @@ function SimCitizen:Respawn(nListId, code, reason)
         nX = tbNpc.parentAppointPos[1]
         nY = tbNpc.parentAppointPos[2]
     elseif (isAllDead == 1 and tbNpc.resetPosWhenRevive and tbNpc.resetPosWhenRevive >= 1) then
-        if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+        if (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
             -- For preset path, select a random point on the path
             local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
             if path and getn(path) > 0 then
@@ -316,7 +316,7 @@ function SimCitizen:IsDialogNpcAround(nListId)
     end
 
     -- Check cache for preset path
-    if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+    if (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
         local pathKey = tbNpc.currentPathIndex .. "_" .. tbNpc.currentPointIndex
         local cachedNpcId = tbNpc.worldInfo.foundDialogNpcOnPaths[pathKey]
         
@@ -382,7 +382,7 @@ function SimCitizen:IsDialogNpcAround(nListId)
         local nNpcId = GetNpcSettingIdx(allNpcs[i])
         if fighter2Kind == 3 and (nNpcId == 108 or nNpcId == 198 or nNpcId == 203 or nNpcId == 384) then
             -- Cache the found NPC ID
-            if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+            if (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
                 local pathKey = tbNpc.currentPathIndex .. "_" .. tbNpc.currentPointIndex
                 tbNpc.worldInfo.foundDialogNpcOnPaths[pathKey] = nNpcId
             else
@@ -510,7 +510,7 @@ function SimCitizen:TriggerFightWithPlayer(nListId)
                     local name = GetNpcName(tbNpc.finalIndex)
                     local lastPos
                     
-                    if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+                    if (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
                         local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
                         if path and tbNpc.currentPointIndex and tbNpc.currentPointIndex <= getn(path) then
                             lastPos = path[tbNpc.currentPointIndex]
@@ -552,7 +552,7 @@ function SimCitizen:HasArrived(nListId)
         end
     else
         -- Handle preset path mode
-        if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
+        if (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths and tbNpc.currentPathIndex then
             local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
             if path and tbNpc.currentPointIndex and tbNpc.currentPointIndex <= getn(path) then
                 nX = path[tbNpc.currentPointIndex][1]
@@ -599,7 +599,7 @@ function SimCitizen:HardResetPos(nListId)
     end
 
     -- Preset path mode - choose a random position on the already chosen path
-    if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths then
+    if (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths then
         if tbNpc.currentPathIndex then
             local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
             if path and getn(path) > 0 then
@@ -807,7 +807,7 @@ function SimCitizen:Breath(nListId)
         local targetPos
         
         -- Handle preset path walking
-        if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths then
+        if (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths then
             if tbNpc.currentPathIndex and tbNpc.currentPointIndex then
                 local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
                 if path and tbNpc.currentPointIndex <= getn(path) then
@@ -1244,7 +1244,7 @@ function SimCitizen:GetRandomWalkPoint(nListId, currentPosId)
     end
     
     -- Handle preset walking mode
-    if tbNpc.walkMode == "preset" and tbNpc.worldInfo.walkPaths then
+    if (tbNpc.walkMode == "preset" or tbNpc.walkMode == "formation") and tbNpc.worldInfo.walkPaths then
         if tbNpc.currentPathIndex and tbNpc.currentPointIndex then
             local path = tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]
             if path then

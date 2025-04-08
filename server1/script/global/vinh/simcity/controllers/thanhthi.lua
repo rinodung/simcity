@@ -545,7 +545,7 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 				self.patrolMap = nW
 				self.patrolTimerId = AddTimer(20 * 18, "SimCityMainThanhThi:CreatePatrol", self)
 			end 
-		else
+		else if LUYENCONG_AUTOADD == 1 then
 			tmpFound = nv9x
 			N = getn(tmpFound)
 			worldInfo.allowFighting = 1
