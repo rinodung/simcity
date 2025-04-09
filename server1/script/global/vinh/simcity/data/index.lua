@@ -1,240 +1,135 @@
 Include("\\script\\global\\vinh\\simcity\\libs\\common.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mbienkinh.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdaily.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mlaman.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtuongduong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mphuongtuong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtongkim_nguyensoai.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mduongchau.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mbalanghuyen.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mlongtuyenthon.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mgiangtanthon.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mvinhlactran.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mchutientran.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdaohuongthon.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mlongmontran.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthachcotran.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthienvuongbang.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthieulam.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mduongmon.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mngudoc.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mngami.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthuyyen.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mcaibang.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mvodang.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mconlon.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mhoason.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mvuhon.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtieudao.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthienvuongdao.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mphucluudong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mhoasondinh.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mmecungdaygieng.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mmocnhanhang.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthatsatdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mduocvuongcoc.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mmecungnhapmon.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mnhandangson.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mkiemcactaybac.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtanlang.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mmanhhodong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mkiemcactaynam.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mkiemcactrungnguyen.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mvulangson.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mbachthuydong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mhoalangdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mlatieuson.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mkimquangdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mlangtanthuyhoang.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mbachvandong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mmieulinh.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\myentudong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mphucnguusondong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthuccuongson.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthophidong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mkinhhoangdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtoavandong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthanhthanhson.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthantiendong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mphucnguusontay.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mmecungkequandong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mmatthatthieulam.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mhoanghanguyendau.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mkienthinhphong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdiemthuongson.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mphungnhandong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdiemthuongdongtang1.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdiemthuongdongtang2.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdiemthuongdongtang3.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mlongcungdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdiadaohauvien.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mhuongthuydong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthientamdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdaydongdinhhotang1.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtuongvandong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mluutiendongtang1.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mbanghuyetdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\macbadiadao.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthientamthaptang1.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthientamthaptang2.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mnghietlongdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthanhdongtang1.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthanhdongtang2.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mhoanhsonphai.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthanhloadao.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\m108lahantran.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtuongvandongtang2.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtruonggiangnguyendau.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdaohoanguyen.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthanhloadaosondong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mdaitudong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\msonbaodong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mlinhcocdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtuongvandongtang8.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mlaohodong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mluutiendongtang5.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mnhanthachdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mthanhkedong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mvulangdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mcoduongdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mbanghadong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mphudungdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mvodanhdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mphithiendong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mduongtrungdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\msamactang1.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mchannuitruongbach.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mkhoalangdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtiencucdong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mcanviendong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\msamactang2.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\msamactang3.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtruongbachsonnam.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mtruongbachsonbac.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mmanbacthaonguyen.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mvisondao.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mhacsadong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mmaccaoquat.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mlamduquan.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\maps\\mngochoadong.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\chat.lua")
-Include("\\script\\global\\vinh\\simcity\\data\\names.lua")
-allSimcityMap = {
-    map_tuongduong,
-    map_bienkinh,
-    map_laman,
-    map_daily,
-    map_duongchau,
-    map_phuongtuong,
-    map_balanghuyen,
-    map_longtuyenthon,
-    map_giangtanthon,
-    map_vinhlactran,
-    map_chutientran,
-    map_daohuongthon,
-    map_longmontran,
-    map_thachcotran,
-    map_thienvuongbang,
-    map_thieulam,
-    map_duongmon,
-    map_ngudoc,
-    map_ngami,
-    map_thuyyen,
-    map_caibang,
-    map_vodang,
-    map_conlon,
-    map_hoason,
-    map_vuhon,
-    map_tieudao,
-    map_thienvuongdao,
-    map_phucluudong,
-    map_hoasondinh,
-    map_mecungdaygieng,
-    map_mocnhanhang,
-    map_thatsatdong,
-    map_duocvuongcoc,
-    map_mecungnhapmon,
-    map_nhandangson,
-    map_kiemcactaybac,
-    map_tanlang,
-    map_manhhodong,
-    map_kiemcactaynam,
-    map_kiemcactrungnguyen,
-    map_vulangson,
-    map_bachthuydong,
-    map_hoalangdong,
-    map_latieuson,
-    map_kimquangdong,
-    map_langtanthuyhoang,
-    map_bachvandong,
-    map_mieulinh,
-    map_yentudong,
-    map_phucnguusondong,
-    map_thuccuongson,
-    map_thophidong,
-    map_kinhhoangdong,
-    map_toavandong,
-    map_thanhthanhson,
-    map_thantiendong,
-    map_phucnguusontay,
-    map_mecungkequandong,
-    map_matthatthieulam,
-    map_hoanghanguyendau,
-    map_kienthinhphong,
-    map_diemthuongson,
-    map_phungnhandong,
-    map_diemthuongdongtang1,
-    map_diemthuongdongtang2,
-    map_diemthuongdongtang3,
-    map_longcungdong,
-    map_diadaohauvien,
-    map_huongthuydong,
-    map_thientamdong,
-    map_daydongdinhhotang1,
-    map_tuongvandong,
-    map_luutiendongtang1,
-    map_banghuyetdong,
-    map_acbadiadao,
-    map_thientamthaptang1,
-    map_thientamthaptang2,
-    map_nghietlongdong,
-    map_ngochoadong,
-    map_thanhdongtang1,
-    map_thanhdongtang2,
-    map_hoanhsonphai,
-    map_thanhloadao,
-    map_108lahantran,
-    map_tuongvandongtang2,
-    map_truonggiangnguyendau,
-    map_daohoanguyen,
-    map_thanhloadaosondong,
-    map_daitudong,
-    map_sonbaodong,
-    map_linhcocdong,
-    map_tuongvandongtang8,
-    map_laohodong,
-    map_luutiendongtang5,
-    map_lamduquan,
-    map_nhanthachdong,
-    map_thanhkedong,
-    map_vulangdong,
-    map_coduongdong,
-    map_banghadong,
-    map_phudungdong,
-    map_vodanhdong,
-    map_phithiendong,
-    map_duongtrungdong,
-    map_samactang1,
-    map_channuitruongbach,
-    map_khoalangdong,
-    map_tiencucdong,
-    map_canviendong,
-    map_samactang2,
-    map_samactang3,
-    map_truongbachsonnam,
-    map_truongbachsonbac,
-    map_manbacthaonguyen,
-    map_visondao,
-    map_hacsadong,
-    map_maccaoquat,
-}
+
+settingsPath = "\\settings\\global\\vinh\\simcity\\"
+SimCityPlayerNames = {}
+SimCityChat = {}
+SimCityMap = {}
+
+-- Doc ten
+function loadNames()
+    local namesData = SimCityTableFromFile(settingsPath.. "names.txt", {"*w"})
+    for i=1, getn(namesData) do
+        tinsert(SimCityPlayerNames, namesData[i][1])
+    end
+end
+
+-- Doc chat
+function loadChat()
+    local chatData = SimCityTableFromFile(settingsPath.. "chat.txt", {"*w", "*w"})
+    for i=1, getn(chatData) do
+    if not SimCityChat[chatData[i][1]] then  
+        SimCityChat[chatData[i][1]] = {}
+    end
+        tinsert(SimCityChat[chatData[i][1]], chatData[i][2])
+    end
+end
+
+-- Doc map thanh thi va chien tranh
+function loadMap()
+    local mapPath = settingsPath.. "maps\\"
+    local thanhthiData = SimCityTableFromFile(mapPath.. "thanhthi.txt", {"*n", "*w", "*w"})
+    local chientranhData = SimCityTableFromFile(mapPath.. "chientranh.txt", {"*n", "*w", "*w"})
+
+    if not thanhthiData or not chientranhData then
+        print("Failed to read backup files")
+        return
+    end
+    for i = 1, getn(thanhthiData) do
+        local entry = thanhthiData[i]
+        local worldId = entry[1]
+        local worldName = entry[2]
+        local filePath = entry[3]
+
+        if not SimCityMap[worldId] then
+            SimCityMap[worldId] = {
+                worldId = worldId,
+                name = worldName,
+                walkPaths = {},
+                chientranh = {path1={}, path2={}},
+                decoration = {}
+            }
+        end
+        local world = SimCityMap[worldId]
+        local foundWalkPath = SimCityTableFromFile(mapPath.. filePath, {"*w", "*n", "*n"})
+
+        local allPath = {}
+        for i=1, getn(foundWalkPath) do
+            if not allPath[foundWalkPath[i][1]] then
+                allPath[foundWalkPath[i][1]] = {}
+            end
+            tinsert(allPath[foundWalkPath[i][1]], {foundWalkPath[i][2], foundWalkPath[i][3]})
+        end
+        for pathName, pathValues in allPath do
+            tinsert(world.walkPaths, pathValues)
+        end
+    end
+
+    for i = 1, getn(chientranhData) do
+        local entry = chientranhData[i]
+        local worldId = entry[1]
+        local worldName = entry[2]
+        local filePath = entry[3]
+
+        
+        -- Read the path data from the file
+        local pathData = SimCityTableFromFile(mapPath.. filePath, {"*w", "*w", "*n", "*n"})
+        if pathData then
+            
+            if not SimCityMap[worldId] then
+                SimCityMap[worldId] = {
+                    worldId = worldId,
+                    name = worldName,
+                            chientranh = {
+                                path1 = {},
+                                path2 = {}
+                            },
+                            decoration = {},
+                            walkPaths = {}
+                    }
+            end
+
+            local world = SimCityMap[worldId]
+            if not world.chientranh.path1 then
+                world.chientranh.path1 = {}
+            end
+            if not world.chientranh.path2 then
+                world.chientranh.path2 = {}
+            end
+
+            local allPath1 = {}
+            local allPath2 = {}
+            for i=1, getn(pathData) do
+                local path = pathData[i]
+                local camp = path[1]
+                local pathName = "n"..path[2]            
+                local pathX = path[3]
+                local pathY = path[4]
+                if camp == "camp1" then
+                    if not allPath1[pathName] then
+                        allPath1[pathName] = {}
+                    end
+                    tinsert(allPath1[pathName], {pathX, pathY})
+                elseif camp == "camp2" then
+                    if not allPath2[pathName] then
+                        allPath2[pathName] = {}
+                    end
+                    tinsert(allPath2[pathName], {pathX, pathY})
+                end
+            end  
+
+            for pathName, pathValues in allPath1 do
+                tinsert(world.chientranh.path1, pathValues)
+            end
+            for pathName, pathValues in allPath2 do
+                tinsert(world.chientranh.path2, pathValues)
+            end
+        end
+    end
+end
+
+-- EXECUTION
+loadNames()
+loadChat()
+loadMap()
+
+map_tongkim_nguyensoai = SimCityMap[10000]

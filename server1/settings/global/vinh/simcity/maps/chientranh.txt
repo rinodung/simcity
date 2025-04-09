@@ -1,0 +1,3 @@
+WorldID	WorldName	PathFile
+37	BiÖn Kinh	chientranh\37_bienkinh.txt
+78	T­¬ng D­¬ng	chientranh\78_tuongduong.txt

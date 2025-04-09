@@ -377,9 +377,9 @@ function SimTheoSau:HardResetPos(nListId)
     local tbNpc = self.fighterList[nListId]
     local nW = tbNpc.nMapId
     local pW, pX, pY = CallPlayerFunction(self:GetPlayer(nListId), GetWorldPos)
-        local targetPos = randomRange({pX, pY }, tbNpc.walkVar or 2)
-        tbNpc.parentAppointPos[1] = targetPos[1]
-        tbNpc.parentAppointPos[2] = targetPos[2]
+    local targetPos = randomRange({pX, pY }, tbNpc.walkVar or 2)
+    tbNpc.parentAppointPos[1] = targetPos[1]
+    tbNpc.parentAppointPos[2] = targetPos[2]
     return 1
 end
 
@@ -430,11 +430,11 @@ function SimTheoSau:Breath(nListId)
     -- Otherwise just Random chat    
     if tbNpc.isFighting == 1 then
         if random(1, 1000) <= CHANCE_CHAT then
-            NpcChat(tbNpc.finalIndex, allSimcityChat.fighting[random(1, getn(allSimcityChat.fighting))])
+            NpcChat(tbNpc.finalIndex, SimCityChat.fighting[random(1, getn(SimCityChat.fighting))])
         end
     else
         if random(1, 1000) <= CHANCE_CHAT then
-            NpcChat(tbNpc.finalIndex, allSimcityChat.general[random(1, getn(allSimcityChat.general))])
+            NpcChat(tbNpc.finalIndex, SimCityChat.general[random(1, getn(SimCityChat.general))])
         end
     end
 
