@@ -62,6 +62,10 @@ function loadMap()
         for pathName, pathValues in allPath do
             tinsert(world.walkPaths, pathValues)
         end
+
+        if worldId == 10000 then
+            map_tongkim_nguyensoai = allPath
+        end
     end
 
     for i = 1, getn(chientranhData) do
@@ -131,5 +135,3 @@ end
 loadNames()
 loadChat()
 loadMap()
-
-map_tongkim_nguyensoai = SimCityMap[10000]
