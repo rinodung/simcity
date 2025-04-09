@@ -29,6 +29,7 @@ function loadMap()
     local mapPath = settingsPath.. "maps\\"
     local thanhthiData = SimCityTableFromFile(mapPath.. "thanhthi.txt", {"*n", "*w", "*w"})
     local chientranhData = SimCityTableFromFile(mapPath.. "chientranh.txt", {"*n", "*w", "*w"})
+    local trangtriData = SimCityTableFromFile(mapPath.. "trangtri.txt", {"*n", "*w", "*w"})
 
     if not thanhthiData or not chientranhData then
         print("Failed to read backup files")
@@ -127,6 +128,22 @@ function loadMap()
             for pathName, pathValues in allPath2 do
                 tinsert(world.chientranh.path2, pathValues)
             end
+        end
+    end
+
+    for i = 1, getn(trangtriData) do
+        local entry = trangtriData[i]
+        local worldId = entry[1]
+        local worldName = entry[2]
+        local filePath = entry[3]
+
+        local trangtriData = SimCityTableFromFile(mapPath.. filePath, {"*n", "*n", "*n", "*w", "*w"})
+        if SimCityMap[worldId] and trangtriData then
+            local allData = {}
+            for i=1, getn(trangtriData) do
+                tinsert(allData, {trangtriData[i][1], trangtriData[i][2], trangtriData[i][3], trangtriData[i][5]})
+            end
+            SimCityMap[worldId].decoration = allData
         end
     end
 end

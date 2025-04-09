@@ -398,6 +398,24 @@ function SimTheoSau:Breath(nListId)
     local cachNguoiChoi = 0 
 
     local pID = self:GetPlayer(nListId)
+
+    if LIFE_RESTORE_PERCENT > 0 then
+        local currentLife = NPCINFO_GetNpcCurrentLife(tbNpc.finalIndex)
+        local maxLife = NPCINFO_GetNpcCurrentMaxLife(tbNpc.finalIndex)
+        if currentLife < maxLife then
+            -- Calculate life to restore (percentage of max life)
+            local restoreAmount = maxLife * LIFE_RESTORE_PERCENT  -- Default 5% if not specified
+                
+            -- Apply the restoration
+            local newLife = currentLife + restoreAmount
+            if newLife > maxLife then
+                newLife = maxLife
+            end
+            
+            NPCINFO_SetNpcCurrentLife(tbNpc.finalIndex, newLife)
+        end
+    end
+    
     if pID > 0 then
         tbNpc.notFoundPlayerTick = nil
         pW, pX, pY = CallPlayerFunction(pID, GetWorldPos)
