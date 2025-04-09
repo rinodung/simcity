@@ -44,4 +44,4 @@ DISTANCE_SUPPORT_PLAYER = 8        -- neu gan nguoi choi khoang cach 12 thi chuy
 DISTANCE_FOLLOW_PLAYER_TOOFAR = 30 -- neu qua xa nguoi choi vi chay nhanh thi phai bien hinh theo
 DISTANCE_VISION = 15               -- qua 15 = phai respawn vi no se quay ve cho cu
 
-LIFE_RESTORE_PERCENT = 0.05        -- phan tram life se duoc hoi lai khi nguoi choi di qua
+LIFE_RESTORE_PERCENT = 0.01        -- phan tram life se duoc hoi lai moi 1s
