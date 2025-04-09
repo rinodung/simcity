@@ -12,6 +12,8 @@ function mainLoop()
     SimCitizen:ATick()
 	SimTheoSau:ATick()
 	GroupFighter:ATick()
+	SimCityWorld:ATick()
+	--SimCityKeoXe:ATick()
     AddTimer(REFRESH_RATE, "mainLoop", SimCitizen)
 end 
 

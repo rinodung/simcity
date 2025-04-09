@@ -25,15 +25,6 @@ function createTaskSayKeoxe()
 	return tbOpt
 end
 
-function SimCityKeoXe:init()
-	if self.m_TimerId then
-		TimerList:DelTimer(self.m_TimerId)
-	end
-
-	-- Bo dong sau day neu muon di theo doi hinh
-	--self.m_TimerId = TimerList:AddTimer(self, 18)
-end
-
 function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, capHP, extraConfig)
 	local name = GetName()
 	local rank = 1
@@ -425,7 +416,7 @@ function SimCityKeoXe:TaoBai(forceLevel)
 	return 0
 end
 
-function SimCityKeoXe:OnTime()
+function SimCityKeoXe:ATick()
 	-- Get info for npc in this world
 	for name, children in self.collections do
 		local parentID = SearchPlayer(name)
@@ -447,5 +438,4 @@ function SimCityKeoXe:OnTime()
 		end
 	end
 
-	self.m_TimerId = TimerList:AddTimer(self, 18)
 end

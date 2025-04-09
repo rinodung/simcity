@@ -165,3 +165,28 @@ function arrRandomExtracItems(arr, n)
 
     return result
 end
+
+
+function SimCityTableFromFile(strFilePatch, tbPattern)	
+	if (TabFile_Load(strFilePatch, strFilePatch) == 0) then
+		print("Load TabFile Error!"..strFilePatch)
+		return nil
+	else
+		local tbResult = {}
+		local nRowCount = TabFile_GetRowCount(strFilePatch)
+        
+		for i = 2, nRowCount do
+			tbResult[i-1] = {}
+			for j = 1, getn(tbPattern) do
+				local tmp = nil
+				if tbPattern[j] == "*n" then
+					tmp = tonumber(TabFile_GetCell(strFilePatch, i, j))
+				elseif tbPattern[j] == "*w" then
+					tmp = tostring(TabFile_GetCell(strFilePatch, i, j))
+				end
+				tinsert(tbResult[i-1], tmp)
+			end
+		end
+		return tbResult
+	end
+end
