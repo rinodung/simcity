@@ -370,7 +370,7 @@ end
 
 function SimCityMainThanhThi:addNpcs()
 	add_dialognpc({
-		{ 1617, 78,  1610, 3235, "\\script\\global\\vinh\\simcity\\controllers\\thanhthi.lua", "Tri÷u M…n" }, -- TD
+		{ 1617, 78,  1621, 3253, "\\script\\global\\vinh\\simcity\\controllers\\thanhthi.lua", "Tri÷u M…n" }, -- TD
 		{ 1617, 37,  1719, 3091, "\\script\\global\\vinh\\simcity\\controllers\\thanhthi.lua", "Tri÷u M…n" }, -- BK
 		{ 1617, 11,  3158, 5082, "\\script\\global\\vinh\\simcity\\controllers\\thanhthi.lua", "Tri÷u M…n" }, -- TD
 		{ 1617, 1,   1569, 3198, "\\script\\global\\vinh\\simcity\\controllers\\thanhthi.lua", "Tri÷u M…n" }, -- PT

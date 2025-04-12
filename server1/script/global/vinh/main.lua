@@ -12,7 +12,7 @@ function simcity_addNpcs()
 	
 	-- KeoXe: them VoKy o TuongDuong
 	add_dialognpc({ 
-		{103,78,1608,3235,"\\script\\global\\vinh\\simcity\\controllers\\keoxe.lua","V« Kþ"}, 
+		{103,78,1619,3251,"\\script\\global\\vinh\\simcity\\controllers\\keoxe.lua","V« Kþ"}, 
 	})
 
 
