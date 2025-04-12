@@ -183,6 +183,7 @@ function SimCityChienTranh:taodoi(thonglinh, camp, mapID, walkPathNames, childre
 	return SimCitizen:New({
 		mode = "chiendau",
 		szName = name or "",
+		tongkim = self.tongkim,
 
 		nNpcId = thonglinh, -- required, main char ID
 		nMapId = mapID,     -- required, map

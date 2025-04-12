@@ -633,8 +633,11 @@ SimMovement.Citizen = {
 
             -- Tong kim dang o trong spawn?
             if (tbNpc.tongkim == 1 and tbNpc.tick_breath < tbNpc.tick_canWalk) then
+                
+                keepWalkingRate = 5
+                 
                 -- Walk random trong spawn
-                if (random(1, 100) < 5) then
+                if (random(1, 100) < keepWalkingRate) then
                     tbNpc.nPosId = tbNpc.movementSys:GetRandomWalkPoint(simInstance, tbNpc, tbNpc.nPosId)
                 else
                     return 1
@@ -784,10 +787,6 @@ SimMovement.FormationChild = {
         local myPosX = floor(nX32 / 32)
         local myPosY = floor(nY32 / 32)
     
-        local cachNguoiChoi = 0
-       
-        pW, pX, pY = tbNpc.movementSys:GetParentPos(simInstance, nListId)
-        cachNguoiChoi = GetDistanceRadius(myPosX, myPosY, pX, pY)
 
         -- Is parent fighting? Join fight or keep fighting
         if tbNpc.fightSys:IsParentFighting(simInstance, tbNpc) == 1 and tbNpc.isFighting == 0 then
@@ -813,6 +812,7 @@ SimMovement.FormationChild = {
         -- Player has gone different map? Do respawn
         local needRespawn = 0
         pW, pX, pY = self:GetParentPos(simInstance, nListId)
+        local cachNguoiChoi =  GetDistanceRadius(myPosX, myPosY, pX, pY)
 
         -- Parent pos available?
         if pW > 0 and pX > 0 and pY > 0 then
