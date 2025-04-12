@@ -47,13 +47,12 @@ function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, capHP, extraConfi
 		noRevive = 0,        -- optional: 0: keep reviving, 1: dead
 
 		CHANCE_ATTACK_PLAYER = 1, -- co hoi tan cong nguoi choi neu di ngang qua
-		attackNpcChance = 1, -- co hoi bat chien dau khi thay NPC khac phe
-		CHANCE_ATTACK_NPC = 1, -- co hoi tang cong NPC neu di ngang qua NPC danh nhau
+		CHANCE_ATTACK_NPC = 1, -- co hoi bat chien dau khi thay NPC khac phe
+		CHANCE_JOIN_FIGHT = 1, -- co hoi tang cong NPC neu di ngang qua NPC danh nhau
 		RADIUS_FIGHT_PLAYER = 15, -- scan for player around and randomly attack
 		RADIUS_FIGHT_NPC = 10, -- scan for NPC around and start randomly attack,
 		RADIUS_FIGHT_SCAN = 10, -- scan for fight around and join/leave fight it
-
-		noBackward = 1,      -- do not walk backward
+ 
 		kind = 0,            -- quai mode
 		TIME_FIGHTING_minTs = 1800,
 		TIME_FIGHTING_maxTs = 3000,
@@ -105,18 +104,6 @@ function SimCityKeoXe:nv_tudo_xe(capHP)
 
 		local children = {}
 		self:taoNV(pid, forCamp, pW, {}, 1, children, capHP)
-	end
-
-	self:init()
-end
-
-function SimCityKeoXe:removeAll()
-	for key, fighter in SimTheoSau.fighterList do
-		local name = GetName()
-		if fighter.playerID == name then
-			SimTheoSau:Remove(fighter.id)
-			self.collections[name] = nil
-		end
 	end
 end
 
@@ -327,7 +314,7 @@ function SimCityKeoXe:mainMenu()
 	tinsert(tbSay, "KÕt giao nhãm qu¸i nh©n/#SimCityKeoXe:goiAnhHungThiep()")
 	--tinsert(tbSay, "ThiÕt lËp/#SimCityKeoXe:caidat()")
 	tinsert(tbSay, "T¹o b·i luyÖn c«ng/#SimCityKeoXe:luyencong()")
-	tinsert(tbSay, "Gi¶i t¸n/#SimCityKeoXe:removeAll()")
+	tinsert(tbSay, "Gi¶i t¸n/#SimTheoSau:RemoveAll()")
 	tinsert(tbSay, "KÕt thóc ®èi tho¹i./no")
 	CreateTaskSay(tbSay)
 
@@ -373,7 +360,7 @@ end
 function SimCityKeoXe:TaoBai(forceLevel)
 	-- Tam thoi xoa xe de tao NPC tu dong neu khong se copy NPC tu xe vao luon
 	if (forceLevel == 999) then
-		SimCityKeoXe:removeAll()
+		SimTheoSau:RemoveAll()
 	end
 
 	local fighterList = GetAroundNpcList(60)

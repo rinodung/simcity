@@ -29,17 +29,15 @@ Include("\\script\\lib\\string.lua")
 
 -- Common Helpers
 Include("\\script\\global\\vinh\\simcity\\config.lua")
-Include("\\script\\global\\vinh\\simcity\\common.lua")
+Include("\\script\\global\\vinh\\simcity\\libs\\index.lua")
 
 -- Plugins first
 Include("\\script\\global\\vinh\\simcity\\plugins\\index.lua")
 
 -- Data load
-Include("\\script\\global\\vinh\\simcity\\data\\index.lua")
+Include("\\script\\global\\vinh\\simcity\\libs\\data.lua")
 
 -- Now main class
-Include("\\script\\global\\vinh\\simcity\\class\\group_fighter.class.lua")
-
 Include("\\script\\global\\vinh\\simcity\\class\\sim_theosau.lua")
 Include("\\script\\global\\vinh\\simcity\\class\\sim_citizen.lua")
 
