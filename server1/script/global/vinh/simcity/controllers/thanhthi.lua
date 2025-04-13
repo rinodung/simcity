@@ -425,6 +425,7 @@ function SimCityMainThanhThi:onPlayerEnterMap()
 		self.worldStatus["w" .. nW].enabled = 1
 
 		if SimCityWorld:IsTongKimMap(nW) == 1 then
+			SimCityMainTongKim:onPlayerEnterMap()
 			return 1
 		end
 
@@ -451,6 +452,12 @@ function SimCityMainThanhThi:onPlayerExitMap()
 	-- If enabled but no one left, clean it
 	if self.worldStatus["w" .. nW].count == 0 and self.worldStatus["w" .. nW].enabled == 1 then
 		self.worldStatus["w" .. nW] = nil
+
+		if SimCityWorld:IsTongKimMap(nW) == 1 then
+			SimCityMainTongKim:clearTongKimNpc(nW)
+			return 1
+		end
+
 		self:removeAll()
 	end
 end

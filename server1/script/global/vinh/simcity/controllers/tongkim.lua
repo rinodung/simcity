@@ -23,29 +23,32 @@ function SimCityMainTongKim:xemBXH()
 	SimCityWorld:doShowBXH(nW)
 end
 
-function SimCityMainTongKim:mainMenu()
-	SimCityMainTongKim:updateCampPosition()
-	SimCityChienTranh:modeTongKim(1, self.camp2TopRight)
-
-	local nW, nX, nY = GetWorldPos()
-
-
-	SimCityChienTranh.nW = nW
-
-
+function SimCityMainTongKim:setUpMap(nW)
 	local worldInfo = SimCityWorld:Get(nW)
 	if not worldInfo.name then
 		local config = objCopy(SimCityMap[10000])
 		config.worldId = nW
 		config.name = "Tèng Kim"
 		config.decoration = {}
-
+		config.isTongKim = 1
 		SimCityWorld:New(config);
 		worldInfo = SimCityWorld:Get(nW)
 		worldInfo.showFightingArea = 0
 		worldInfo.showThangCap = 1
 		worldInfo.showBXH = 1
+		worldInfo.announceBXHTick = 1 -- show BXH moi 1 phut
 	end
+end
+
+function SimCityMainTongKim:mainMenu()
+	SimCityMainTongKim:updateCampPosition()
+	SimCityChienTranh:modeTongKim(1, self.camp2TopRight)
+
+	local nW, nX, nY = GetWorldPos()
+	SimCityMainTongKim:setUpMap(nW)
+
+	SimCityChienTranh.nW = nW
+	local worldInfo = SimCityWorld:Get(nW)
 
 	local tbSay = createTaskSayChienTranh(nW, worldInfo.name .. " khãi löa chinh chiÕn")
 
@@ -64,9 +67,9 @@ function main()
 	return SimCityMainTongKim:mainMenu()
 end
 
-function SimCityMainTongKim:clearTongKimNpc()
+function SimCityMainTongKim:clearTongKimNpc(targetWorld)
 	for k, world in SimCityWorld.data do
-		if world.isTongKim == 1 then
+		if world.isTongKim == 1 and (not targetWorld or world.worldId == targetWorld) then
 			SimCityChienTranh.nW = world.worldId
 			SimCityChienTranh:removeAll()
 		end
@@ -157,32 +160,20 @@ function SimCityMainTongKim:addTongKimNpc()
 	SetNpcCurCamp(id, 1)
 
 
+end
 
+function SimCityMainTongKim:onPlayerEnterMap()
 	if TONGKIM_AUTOCREATE and TONGKIM_AUTOCREATE == 1 then
-		SimCityMainTongKim:updateCampPosition()
-		SimCityChienTranh:modeTongKim(1, self.camp2TopRight)
-		nW = SubWorldIdx2ID(nW)
-		SimCityTongKim.playerInTK[nW] = {}
+		local nW, nX, nY = GetWorldPos()
+		SimCityMainTongKim:setUpMap(nW)
 
 		SimCityChienTranh.nW = nW
-		SimCityChienTranh:removeAll()
-		local worldInfo = SimCityWorld:Get(nW)
-		if not worldInfo.name then	
-			local config = objCopy(SimCityMap[10000])
-			config.worldId = nW
-			config.name = "Tèng Kim"
-			config.decoration = {} 
-			config.isTongKim = 1
-
-			SimCityWorld:New(config); 
-
-			worldInfo = SimCityWorld:Get(nW)
-			worldInfo.showFightingArea = 0
-			worldInfo.showThangCap = 1
-			worldInfo.showBXH = 1
-			worldInfo.announceBXHTick = 1 -- show BXH moi 1 phut
-		end
-
+		self:updateCampPosition()
+		SimCityChienTranh:modeTongKim(1, self.camp2TopRight)		
+		
+		self:clearTongKimNpc(nW)
+		SimCityTongKim.playerInTK[nW] = {}
+		
 		SimCityChienTranh:nv_tudo(1)
 	end
 end

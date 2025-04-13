@@ -588,7 +588,7 @@ function SimCityChienTranh:TaoTongKimSpawn(ngoaitrang)
 	local capHP = 3
 	local pool = SimCityNPCInfo:getPoolByCap(capHP)
 	local total = 0
-	while total < 50 do
+	while total < 20 do
 		local id = pool[random(1, getn(pool))]
 
 		local campDirection = 0
