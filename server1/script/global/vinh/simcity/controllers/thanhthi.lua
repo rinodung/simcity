@@ -37,7 +37,7 @@ function SimCityMainThanhThi:_createSingle(id, Map, config)
 		nNpcId = id, -- required, main char ID
 		nMapId = Map, -- required, map
 		walkMode = "random",
-		walkVar = 3,
+		walkVar = 2,
 		kind = kind,
 		CHANCE_ATTACK_PLAYER = CHANCE_ATTACK_PLAYER, -- co hoi tan cong nguoi choi neu di ngang qua
 		CHANCE_ATTACK_NPC = CHANCE_AUTO_ATTACK,  -- co hoi bat chien dau
