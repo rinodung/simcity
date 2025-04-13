@@ -449,7 +449,7 @@ SimMovement.Citizen = {
             return 1
         end
 
-        if tbNpc.walkMode and tbNpc.walkMode == "formation" then
+        if (tbNpc.walkMode and tbNpc.walkMode == "formation") then
             local centerCharId = getCenteredCell(createFormation(size))
             local fighter = simInstance:Get(tbNpc.children[centerCharId])
 
@@ -466,13 +466,6 @@ SimMovement.Citizen = {
                 local nX, nY, nMapIndex = GetNpcPos(fighter.finalIndex)
                 tbNpc.childrenPath = genCoords_squareshape({ nX / 32, nY / 32 }, { X, Y }, size)
             end
-        else
-            local childrenPath = {}
-            for i = 1, size do
-                local targetPos = randomRange({X, Y}, tbNpc.walkVar or 2)
-                tinsert(childrenPath, { targetPos[1], targetPos[2] })
-            end
-            tbNpc.childrenPath = childrenPath
         end
     end,
 
@@ -754,6 +747,7 @@ SimMovement.FormationChild = {
 
     GetMyPosFromParent = function(self, simInstance, nListId)
         local tbNpc = simInstance.fighterList[nListId]
+
         local foundParent = simInstance:Get(tbNpc.parentID)
         if foundParent then
             return self:GiveChildPos(simInstance, tbNpc.parentID, tbNpc.childID)
@@ -851,7 +845,27 @@ SimMovement.FormationChild = {
 
 
         -- Otherwise walk toward parent
-        local targetW, targetX, targetY = self:GetMyPosFromParent(simInstance, nListId)
+        local targetW = pW
+        local targetX = myPosX
+        local targetY = myPosY 
+        
+        if (tbNpc.childrenWalkMode == "random") then
+
+            if (cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER) then
+                if random(1,100) < 10 then 
+                    local randomPos = randomRange({pX, pY}, tbNpc.walkVar or 2)
+                    targetX = randomPos[1]
+                    targetY = randomPos[2]
+                end
+            else
+                local randomPos = randomRange({pX, pY}, tbNpc.walkVar or 2)
+                targetX = randomPos[1]
+                targetY = randomPos[2]
+            end
+ 
+        else
+            targetW, targetX, targetY = self:GetMyPosFromParent(simInstance, nListId)
+        end
 
         -- Parent gave info?
         if targetW > 0 and targetX > 0 and targetY > 0 then

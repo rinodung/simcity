@@ -351,7 +351,9 @@ function SimCityChienTranh:phe_tudo_xe(startNPCIndex, perPage, ngoaitrang)
 		end
 
 
-		self:taoNV(pid, forCamp, self.nW, myPath, ngoaitrang or 0, children)
+		self:taoNV(pid, forCamp, self.nW, myPath, ngoaitrang or 0, children, nil, {
+			childrenWalkMode = "random"
+		})
 
 		if i > 5 then
 			forCamp = 2
@@ -413,7 +415,9 @@ function SimCityChienTranh:nv_tudo_xe(capHP)
 		end
 
 
-		self:taoNV(pid, forCamp, self.nW, myPath, 1, children, capHP)
+		self:taoNV(pid, forCamp, self.nW, myPath, 1, children, capHP, {
+			childrenWalkMode = "random"
+		})
 
 		if i > 5 then
 			forCamp = 2
