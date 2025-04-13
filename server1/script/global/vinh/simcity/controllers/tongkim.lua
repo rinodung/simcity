@@ -64,6 +64,15 @@ function main()
 	return SimCityMainTongKim:mainMenu()
 end
 
+function SimCityMainTongKim:clearTongKimNpc()
+	for k, world in SimCityWorld.data do
+		if world.isTongKim == 1 then
+			SimCityChienTranh.nW = world.worldId
+			SimCityChienTranh:removeAll()
+		end
+	end
+end
+
 function SimCityMainTongKim:addTongKimNpc()
 	SimCityMainTongKim:updateCampPosition()
 
@@ -163,6 +172,7 @@ function SimCityMainTongKim:addTongKimNpc()
 			config.worldId = nW
 			config.name = "Tèng Kim"
 			config.decoration = {} 
+			config.isTongKim = 1
 
 			SimCityWorld:New(config); 
 
