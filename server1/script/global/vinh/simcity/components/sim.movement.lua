@@ -221,8 +221,15 @@ SimMovement.Citizen = {
                 if path then
                     local pathLength = getn(path)
 
+
+                    -- Van con thoi gian o lai trong spawn
+                    if (tbNpc.tick_breath < tbNpc.tick_canWalk and tbNpc.tongkim == 1) or (tbNpc.baoDanhTongKim == 1) then
+                        tbNpc.currentPointIndex = random(1, pathLength)
+                        return tbNpc.currentPointIndex
+
+
                     -- Can move as usual
-                    if tbNpc.tick_breath > tbNpc.tick_canWalk then
+                    elseif tbNpc.tick_breath > tbNpc.tick_canWalk then
 
                         if tbNpc.tongkim == 1 
                             and (tbNpc.currentPathIndex == "camp1spawn" or tbNpc.currentPathIndex == "camp2spawn") then
@@ -289,12 +296,6 @@ SimMovement.Citizen = {
                             tbNpc.currentPointIndex = nextIndex
                             return tbNpc.currentPointIndex
                         end
-
-                     
-                    -- Van con thoi gian o lai trong spawn
-                    elseif tbNpc.tick_breath < tbNpc.tick_canWalk and tbNpc.tongkim == 1then
-                        tbNpc.currentPointIndex = random(1, pathLength)
-                        return tbNpc.currentPointIndex
                     end
                 end
             end
@@ -417,7 +418,7 @@ SimMovement.Citizen = {
                         tbNpc.goY = targetPos[2]
                     end
                 else
-                    tbNpc.currentPathIndex = pathNames[random(1, pathCount)]
+                    tbNpc.currentPathIndex = pathNames[tbNpc.hardsetPathIndex or random(1, pathCount)]
                     tbNpc.currentPointIndex = random(1, getn(tbNpc.worldInfo.walkPaths[tbNpc.currentPathIndex]))
                     tbNpc.pathDirection = 1
                 end
@@ -629,6 +630,13 @@ SimMovement.Citizen = {
             local keepWalkingRate = 90
             if tbNpc.isDialogNpcAround > 0 then
                 keepWalkingRate = 5
+            end
+
+            if tbNpc.baoDanhTongKim == 1 then
+                keepWalkingRate = 5
+                if tbNpc.isDialogNpcAround > 0 then
+                    keepWalkingRate = 2
+                end
             end
 
             -- Tong kim dang o trong spawn?

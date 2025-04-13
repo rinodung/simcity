@@ -470,6 +470,11 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 		local nNpcIdx
 		local mapping = {}
 		local map9x = 1
+		local baoDanhTongKim = 0
+
+		if nW == 323 or nW == 324 or nW == 325 then
+			baoDanhTongKim = 1
+		end
 
 		for i = 1, getn(fighterList) do
 			nNpcIdx = fighterList[i]
@@ -501,7 +506,41 @@ function SimCityMainThanhThi:createNpcSoCapByMap()
 
 		local N = getn(tmpFound)
 
-		if map9x == 0 then
+		if baoDanhTongKim == 1 then
+			worldInfo.allowFighting = 0
+			local table1 = {}
+
+			-- Fill each table with 40 random NPCs
+			for i = 1, random(20,40) do 
+				self:_createSingle(
+					tmpFound[random(1, N)], nW, { 
+						ngoaitrang = 1, 
+						level = level or 95, 
+						capHP = capHP , 
+						walkMode = "preset",
+						baoDanhTongKim = 1,
+						hardsetPathIndex = 1,
+						camp = 0,
+						walkVar = 4
+					}
+				)
+			end
+			for i = 1, random(20,40) do 
+				self:_createSingle(
+					tmpFound[random(1, N)], nW, { 
+						ngoaitrang = 1, 
+						level = level or 95, 
+						capHP = capHP , 
+						walkMode = "preset",
+						baoDanhTongKim = 1,
+						hardsetPathIndex = 2,
+						camp = 0,
+						walkVar = 4
+					}
+				)
+			end
+
+		elseif map9x == 0 then
 			if isThanhThi then
 			--	worldInfo.allowFighting = 0
 			--else
