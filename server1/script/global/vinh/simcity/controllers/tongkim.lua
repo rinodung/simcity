@@ -47,7 +47,7 @@ function SimCityMainTongKim:mainMenu()
 		worldInfo.showBXH = 1
 	end
 
-	local tbSay = createTaskSayChienTranh(worldInfo.name .. " khãi löa chinh chiÕn")
+	local tbSay = createTaskSayChienTranh(nW, worldInfo.name .. " khãi löa chinh chiÕn")
 
 	tinsert(tbSay, "Ph¸t anh hïng thiÕp/#SimCityChienTranh:goiAnhHungThiepNgoaiTrang()")
 	tinsert(tbSay, "Ph¸t qu¸i nh©n thiÕp/#SimCityChienTranh:goiAnhHungThiep()")

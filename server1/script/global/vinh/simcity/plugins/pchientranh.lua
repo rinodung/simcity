@@ -9,14 +9,15 @@ SimCityChienTranh = {
 	tongkim_camp2TopRight = 0
 }
 
-function createTaskSayChienTranh(extra)
+function createTaskSayChienTranh(mapId, extra)
 	local tbOpt = {}
 	local nSettingIdx = 1617
 	local nActionId = 0
 	if not extra then
 		extra = ""
 	end
-	tinsert(tbOpt, 1, "<dec><link=image[8,15]:#npcspr:?NPCSID="..tostring(nSettingIdx).."?ACTION="..tostring(nActionId)..">TriÖu MÉn:<link> ThiÕp vèn kh«ng ph¶i ng­êi tèt, nh­ng thiÕp ®èi víi chµng... ch­a tõng gian dèi." .. extra);
+	local counter = SimCityMainThanhThi:countMap(mapId)
+	tinsert(tbOpt, 1, "<dec><link=image[8,15]:#npcspr:?NPCSID="..tostring(nSettingIdx).."?ACTION="..tostring(nActionId)..">TriÖu MÉn:<link> ThiÕp vèn kh«ng ph¶i ng­êi tèt, nh­ng thiÕp ®èi víi chµng... ch­a tõng gian dèi." .. extra .. "<enter><enter><color=yellow>Nh©n sè hiÖn t¹i: " .. counter .. "<color>");
 	return tbOpt
 end
 
@@ -87,7 +88,7 @@ function SimCityChienTranh:genWalkPath(forCamp)
 	return nil
 end
 
-function SimCityChienTranh:taoNV(id, camp, mapID, walkPathNames, nt, theosau, capHP)
+function SimCityChienTranh:taoNV(id, camp, mapID, walkPathNames, nt, theosau, capHP, extraConfig)
 	if not walkPathNames then
 		return nil
 	end
@@ -108,7 +109,7 @@ function SimCityChienTranh:taoNV(id, camp, mapID, walkPathNames, nt, theosau, ca
 
 
 
-	return SimCitizen:New({
+	local tbNpc = {
 		mode = "chiendau",
 		szName = name or "",
 
@@ -152,7 +153,15 @@ function SimCityChienTranh:taoNV(id, camp, mapID, walkPathNames, nt, theosau, ca
 		childrenSetup = theosau or nil,
 		childrenCheckDistance = (theosau and 8) or nil -- force distance check for child
 
-	})
+	}
+
+	if extraConfig then
+		for k,v in extraConfig do
+			tbNpc[k] = v
+		end
+	end
+
+	return SimCitizen:New(tbNpc)
 end
 
 function SimCityChienTranh:taodoi(thonglinh, camp, mapID, walkPathNames, children5)
@@ -290,6 +299,7 @@ function SimCityChienTranh:taophe(nW, camp, linhthuong1, linhthuong2, hieuuy, ph
 end
 
 function SimCityChienTranh:phe_tudo(startNPCIndex, perPage, ngoaitrang)
+	self:TaoTongKimSpawn(ngoaitrang or 0)
 	local forCamp = 1
 	for i = 0, perPage do
 		local id = startNPCIndex + i
@@ -307,6 +317,8 @@ function SimCityChienTranh:phe_tudo(startNPCIndex, perPage, ngoaitrang)
 end
 
 function SimCityChienTranh:phe_tudo_xe(startNPCIndex, perPage, ngoaitrang)
+	self:TaoTongKimSpawn(ngoaitrang or 0)
+
 	local forCamp = 1
 
 	local maxIndex = startNPCIndex + perPage
@@ -348,6 +360,8 @@ function SimCityChienTranh:phe_tudo_xe(startNPCIndex, perPage, ngoaitrang)
 end
 
 function SimCityChienTranh:nv_tudo(capHP)
+	self:TaoTongKimSpawn(1)
+
 	local forCamp = 1
 
 	local pool = SimCityNPCInfo:getPoolByCap(capHP)
@@ -370,6 +384,8 @@ function SimCityChienTranh:nv_tudo(capHP)
 end
 
 function SimCityChienTranh:nv_tudo_xe(capHP)
+	self:TaoTongKimSpawn(1)
+
 	local forCamp = 1
 	local pool = SimCityNPCInfo:getPoolByCap(capHP)
 
@@ -439,7 +455,7 @@ function SimCityChienTranh:getWorldName()
 end
 
 function SimCityChienTranh:goiAnhHungThiepNgoaiTrang()
-	local tbSay = createTaskSayChienTranh()
+	local tbSay = createTaskSayChienTranh(self.nW)
 
 
 	tinsert(tbSay, "§Ö tö tinh anh (100 thiÕp)/#SimCityChienTranh:nv_tudo(1)")
@@ -463,7 +479,7 @@ function SimCityChienTranh:goiAnhHungThiepNgoaiTrang()
 end
 
 function SimCityChienTranh:goiAnhHungThiep()
-	local tbSay = createTaskSayChienTranh()
+	local tbSay = createTaskSayChienTranh(self.nW)
 
 
 
@@ -505,7 +521,7 @@ end
 function SimCityChienTranh:caidat()
 	local worldInfo = SimCityWorld:Get(self.nW)
 
-	local tbSay = createTaskSayChienTranh()
+	local tbSay = createTaskSayChienTranh(self.nW)
 
 
 
@@ -546,7 +562,7 @@ function SimCityChienTranh:mainMenu()
 	self.path2 = worldInfo.chientranh.path2
 
 
-	local tbSay = createTaskSayChienTranh()
+	local tbSay = createTaskSayChienTranh(self.nW)
 	if SimCityMainThanhThi then
 		SimCityMainThanhThi:removeAll()
 	end
@@ -562,4 +578,54 @@ function SimCityChienTranh:mainMenu()
 
 
 	return 1
+end
+
+function SimCityChienTranh:TaoTongKimSpawn(ngoaitrang)
+	if self.tongkim ~= 1 then
+		return 1
+	end
+	local forCamp = 1
+	local capHP = 3
+	local pool = SimCityNPCInfo:getPoolByCap(capHP)
+	local total = 0
+	while total < 50 do
+		local id = pool[random(1, getn(pool))]
+
+		local campDirection = 0
+		if (self.tongkim_camp2TopRight == 1 and forCamp == 1) then
+			campDirection = 1
+		end
+
+		if (self.tongkim_camp2TopRight == 1 and forCamp == 2) then
+			campDirection = 0
+		end
+
+		if (self.tongkim_camp2TopRight == 0 and forCamp == 1) then
+			campDirection = 0
+		end
+
+		if (self.tongkim_camp2TopRight == 0 and forCamp == 2) then
+			campDirection = 1 -- 1 = bottom to top
+		end
+
+		local myPath = {}
+		if (campDirection == 1) then
+			myPath = { {"haudoanh1", 1} }
+		else
+			myPath = { {"haudoanh2", 1} }
+		end
+
+		local fighter = self:taoNV(id, forCamp, self.nW, myPath, ngoaitrang, nil, capHP, {
+			baoDanhTongKim = 1
+		})
+		if fighter then
+			if forCamp == 1 then
+				forCamp = 2
+			else
+				forCamp = 1
+			end
+			total = total + 1
+		end
+	end
+	
 end

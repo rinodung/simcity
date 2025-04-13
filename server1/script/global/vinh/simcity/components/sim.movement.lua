@@ -637,10 +637,14 @@ SimMovement.Citizen = {
                 if tbNpc.isDialogNpcAround > 0 then
                     keepWalkingRate = 2
                 end
-            end
-
+                if (random(1, 100) < keepWalkingRate) then
+                    tbNpc.nPosId = tbNpc.movementSys:GetRandomWalkPoint(simInstance, tbNpc, tbNpc.nPosId)
+                else
+                    return 1
+                end
+            
             -- Tong kim dang o trong spawn?
-            if (tbNpc.tongkim == 1 and tbNpc.tick_breath < tbNpc.tick_canWalk) then
+            elseif (tbNpc.tongkim == 1 and tbNpc.tick_breath < tbNpc.tick_canWalk) then
                 
                 keepWalkingRate = 5
                  
