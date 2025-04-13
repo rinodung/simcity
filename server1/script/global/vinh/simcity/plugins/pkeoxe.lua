@@ -38,7 +38,7 @@ function SimCityKeoXe:taoNV(id, camp, mapID, map, nt, theosau, capHP, extraConfi
 		camp = camp,   -- optional, camp
 
 		walkMode = "random", -- optional: random, keoxe, or 1 for formation
-		walkVar = 2,   -- random walk of radius of 4*2
+		walkVar = 3,   -- random walk of radius of 4*2
 		
 
 		noStop = 1,          -- optional: cannot pause any stop (otherwise 90% walk 10% stop)

@@ -135,7 +135,7 @@ SimMovement.KeoXe = {
         -- Otherwise walk toward parent
         if tbNpc.isFighting == 0 then
             if cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER then
-                if random(1,100) < 10 then 
+                if random(1,100) < 5 then 
                     local targetPos = randomRange({pX, pY}, tbNpc.walkVar or 2)
                     NpcWalk(tbNpc.finalIndex, targetPos[1], targetPos[2]) 
                 end
@@ -852,7 +852,7 @@ SimMovement.FormationChild = {
         if (tbNpc.childrenWalkMode == "random") then
 
             if (cachNguoiChoi <= DISTANCE_SUPPORT_PLAYER) then
-                if random(1,100) < 10 then 
+                if random(1,100) < 5 then 
                     local randomPos = randomRange({pX, pY}, tbNpc.walkVar or 2)
                     targetX = randomPos[1]
                     targetY = randomPos[2]

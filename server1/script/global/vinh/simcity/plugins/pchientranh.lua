@@ -118,7 +118,7 @@ function SimCityChienTranh:taoNV(id, camp, mapID, walkPathNames, nt, theosau, ca
 		camp = realCamp,                        -- optional, camp
 
 		walkMode = (theosau and "formation") or "preset", -- optional: random, keoxe, or formation for formation
-		walkVar = (theosau and 2) or 4,         -- random walk of radius of 4*2
+		walkVar = (theosau and 3) or 4,         -- random walk of radius of 4*2
 		walkPathNames = walkPathNames,
 
 		noStop = 1,          -- optional: cannot pause any stop (otherwise 90% walk 10% stop)
